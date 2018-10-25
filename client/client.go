@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/chippydip/go-sc2ai/api"
+	"github.com/chippydip/go-sc2ai/api/upgrade"
 )
 
 // Client ...
@@ -12,11 +13,11 @@ type Client struct {
 	connection
 	Agent Agent
 
-	playerID    uint32
+	playerID    api.PlayerID
 	gameInfo    *api.ResponseGameInfo
 	data        *api.ResponseData
 	observation *api.ResponseObservation
-	upgrades    map[uint32]struct{}
+	upgrades    map[upgrade.Upgrade]struct{}
 }
 
 // Connect ...
@@ -160,7 +161,7 @@ func (c *Client) Update(stepSize int) error {
 
 	// Check for new upgrades
 	upgradeCompleted := false
-	for _, upgrade := range c.observation.GetObservation().GetRawData().GetPlayer().GetUpgradeIds() {
+	for _, upgrade := range c.observation.GetObservation().GetRawData().GetPlayer().UpgradeIds {
 		if _, ok := c.upgrades[upgrade]; !ok {
 			upgradeCompleted = true
 			c.upgrades[upgrade] = struct{}{}

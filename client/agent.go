@@ -15,7 +15,7 @@ type Agent interface {
 
 // AgentInfo ...
 type AgentInfo interface {
-	PlayerID() uint32
+	PlayerID() api.PlayerID
 	GameInfo() *api.ResponseGameInfo
 	Data() *api.ResponseData
 	Observation() *api.ResponseObservation
@@ -27,7 +27,7 @@ type AgentInfo interface {
 }
 
 // PlayerID ...
-func (c *Client) PlayerID() uint32 {
+func (c *Client) PlayerID() api.PlayerID {
 	return c.playerID
 }
 

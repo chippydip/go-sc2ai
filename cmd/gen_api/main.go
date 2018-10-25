@@ -18,7 +18,7 @@ func main() {
 	check(err)
 	defer os.RemoveAll(dir)
 
-	// Preserve the test directory to look at
+	// // Preserve the test directory to look at
 	// defer func() {
 	// 	if err := recover(); err != nil {
 	// 		fmt.Println(err)
@@ -40,6 +40,8 @@ func main() {
 	check(err)
 
 	protocArgs := []string{
+		"-I=" + os.Getenv("GOPATH") + "/src/github.com/gogo/protobuf/gogoproto",
+		"-I=" + os.Getenv("GOPATH") + "/src/github.com/gogo/protobuf/protobuf",
 		"--proto_path=" + protoDir,
 		"--gogofaster_out=api",
 	}
@@ -56,6 +58,14 @@ func main() {
 		protocArgs = append(protocArgs, path)
 	}
 
+	// Make sure we mapped all the expected types
+	if len(typeMap) != 0 {
+		fmt.Println("Not all types were mapped, missing:")
+		for key := range typeMap {
+			fmt.Println(key)
+		}
+	}
+
 	// Generate go code from the .proto files
 	out, err := exec.Command("protoc", protocArgs...).CombinedOutput()
 	fmt.Print(string(out))
@@ -67,6 +77,7 @@ const (
 	importPrefix   = "import \"s2clientprotocol/"
 	optionalPrefix = "optional "
 	enumPrefix     = "enum "
+	messagePrefix  = "message "
 )
 
 func upgradeProto(path string) []string {
@@ -74,18 +85,23 @@ func upgradeProto(path string) []string {
 	check(err)
 	defer file.Close()
 
+	propPath := []string{}
 	var lines []string
 
 	// Read line by line, making modifications as needed
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		// Get the line and trim whitespace to make matching easier
-		line := strings.TrimSpace(scanner.Text())
+		// Get the line and trim comments and whitespace to make matching easier
+		line := scanner.Text()
+		if comment := strings.Index(line, "//"); comment > 0 {
+			line = line[:comment]
+		}
+		line = strings.TrimSpace(line)
 
 		switch {
 		// Upgrade to proto3 and set the go package name
 		case line == "syntax = \"proto2\";":
-			lines = append(lines, "syntax = \"proto3\";", "option go_package = \"api\";")
+			lines = append(lines, "syntax = \"proto3\";", "option go_package = \"api\";\nimport \"gogo.proto\";")
 
 		// Remove subdirectory of the import so the output path isn't nested
 		case strings.HasPrefix(line, importPrefix):
@@ -93,23 +109,57 @@ func upgradeProto(path string) []string {
 
 		// Remove "optional" prefixes (they are implicit in proto3)
 		case strings.HasPrefix(line, optionalPrefix):
-			lines = append(lines, line[len(optionalPrefix):])
+			lines = append(lines, mapTypes(propPath, line[len(optionalPrefix):]))
 
-		// Race already has a zero-value, so opt-out of the next fix
-		case line == "enum Race {":
+		// Track where we are in the path
+		case strings.HasSuffix(line, " {"):
+			id := strings.Split(line, " ")[1] // "<type> Identifier {"
+			propPath = append(propPath, id)
+
 			lines = append(lines, line)
 
-		// Enums must have a zero value in proto3 (and unfortunately they must be unique due to C++ scoping rules)
-		case strings.HasPrefix(line, enumPrefix):
-			lines = append(lines, line, line[len(enumPrefix):len(line)-2]+"_not_specified = 0;")
+			// Enums must have a zero value in proto3 (and unfortunately they must be unique due to C++ scoping rules)
+			if strings.HasPrefix(line, enumPrefix) && line != "enum Race {" {
+				lines = append(lines, line[len(enumPrefix):len(line)-2]+"_not_specified = 0;")
+			}
+
+		// Pop the last path element
+		case line == "}":
+			propPath = propPath[:len(propPath)-1]
+			lines = append(lines, line)
 
 		// Everything else just gets copied to the output
 		default:
-			lines = append(lines, line)
+			lines = append(lines, mapTypes(propPath, line))
 		}
 	}
 
 	return lines
+}
+
+func mapTypes(path []string, line string) string {
+	parts := strings.Split(line, " ")
+	if len(parts) < 4 {
+		return line // need at least "<type> <name> = <num>;"
+	}
+
+	key := strings.Join(path, ".") + "." + parts[len(parts)-3]
+	if value, ok := typeMap[key]; ok {
+		// Add the casttype/customtype option
+		opt := ""
+		if strings.Index(value, ".") >= 0 {
+			opt = fmt.Sprintf("[(gogoproto.customtype) = \"github.com/chippydip/go-sc2ai/api/%v\", (gogoproto.nullable) = false];", value)
+		} else {
+			opt = fmt.Sprintf("[(gogoproto.casttype) = \"%v\"];", value)
+		}
+
+		last := parts[len(parts)-1]
+		parts = append(parts[:len(parts)-1], last[:len(last)-1], opt)
+		delete(typeMap, key) // track which ones have been processed
+		return strings.Join(parts, " ")
+	}
+
+	return line
 }
 
 func writeLines(path string, lines []string) {
@@ -129,3 +179,64 @@ func check(err error) {
 		panic(err)
 	}
 }
+
+// Make the API more type-safe
+var typeMap = map[string]string{
+	"AbilityData.ability_id":                           "ability.Ability",
+	"UnitTypeData.unit_id":                             "unit.Unit",
+	"UnitTypeData.ability_id":                          "ability.Ability",
+	"UnitTypeData.tech_alias":                          "unit.Unit",
+	"UnitTypeData.unit_alias":                          "unit.Unit",
+	"UnitTypeData.tech_requirement":                    "unit.Unit",
+	"UpgradeData.upgrade_id":                           "upgrade.Upgrade",
+	"UpgradeData.ability_id":                           "ability.Ability",
+	"BuffData.buff_id":                                 "buff.Buff",
+	"EffectData.effect_id":                             "effect.Effect",
+	"DebugCreateUnit.unit_type":                        "unit.Unit",
+	"DebugCreateUnit.owner":                            "PlayerID",
+	"DebugKillUnit.tag":                                "UnitTag",
+	"DebugSetUnitValue.unit_tag":                       "UnitTag",
+	"RequestQueryPathing.start.unit_tag":               "UnitTag",
+	"RequestQueryAvailableAbilities.unit_tag":          "UnitTag",
+	"ResponseQueryAvailableAbilities.unit_tag":         "UnitTag",
+	"ResponseQueryAvailableAbilities.unit_type_id":     "unit.Unit",
+	"RequestQueryBuildingPlacement.ability_id":         "ability.Ability",
+	"RequestQueryBuildingPlacement.placing_unit_tag":   "UnitTag",
+	"PowerSource.tag":                                  "UnitTag",
+	"PlayerRaw.upgrade_ids":                            "upgrade.Upgrade",
+	"UnitOrder.ability_id":                             "ability.Ability",
+	"UnitOrder.target.target_unit_tag":                 "UnitTag",
+	"PassengerUnit.tag":                                "UnitTag",
+	"PassengerUnit.unit_type":                          "unit.Unit",
+	"Unit.tag":                                         "UnitTag",
+	"Unit.unit_type":                                   "unit.Unit",
+	"Unit.owner":                                       "PlayerID",
+	"Unit.add_on_tag":                                  "UnitTag",
+	"Unit.buff_ids":                                    "buff.Buff",
+	"Unit.engaged_target_tag":                          "UnitTag",
+	"Event.dead_units":                                 "UnitTag",
+	"Effect.effect_id":                                 "effect.Effect",
+	"ActionRawUnitCommand.ability_id":                  "ability.Ability",
+	"ActionRawUnitCommand.target.target_unit_tag":      "UnitTag",
+	"ActionRawToggleAutocast.ability_id":               "ability.Ability",
+	"ActionRawToggleAutocast.unit_tags":                "UnitTag",
+	"RequestJoinGame.participation.observed_player_id": "PlayerID",
+	"ResponseJoinGame.player_id":                       "PlayerID",
+	"RequestStartReplay.observed_player_id":            "PlayerID",
+	"ChatReceived.player_id":                           "PlayerID",
+	"PlayerInfo.player_id":                             "PlayerID",
+	"PlayerCommon.player_id":                           "PlayerID",
+	"ActionError.unit_tag":                             "UnitTag",
+	"ActionError.ability_id":                           "ability.Ability",
+	"ActionObserverPlayerPerspective.player_id":        "PlayerID",
+	"ActionObserverCameraFollowPlayer.player_id":       "PlayerID",
+	"ActionObserverCameraFollowUnits.unit_tags":        "UnitTag",
+	"PlayerResult.player_id":                           "PlayerID",
+	"ControlGroup.leader_unit_type":                    "unit.Unit",
+	"UnitInfo.unit_type":                               "unit.Unit",
+	"UnitInfo.player_relative":                         "PlayerID", // TODO: is this correct?
+	"BuildItem.ability_id":                             "ability.Ability",
+	"ActionToggleAutocast.ability_id":                  "ability.Ability",
+}
+
+// TODO: spatial.proto?
