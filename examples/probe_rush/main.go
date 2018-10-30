@@ -1,16 +1,15 @@
 package main
 
 import (
-	"github.com/chippydip/go-sc2ai/api"
-	abilityType "github.com/chippydip/go-sc2ai/api/ability"
-	"time"
-
-	// using unit.Protoss_Nexus is not convenient, because everywhere you wish to iterate []*Units as unit
-	unitType "github.com/chippydip/go-sc2ai/api/unit"
-	"github.com/chippydip/go-sc2ai/client"
-	"github.com/chippydip/go-sc2ai/runner"
 	"math"
 	"math/rand"
+	"time"
+
+	"github.com/chippydip/go-sc2ai/api"
+	abilityType "github.com/chippydip/go-sc2ai/api/ability"
+	unitType "github.com/chippydip/go-sc2ai/api/unit" // using unit.Protoss_Nexus is not convenient, because everywhere you wish to iterate []*Units as unit
+	"github.com/chippydip/go-sc2ai/client"
+	"github.com/chippydip/go-sc2ai/runner"
 )
 
 type probeRush struct {
@@ -54,7 +53,7 @@ func distanceSquared(a, b *api.Point2D) float32 {
 
 // User should check that he receives not nil
 func closestUnit(pos *api.Point2D, units []*api.Unit) *api.Unit {
-	var closest *api.Unit = nil
+	var closest *api.Unit
 	for _, unit := range units {
 		if closest == nil ||
 			(distanceSquared(pos, toPoint2(closest.Pos)) > distanceSquared(pos, toPoint2(unit.Pos))) {
@@ -151,7 +150,7 @@ func (bot *probeRush) UnitCommand(unit *api.Unit, ability abilityType.Ability) {
 			Action: &api.ActionRaw_UnitCommand{
 				UnitCommand: &api.ActionRawUnitCommand{
 					AbilityId: ability,
-					UnitTags:  []uint64{uint64(unit.Tag)}, // UnitTag should be accepted here
+					UnitTags:  []api.UnitTag{unit.Tag},
 				}}}})
 }
 
@@ -161,7 +160,7 @@ func (bot *probeRush) UnitCommandTargetTag(unit *api.Unit, ability abilityType.A
 			Action: &api.ActionRaw_UnitCommand{
 				UnitCommand: &api.ActionRawUnitCommand{
 					AbilityId: ability,
-					UnitTags:  []uint64{uint64(unit.Tag)}, // UnitTag should be accepted here
+					UnitTags:  []api.UnitTag{unit.Tag},
 					Target: &api.ActionRawUnitCommand_TargetUnitTag{
 						TargetUnitTag: target,
 					}}}}})
@@ -173,7 +172,7 @@ func (bot *probeRush) UnitCommandTargetPos(unit *api.Unit, ability abilityType.A
 			Action: &api.ActionRaw_UnitCommand{
 				UnitCommand: &api.ActionRawUnitCommand{
 					AbilityId: ability,
-					UnitTags:  []uint64{uint64(unit.Tag)}, // UnitTag should be accepted here
+					UnitTags:  []api.UnitTag{unit.Tag},
 					Target: &api.ActionRawUnitCommand_TargetWorldSpacePos{
 						TargetWorldSpacePos: target,
 					}}}}})
@@ -181,9 +180,9 @@ func (bot *probeRush) UnitCommandTargetPos(unit *api.Unit, ability abilityType.A
 
 func (bot *probeRush) UnitsCommandTargetPos(units []*api.Unit, ability abilityType.Ability, target *api.Point2D) {
 	// I hope, we can avoid this conversion in future
-	uTags := []uint64{}
+	uTags := []api.UnitTag{}
 	for _, unit := range units {
-		uTags = append(uTags, uint64(unit.Tag))
+		uTags = append(uTags, unit.Tag)
 	}
 	bot.actions = append(bot.actions, &api.Action{
 		ActionRaw: &api.ActionRaw{

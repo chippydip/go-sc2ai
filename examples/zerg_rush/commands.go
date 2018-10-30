@@ -18,7 +18,7 @@ func (bot *zergRush) unitCommand(unit *api.Unit, ability abilityType.Ability) {
 			Action: &api.ActionRaw_UnitCommand{
 				UnitCommand: &api.ActionRawUnitCommand{
 					AbilityId: ability,
-					UnitTags:  []uint64{uint64(unit.Tag)}, // UnitTag should be accepted here
+					UnitTags:  []api.UnitTag{unit.Tag},
 				}}}})
 }
 
@@ -28,7 +28,7 @@ func (bot *zergRush) unitCommandTargetTag(unit *api.Unit, ability abilityType.Ab
 			Action: &api.ActionRaw_UnitCommand{
 				UnitCommand: &api.ActionRawUnitCommand{
 					AbilityId: ability,
-					UnitTags:  []uint64{uint64(unit.Tag)}, // UnitTag should be accepted here
+					UnitTags:  []api.UnitTag{unit.Tag},
 					Target: &api.ActionRawUnitCommand_TargetUnitTag{
 						TargetUnitTag: target,
 					}}}}})
@@ -40,7 +40,7 @@ func (bot *zergRush) unitCommandTargetPos(unit *api.Unit, ability abilityType.Ab
 			Action: &api.ActionRaw_UnitCommand{
 				UnitCommand: &api.ActionRawUnitCommand{
 					AbilityId: ability,
-					UnitTags:  []uint64{uint64(unit.Tag)}, // UnitTag should be accepted here
+					UnitTags:  []api.UnitTag{unit.Tag},
 					Target: &api.ActionRawUnitCommand_TargetWorldSpacePos{
 						TargetWorldSpacePos: target.To2D(),
 					}}}}})
@@ -48,9 +48,9 @@ func (bot *zergRush) unitCommandTargetPos(unit *api.Unit, ability abilityType.Ab
 
 func (bot *zergRush) unitsCommandTargetPos(units []*api.Unit, ability abilityType.Ability, target *Point) {
 	// I hope, we can avoid this conversion in future
-	uTags := []uint64{}
+	uTags := []api.UnitTag{}
 	for _, unit := range units {
-		uTags = append(uTags, uint64(unit.Tag))
+		uTags = append(uTags, unit.Tag)
 	}
 	bot.actions = append(bot.actions, &api.Action{
 		ActionRaw: &api.ActionRaw{

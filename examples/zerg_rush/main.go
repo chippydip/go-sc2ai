@@ -2,15 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/chippydip/go-sc2ai/api"
-	abilityType "github.com/chippydip/go-sc2ai/api/ability"
+	"math/rand"
 	"time"
 
-	// using unit.Protoss_Nexus is not convenient, because everywhere you wish to iterate []*Units as unit
-	unitType "github.com/chippydip/go-sc2ai/api/unit"
+	"github.com/chippydip/go-sc2ai/api"
+	abilityType "github.com/chippydip/go-sc2ai/api/ability"
+	unitType "github.com/chippydip/go-sc2ai/api/unit" // using unit.Protoss_Nexus is not convenient, because everywhere you wish to iterate []*Units as unit
 	"github.com/chippydip/go-sc2ai/client"
 	"github.com/chippydip/go-sc2ai/runner"
-	"math/rand"
 )
 
 type zergRush struct {

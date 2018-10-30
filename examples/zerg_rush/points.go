@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/chippydip/go-sc2ai/api"
 	"math"
+
+	"github.com/chippydip/go-sc2ai/api"
 )
 
 type Point struct {
@@ -47,7 +48,7 @@ func (a *Point) DistanceSquared(b *Point) float64 {
 
 // User should check that he receives not nil
 func (a *Point) ClosestUnit(units []*api.Unit) *api.Unit {
-	var closest *api.Unit = nil
+	var closest *api.Unit
 	for _, unit := range units {
 		if closest == nil ||
 			(a.DistanceSquared(PointFrom3D(closest.Pos)) > a.DistanceSquared(PointFrom3D(unit.Pos))) {

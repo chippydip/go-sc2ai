@@ -218,6 +218,7 @@ var typeMap = map[string]string{
 	"Effect.effect_id":                                 "effect.Effect",
 	"ActionRawUnitCommand.ability_id":                  "ability.Ability",
 	"ActionRawUnitCommand.target.target_unit_tag":      "UnitTag",
+	"ActionRawUnitCommand.unit_tags":                   "UnitTag",
 	"ActionRawToggleAutocast.ability_id":               "ability.Ability",
 	"ActionRawToggleAutocast.unit_tags":                "UnitTag",
 	"RequestJoinGame.participation.observed_player_id": "PlayerID",
