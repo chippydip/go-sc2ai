@@ -34,7 +34,7 @@ func (bot *zergRush) unitCommandTargetTag(unit *api.Unit, ability abilityType.Ab
 					}}}}})
 }
 
-func (bot *zergRush) unitCommandTargetPos(unit *api.Unit, ability abilityType.Ability, target *Point) {
+func (bot *zergRush) unitCommandTargetPos(unit *api.Unit, ability abilityType.Ability, target api.Point2D) {
 	bot.actions = append(bot.actions, &api.Action{
 		ActionRaw: &api.ActionRaw{
 			Action: &api.ActionRaw_UnitCommand{
@@ -42,11 +42,11 @@ func (bot *zergRush) unitCommandTargetPos(unit *api.Unit, ability abilityType.Ab
 					AbilityId: ability,
 					UnitTags:  []api.UnitTag{unit.Tag},
 					Target: &api.ActionRawUnitCommand_TargetWorldSpacePos{
-						TargetWorldSpacePos: target.To2D(),
+						TargetWorldSpacePos: &target,
 					}}}}})
 }
 
-func (bot *zergRush) unitsCommandTargetPos(units []*api.Unit, ability abilityType.Ability, target *Point) {
+func (bot *zergRush) unitsCommandTargetPos(units []*api.Unit, ability abilityType.Ability, target api.Point2D) {
 	// I hope, we can avoid this conversion in future
 	uTags := []api.UnitTag{}
 	for _, unit := range units {
@@ -59,6 +59,6 @@ func (bot *zergRush) unitsCommandTargetPos(units []*api.Unit, ability abilityTyp
 					AbilityId: ability,
 					UnitTags:  uTags,
 					Target: &api.ActionRawUnitCommand_TargetWorldSpacePos{
-						TargetWorldSpacePos: target.To2D(),
+						TargetWorldSpacePos: &target,
 					}}}}})
 }

@@ -17,8 +17,8 @@ type zergRush struct {
 
 	actions []*api.Action
 
-	myStartLocation    *Point
-	enemyStartLocation *Point
+	myStartLocation    api.Point2D
+	enemyStartLocation api.Point2D
 	observation        *api.Observation
 	units              map[unitType.Unit][]*api.Unit
 	neutralUnits       map[unitType.Unit][]*api.Unit
@@ -74,8 +74,8 @@ func (bot *zergRush) OnGameStart(info client.AgentInfo) {
 	}
 
 	// My hatchery is on start position
-	bot.myStartLocation = PointFrom3D(bot.units[unitType.Zerg_Hatchery][0].Pos)
-	bot.enemyStartLocation = PointFrom2D(bot.AgentInfo.GameInfo().GetStartRaw().GetStartLocations()[0])
+	bot.myStartLocation = bot.units[unitType.Zerg_Hatchery][0].Pos.ToPoint2D()
+	bot.enemyStartLocation = *bot.AgentInfo.GameInfo().GetStartRaw().GetStartLocations()[0]
 
 	// Send a friendly hello
 	bot.ChatSend("(glhf)")
@@ -124,9 +124,8 @@ func (bot *zergRush) Strategy() {
 	if bot.minerals >= 200 && len(bot.units[unitType.Zerg_SpawningPool]) == 0 &&
 		len(bot.units[unitType.Zerg_Drone]) > 0 {
 		builder := bot.units[unitType.Zerg_Drone][0]
-		dist := bot.enemyStartLocation.Distance(bot.myStartLocation)
-		vec := bot.enemyStartLocation.Sub(bot.myStartLocation).Div(&Point{dist, dist})
-		pos := bot.myStartLocation.Add(vec.Mul(&Point{5, 5}))
+		vec := bot.enemyStartLocation.Sub(bot.myStartLocation).Normalize()
+		pos := bot.myStartLocation.Add(vec.Mul(5))
 		bot.unitCommandTargetPos(builder, abilityType.Build_SpawningPool, pos)
 		return
 	}
@@ -171,17 +170,17 @@ func (bot *zergRush) Tactics() {
 			}
 			for _, ling := range lings {
 				if len(bot.goodTargets) > 0 {
-					target := PointFrom3D(ling.Pos).ClosestUnit(bot.goodTargets)
-					if PointFrom3D(ling.Pos).Distance(PointFrom3D(target.Pos)) > 4 {
+					target := ClosestUnit(ling.Pos.ToPoint2D(), bot.goodTargets)
+					if ling.Pos.ToPoint2D().Sub(target.Pos.ToPoint2D()).Len() > 4 {
 						// If target is far, attack it as unit, ling will run ignoring everything else
 						bot.unitCommandTargetTag(ling, abilityType.Attack, target.Tag)
 					} else {
 						// Attack as position, ling will choose best target around
-						bot.unitCommandTargetPos(ling, abilityType.Attack, PointFrom3D(target.Pos))
+						bot.unitCommandTargetPos(ling, abilityType.Attack, target.Pos.ToPoint2D())
 					}
 				} else {
-					target := PointFrom3D(ling.Pos).ClosestUnit(bot.okTargets)
-					bot.unitCommandTargetPos(ling, abilityType.Attack, PointFrom3D(target.Pos))
+					target := ClosestUnit(ling.Pos.ToPoint2D(), bot.okTargets)
+					bot.unitCommandTargetPos(ling, abilityType.Attack, target.Pos.ToPoint2D())
 				}
 			}
 		}

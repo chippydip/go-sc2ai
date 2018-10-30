@@ -1,7 +1,6 @@
 package main
 
 import (
-	"math"
 	"math/rand"
 	"time"
 
@@ -17,8 +16,8 @@ type probeRush struct {
 
 	actions []*api.Action
 
-	myStartLocation    *api.Point2D
-	enemyStartLocation *api.Point2D
+	myStartLocation    api.Point2D
+	enemyStartLocation api.Point2D
 	observation        *api.Observation
 	units              []*api.Unit
 	myUnits            []*api.Unit
@@ -36,27 +35,12 @@ type probeRush struct {
 	vespene  uint32
 }
 
-// It would be nice to have (p *api.Point) toPoint2() - but how to do it?
-func toPoint2(p *api.Point) *api.Point2D {
-	return &api.Point2D{X: p.X, Y: p.Y}
-}
-
-// (a *api.Point2D) distanceTo(b *api.Point2D) - can we do that?
-func distance(a, b *api.Point2D) float32 {
-	return float32(math.Sqrt(float64(distanceSquared(a, b))))
-}
-
-func distanceSquared(a, b *api.Point2D) float32 {
-	// So much 32<->64 castings... can we do something with them?
-	return float32(math.Pow(float64(b.X-a.X), 2) + math.Pow(float64(b.Y-a.Y), 2))
-}
-
 // User should check that he receives not nil
-func closestUnit(pos *api.Point2D, units []*api.Unit) *api.Unit {
+func closestUnit(pos api.Point2D, units []*api.Unit) *api.Unit {
 	var closest *api.Unit
 	for _, unit := range units {
 		if closest == nil ||
-			(distanceSquared(pos, toPoint2(closest.Pos)) > distanceSquared(pos, toPoint2(unit.Pos))) {
+			pos.Sub(closest.Pos.ToPoint2D()).LenSqr() > pos.Sub(unit.Pos.ToPoint2D()).LenSqr() {
 			closest = unit
 		}
 	}
@@ -86,12 +70,12 @@ func (bot *probeRush) ChatSend(msg string) {
 func (bot *probeRush) OnGameStart(info client.AgentInfo) {
 	bot.AgentInfo = info
 
-	bot.enemyStartLocation = bot.AgentInfo.GameInfo().GetStartRaw().GetStartLocations()[0]
+	bot.enemyStartLocation = *bot.AgentInfo.GameInfo().GetStartRaw().GetStartLocations()[0]
 	bot.units = bot.AgentInfo.Observation().GetObservation().GetRawData().GetUnits()
 	// Find my nexus, it is on start position
 	for _, unit := range bot.units {
 		if unit.UnitType == unitType.Protoss_Nexus {
-			bot.myStartLocation = toPoint2(unit.Pos)
+			bot.myStartLocation = unit.Pos.ToPoint2D()
 			break
 		}
 	}
@@ -166,7 +150,7 @@ func (bot *probeRush) UnitCommandTargetTag(unit *api.Unit, ability abilityType.A
 					}}}}})
 }
 
-func (bot *probeRush) UnitCommandTargetPos(unit *api.Unit, ability abilityType.Ability, target *api.Point2D) {
+func (bot *probeRush) UnitCommandTargetPos(unit *api.Unit, ability abilityType.Ability, target api.Point2D) {
 	bot.actions = append(bot.actions, &api.Action{
 		ActionRaw: &api.ActionRaw{
 			Action: &api.ActionRaw_UnitCommand{
@@ -174,11 +158,11 @@ func (bot *probeRush) UnitCommandTargetPos(unit *api.Unit, ability abilityType.A
 					AbilityId: ability,
 					UnitTags:  []api.UnitTag{unit.Tag},
 					Target: &api.ActionRawUnitCommand_TargetWorldSpacePos{
-						TargetWorldSpacePos: target,
+						TargetWorldSpacePos: &target,
 					}}}}})
 }
 
-func (bot *probeRush) UnitsCommandTargetPos(units []*api.Unit, ability abilityType.Ability, target *api.Point2D) {
+func (bot *probeRush) UnitsCommandTargetPos(units []*api.Unit, ability abilityType.Ability, target api.Point2D) {
 	// I hope, we can avoid this conversion in future
 	uTags := []api.UnitTag{}
 	for _, unit := range units {
@@ -191,7 +175,7 @@ func (bot *probeRush) UnitsCommandTargetPos(units []*api.Unit, ability abilityTy
 					AbilityId: ability,
 					UnitTags:  uTags,
 					Target: &api.ActionRawUnitCommand_TargetWorldSpacePos{
-						TargetWorldSpacePos: target,
+						TargetWorldSpacePos: &target,
 					}}}}})
 }
 
@@ -221,11 +205,11 @@ func (bot *probeRush) Tactics() {
 			} else {
 				target := new(api.Unit)
 				if len(bot.goodTargets) > 0 {
-					target = closestUnit(toPoint2(probe.Pos), bot.goodTargets)
+					target = closestUnit(probe.Pos.ToPoint2D(), bot.goodTargets)
 				} else {
-					target = closestUnit(toPoint2(probe.Pos), bot.okTargets)
+					target = closestUnit(probe.Pos.ToPoint2D(), bot.okTargets)
 				}
-				bot.UnitCommandTargetPos(probe, abilityType.Attack, toPoint2(target.Pos))
+				bot.UnitCommandTargetPos(probe, abilityType.Attack, target.Pos.ToPoint2D())
 			}
 		}
 	}
