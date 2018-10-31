@@ -1,166 +1,139 @@
 package api
 
-import (
-	"math"
-)
-
 // PointI
 
-// ToPoint2D ...
+// ToPoint2D converts to a Point2D.
 func (p PointI) ToPoint2D() Point2D {
 	return Point2D{float32(p.X), float32(p.Y)}
 }
 
-// ToCenteredPoint2D ...
-func (p PointI) ToCenteredPoint2D() Point2D {
+// ToPoint2DCentered converts to a Point2D and adds 0.5 to X/Y to center inside that map cell.
+func (p PointI) ToPoint2DCentered() Point2D {
 	return Point2D{float32(p.X) + 0.5, float32(p.Y) + 0.5}
 }
 
-// ToPoint ...
+// ToPoint converts to a Point with zero Z coordinate.
 func (p PointI) ToPoint() Point {
 	return Point{float32(p.X), float32(p.Y), 0}
 }
 
-// ToCenteredPoint ...
-func (p PointI) ToCenteredPoint() Point {
+// ToPointCentered to a Point with zero Z coordinate and adds 0.5 to X/Y to center inside that map cell.
+func (p PointI) ToPointCentered() Point {
 	return Point{float32(p.X) + 0.5, float32(p.Y) + 0.5, 0}
 }
 
-// Add ...
-func (p PointI) Add(p2 PointI) PointI {
-	return PointI{p.X + p2.X, p.Y + p2.Y}
+// VecTo computes the vector from p -> p2.
+func (p PointI) VecTo(p2 PointI) VecI {
+	return VecI(p2).Sub(VecI(p))
 }
 
-// Sub ...
-func (p PointI) Sub(p2 PointI) PointI {
-	return PointI{p.X - p2.X, p.Y - p2.Y}
+// For DirTo and Offset, just convert to Point2D first since the result may not be integers
+
+// Distance computes the absolute distance between two points.
+func (p PointI) Distance(p2 PointI) float64 {
+	return p.VecTo(p2).Len()
 }
 
-// Mul ...
-func (p PointI) Mul(c int32) PointI {
-	return PointI{p.X * c, p.Y * c}
+// Distance2 computes the squared distance between two points.
+func (p PointI) Distance2(p2 PointI) int32 {
+	return p.VecTo(p2).Len2()
 }
 
-// Dot ...
-func (p PointI) Dot(p2 PointI) int64 {
-	return int64(p.X)*int64(p2.X) + int64(p.Y)*int64(p2.Y)
+// Manhattan computes the manhattan distance between two points.
+func (p PointI) Manhattan(p2 PointI) int32 {
+	return p.VecTo(p2).Manhattan()
 }
 
-// LenSqr ...
-func (p PointI) LenSqr() int64 {
-	return p.Dot(p)
-}
-
-// Len ...
-func (p PointI) Len() float64 {
-	return math.Sqrt(float64(p.LenSqr()))
+// Add returns the point at the end of v when starting from p.
+func (p PointI) Add(v VecI) PointI {
+	return PointI(VecI(p).Add(v))
 }
 
 // Point2D
 
-// ToPointI ...
+// ToPointI converts to a PointI by truncating X/Y.
 func (p Point2D) ToPointI() PointI {
 	return PointI{int32(p.X), int32(p.Y)}
 }
 
-// ToPoint ...
+// ToPoint converts to a Point by truncating X/Y and setting Z to zero.
 func (p Point2D) ToPoint() Point {
 	return Point{p.X, p.Y, 0}
 }
 
-// Add ...
-func (p Point2D) Add(p2 Point2D) Point2D {
-	return Point2D{p.X + p2.X, p.Y + p2.Y}
+// VecTo computes the vector from p -> p2.
+func (p Point2D) VecTo(p2 Point2D) Vec2D {
+	return Vec2D(p2).Sub(Vec2D(p))
 }
 
-// Sub ...
-func (p Point2D) Sub(p2 Point2D) Point2D {
-	return Point2D{p.X - p2.X, p.Y - p2.Y}
+// DirTo computes the unit vector pointing from p -> p2.
+func (p Point2D) DirTo(p2 Point2D) Vec2D {
+	return p.VecTo(p2).Norm()
 }
 
-// Mul ...
-func (p Point2D) Mul(c float32) Point2D {
-	return Point2D{p.X * c, p.Y * c}
+// Offset moves a point toward a target by the specified distance.
+func (p Point2D) Offset(toward Point2D, by float32) Point2D {
+	return p.Add(p.DirTo(toward).Mul(by))
 }
 
-// Mul64 ...
-func (p Point2D) Mul64(c float64) Point2D {
-	return Point2D{float32(float64(p.X) * c), float32(float64(p.Y) * c)}
+// Distance computes the absolute distance between two points.
+func (p Point2D) Distance(p2 Point2D) float64 {
+	return p.VecTo(p2).Len()
 }
 
-// Dot ...
-func (p Point2D) Dot(p2 Point2D) float64 {
-	return float64(p.X)*float64(p2.X) + float64(p.Y)*float64(p2.Y)
+// Distance2 computes the squared distance between two points.
+func (p Point2D) Distance2(p2 Point2D) float32 {
+	return p.VecTo(p2).Len2()
 }
 
-// LenSqr ...
-func (p Point2D) LenSqr() float64 {
-	return p.Dot(p)
+// Manhattan computes the manhattan distance between two points.
+func (p Point2D) Manhattan(p2 Point2D) float32 {
+	return p.VecTo(p2).Manhattan()
 }
 
-// Len ...
-func (p Point2D) Len() float64 {
-	return math.Sqrt(p.LenSqr())
-}
-
-// Normalize ...
-func (p Point2D) Normalize() Point2D {
-	return p.Mul64(1.0 / p.Len())
+// Add returns the point at the end of v when starting from p.
+func (p Point2D) Add(v Vec2D) Point2D {
+	return Point2D(Vec2D(p).Add(v))
 }
 
 // Point
 
-// ToPointI ...
+// ToPointI converts to a PointI by truncating X/Y and dropping Z.
 func (p Point) ToPointI() PointI {
 	return PointI{int32(p.X), int32(p.Y)}
 }
 
-// ToPoint2D ...
+// ToPoint2D converts to a Point2D by dropping Z.
 func (p Point) ToPoint2D() Point2D {
 	return Point2D{p.X, p.Y}
 }
 
-// Add ...
-func (p Point) Add(p2 Point) Point {
-	return Point{p.X + p2.X, p.Y + p2.Y, p.Z + p2.Z}
+// VecTo computes the vector from p -> p2.
+func (p Point) VecTo(p2 Point) Vec {
+	return Vec(p2).Sub(Vec(p))
 }
 
-// Sub ...
-func (p Point) Sub(p2 Point) Point {
-	return Point{p.X - p2.X, p.Y - p2.Y, p.Z - p2.Z}
+// DirTo computes the unit vector pointing from p -> p2.
+func (p Point) DirTo(p2 Point) Vec {
+	return p.VecTo(p2).Norm()
 }
 
-// Mul ...
-func (p Point) Mul(c float32) Point {
-	return Point{p.X * c, p.Y * c, p.Z * c}
+// Offset moves a point toward a target by the specified distance.
+func (p Point) Offset(toward Point, by float32) Point {
+	return p.Add(p.DirTo(toward).Mul(by))
 }
 
-// Mul64 ...
-func (p Point) Mul64(c float64) Point {
-	return Point{float32(float64(p.X) * c), float32(float64(p.Y) * c), float32(float64(p.Z) * c)}
+// Distance computes the absolute distance between two points.
+func (p Point) Distance(p2 Point) float64 {
+	return p.VecTo(p2).Len()
 }
 
-// Dot ...
-func (p Point) Dot(p2 Point) float64 {
-	return float64(p.X)*float64(p2.X) + float64(p.Y)*float64(p2.Y) + float64(p.Z)*float64(p2.Z)
+// Distance2 computes the squared distance between two points.
+func (p Point) Distance2(p2 Point) float32 {
+	return p.VecTo(p2).Len2()
 }
 
-// LenSqr ...
-func (p Point) LenSqr() float64 {
-	return p.Dot(p)
-}
-
-// Len ...
-func (p Point) Len() float64 {
-	return math.Sqrt(p.LenSqr())
-}
-
-// Normalize ...
-func (p Point) Normalize() Point {
-	return p.Mul64(1.0 / p.Len())
-}
-
-// Cross ...
-func (p Point) Cross(p2 Point) Point {
-	return Point{p.Y*p2.Z - p.Z*p2.Y, p.Z*p2.X - p.X*p2.Z, p.X*p2.Y - p.Y*p2.X}
+// Add returns the point at the end of v when starting from p.
+func (p Point) Add(v Vec) Point {
+	return Point(Vec(p).Add(v))
 }

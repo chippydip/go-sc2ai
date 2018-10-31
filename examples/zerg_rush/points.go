@@ -9,7 +9,7 @@ func ClosestUnit(a api.Point2D, units []*api.Unit) *api.Unit {
 	var closest *api.Unit
 	for _, unit := range units {
 		if closest == nil ||
-			a.Sub(closest.Pos.ToPoint2D()).LenSqr() > a.Sub(unit.Pos.ToPoint2D()).LenSqr() {
+			a.Distance2(closest.Pos.ToPoint2D()) > a.Distance2(unit.Pos.ToPoint2D()) {
 			closest = unit
 		}
 	}

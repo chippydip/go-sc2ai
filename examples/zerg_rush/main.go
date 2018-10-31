@@ -124,8 +124,7 @@ func (bot *zergRush) Strategy() {
 	if bot.minerals >= 200 && len(bot.units[unitType.Zerg_SpawningPool]) == 0 &&
 		len(bot.units[unitType.Zerg_Drone]) > 0 {
 		builder := bot.units[unitType.Zerg_Drone][0]
-		vec := bot.enemyStartLocation.Sub(bot.myStartLocation).Normalize()
-		pos := bot.myStartLocation.Add(vec.Mul(5))
+		pos := bot.myStartLocation.Offset(bot.enemyStartLocation, 5)
 		bot.unitCommandTargetPos(builder, abilityType.Build_SpawningPool, pos)
 		return
 	}
@@ -171,7 +170,7 @@ func (bot *zergRush) Tactics() {
 			for _, ling := range lings {
 				if len(bot.goodTargets) > 0 {
 					target := ClosestUnit(ling.Pos.ToPoint2D(), bot.goodTargets)
-					if ling.Pos.ToPoint2D().Sub(target.Pos.ToPoint2D()).Len() > 4 {
+					if ling.Pos.ToPoint2D().Distance2(target.Pos.ToPoint2D()) > 4*4 {
 						// If target is far, attack it as unit, ling will run ignoring everything else
 						bot.unitCommandTargetTag(ling, abilityType.Attack, target.Tag)
 					} else {
