@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/chippydip/go-sc2ai/api"
-	"github.com/chippydip/go-sc2ai/api/upgrade"
 )
 
 // Client ...
@@ -17,7 +16,7 @@ type Client struct {
 	gameInfo    *api.ResponseGameInfo
 	data        *api.ResponseData
 	observation *api.ResponseObservation
-	upgrades    map[upgrade.Upgrade]struct{}
+	upgrades    map[api.UpgradeID]struct{}
 }
 
 // Connect ...
@@ -77,7 +76,7 @@ func (c *Client) CreateGame(mapPath string, players []PlayerSetup, realtime bool
 		return err
 	}
 
-	if r.Error != api.ResponseCreateGame_Error_not_specified {
+	if r.Error != api.ResponseCreateGame_nil {
 		return fmt.Errorf("%v: %v", r.Error.String(), r.GetErrorDetails())
 	}
 
@@ -102,7 +101,7 @@ func (c *Client) RequestJoinGame(setup PlayerSetup, options *api.InterfaceOption
 		return err
 	}
 
-	if r.Error != api.ResponseJoinGame_Error_not_specified {
+	if r.Error != api.ResponseJoinGame_nil {
 		return fmt.Errorf("%v: %v", r.Error.String(), r.GetErrorDetails())
 	}
 

@@ -5,9 +5,10 @@ import (
 	"time"
 
 	"github.com/chippydip/go-sc2ai/api"
-	abilityType "github.com/chippydip/go-sc2ai/api/ability"
-	unitType "github.com/chippydip/go-sc2ai/api/unit" // using unit.Protoss_Nexus is not convenient, because everywhere you wish to iterate []*Units as unit
 	"github.com/chippydip/go-sc2ai/client"
+	"github.com/chippydip/go-sc2ai/enums/ability"
+	"github.com/chippydip/go-sc2ai/enums/protoss"
+	"github.com/chippydip/go-sc2ai/enums/zerg"
 	"github.com/chippydip/go-sc2ai/runner"
 )
 
@@ -74,7 +75,7 @@ func (bot *probeRush) OnGameStart(info client.AgentInfo) {
 	bot.units = bot.AgentInfo.Observation().GetObservation().GetRawData().GetUnits()
 	// Find my nexus, it is on start position
 	for _, unit := range bot.units {
-		if unit.UnitType == unitType.Protoss_Nexus {
+		if unit.UnitType == protoss.Nexus {
 			bot.myStartLocation = unit.Pos.ToPoint2D()
 			break
 		}
@@ -101,14 +102,14 @@ func (bot *probeRush) ParseObservation() {
 	for _, unit := range bot.units {
 		if unit.Alliance == api.Alliance_Self {
 			bot.myUnits = append(bot.myUnits, unit)
-			if unit.UnitType == unitType.Protoss_Nexus {
+			if unit.UnitType == protoss.Nexus {
 				bot.nexus = unit
-			} else if unit.UnitType == unitType.Protoss_Probe {
+			} else if unit.UnitType == protoss.Probe {
 				bot.probes = append(bot.probes, unit)
 			}
 		} else if unit.Alliance == api.Alliance_Enemy {
 			bot.enemyUnits = append(bot.enemyUnits, unit)
-			if !unit.IsFlying && unit.UnitType != unitType.Zerg_Larva && unit.UnitType != unitType.Zerg_Egg {
+			if !unit.IsFlying && unit.UnitType != zerg.Larva && unit.UnitType != zerg.Egg {
 				bot.okTargets = append(bot.okTargets, unit)
 				if !contains(bot.typeData[unit.UnitType].Attributes, api.Attribute_Structure) {
 					bot.goodTargets = append(bot.goodTargets, unit)
@@ -128,7 +129,7 @@ func (bot *probeRush) FirstStep() {
 	// fmt.Println(bot.homeMineral)
 }
 
-func (bot *probeRush) UnitCommand(unit *api.Unit, ability abilityType.Ability) {
+func (bot *probeRush) UnitCommand(unit *api.Unit, ability api.AbilityID) {
 	bot.actions = append(bot.actions, &api.Action{
 		ActionRaw: &api.ActionRaw{
 			Action: &api.ActionRaw_UnitCommand{
@@ -138,7 +139,7 @@ func (bot *probeRush) UnitCommand(unit *api.Unit, ability abilityType.Ability) {
 				}}}})
 }
 
-func (bot *probeRush) UnitCommandTargetTag(unit *api.Unit, ability abilityType.Ability, target api.UnitTag) {
+func (bot *probeRush) UnitCommandTargetTag(unit *api.Unit, ability api.AbilityID, target api.UnitTag) {
 	bot.actions = append(bot.actions, &api.Action{
 		ActionRaw: &api.ActionRaw{
 			Action: &api.ActionRaw_UnitCommand{
@@ -150,7 +151,7 @@ func (bot *probeRush) UnitCommandTargetTag(unit *api.Unit, ability abilityType.A
 					}}}}})
 }
 
-func (bot *probeRush) UnitCommandTargetPos(unit *api.Unit, ability abilityType.Ability, target api.Point2D) {
+func (bot *probeRush) UnitCommandTargetPos(unit *api.Unit, ability api.AbilityID, target api.Point2D) {
 	bot.actions = append(bot.actions, &api.Action{
 		ActionRaw: &api.ActionRaw{
 			Action: &api.ActionRaw_UnitCommand{
@@ -162,7 +163,7 @@ func (bot *probeRush) UnitCommandTargetPos(unit *api.Unit, ability abilityType.A
 					}}}}})
 }
 
-func (bot *probeRush) UnitsCommandTargetPos(units []*api.Unit, ability abilityType.Ability, target api.Point2D) {
+func (bot *probeRush) UnitsCommandTargetPos(units []*api.Unit, ability api.AbilityID, target api.Point2D) {
 	// I hope, we can avoid this conversion in future
 	uTags := []api.UnitTag{}
 	for _, unit := range units {
@@ -182,18 +183,18 @@ func (bot *probeRush) UnitsCommandTargetPos(units []*api.Unit, ability abilityTy
 func (bot *probeRush) Strategy() {
 	// Build probe if can
 	if bot.nexus != nil && len(bot.nexus.Orders) == 0 && bot.minerals >= 50 {
-		bot.UnitCommand(bot.nexus, abilityType.Train_Probe)
+		bot.UnitCommand(bot.nexus, ability.Train_Probe)
 	}
 	// Chronoboost self if building something
 	if bot.nexus != nil && len(bot.nexus.Orders) > 0 && bot.nexus.Energy >= 50 {
-		bot.UnitCommandTargetTag(bot.nexus, abilityType.Effect_ChronoBoostEnergyCost, bot.nexus.Tag)
+		bot.UnitCommandTargetTag(bot.nexus, ability.Effect_ChronoBoostEnergyCost, bot.nexus.Tag)
 	}
 }
 
 func (bot *probeRush) Tactics() {
 	if len(bot.okTargets) == 0 && bot.probes != nil {
 		// Attack enemy base position
-		bot.UnitsCommandTargetPos(bot.probes, abilityType.Attack, bot.enemyStartLocation)
+		bot.UnitsCommandTargetPos(bot.probes, ability.Attack, bot.enemyStartLocation)
 	} else {
 		// To see battle better
 		if len(bot.goodTargets) > 0 {
@@ -201,7 +202,7 @@ func (bot *probeRush) Tactics() {
 		}
 		for _, probe := range bot.probes {
 			if probe.Shield == 0 {
-				bot.UnitCommandTargetTag(probe, abilityType.Harvest_Gather, bot.homeMineral.Tag)
+				bot.UnitCommandTargetTag(probe, ability.Harvest_Gather, bot.homeMineral.Tag)
 			} else {
 				target := new(api.Unit)
 				if len(bot.goodTargets) > 0 {
@@ -209,7 +210,7 @@ func (bot *probeRush) Tactics() {
 				} else {
 					target = closestUnit(probe.Pos.ToPoint2D(), bot.okTargets)
 				}
-				bot.UnitCommandTargetPos(probe, abilityType.Attack, target.Pos.ToPoint2D())
+				bot.UnitCommandTargetPos(probe, ability.Attack, target.Pos.ToPoint2D())
 			}
 		}
 	}

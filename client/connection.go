@@ -97,7 +97,7 @@ func (c *connection) Connect(address string, port int, timeout time.Duration) er
 }
 
 func (c *connection) onResponse(r *api.Response) error {
-	if r.Status != api.Status_Status_not_specified {
+	if r.Status != api.Status_nil {
 		c.Status = r.Status
 	}
 	// for _, e := range r.Error {

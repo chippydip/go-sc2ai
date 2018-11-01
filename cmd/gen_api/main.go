@@ -120,7 +120,7 @@ func upgradeProto(path string) []string {
 
 			// Enums must have a zero value in proto3 (and unfortunately they must be unique due to C++ scoping rules)
 			if strings.HasPrefix(line, enumPrefix) && line != "enum Race {" {
-				lines = append(lines, line[len(enumPrefix):len(line)-2]+"_not_specified = 0;")
+				lines = append(lines, line[len(enumPrefix):len(line)-2]+"_nil = 0 [(gogoproto.enumvalue_customname) = \"nil\"];")
 			}
 
 		// Pop the last path element
@@ -145,13 +145,8 @@ func mapTypes(path []string, line string) string {
 
 	key := strings.Join(path, ".") + "." + parts[len(parts)-3]
 	if value, ok := typeMap[key]; ok {
-		// Add the casttype/customtype option
-		opt := ""
-		if strings.Index(value, ".") >= 0 {
-			opt = fmt.Sprintf("[(gogoproto.customtype) = \"github.com/chippydip/go-sc2ai/api/%v\", (gogoproto.nullable) = false];", value)
-		} else {
-			opt = fmt.Sprintf("[(gogoproto.casttype) = \"%v\"];", value)
-		}
+		// Add the casttype option
+		opt := fmt.Sprintf("[(gogoproto.casttype) = \"%v\"];", value)
 
 		last := parts[len(parts)-1]
 		parts = append(parts[:len(parts)-1], last[:len(last)-1], opt)
@@ -182,45 +177,52 @@ func check(err error) {
 
 // Make the API more type-safe
 var typeMap = map[string]string{
-	"AbilityData.ability_id":                           "ability.Ability",
-	"UnitTypeData.unit_id":                             "unit.Unit",
-	"UnitTypeData.ability_id":                          "ability.Ability",
-	"UnitTypeData.tech_alias":                          "unit.Unit",
-	"UnitTypeData.unit_alias":                          "unit.Unit",
-	"UnitTypeData.tech_requirement":                    "unit.Unit",
-	"UpgradeData.upgrade_id":                           "upgrade.Upgrade",
-	"UpgradeData.ability_id":                           "ability.Ability",
-	"BuffData.buff_id":                                 "buff.Buff",
-	"EffectData.effect_id":                             "effect.Effect",
-	"DebugCreateUnit.unit_type":                        "unit.Unit",
-	"DebugCreateUnit.owner":                            "PlayerID",
-	"DebugKillUnit.tag":                                "UnitTag",
-	"DebugSetUnitValue.unit_tag":                       "UnitTag",
-	"RequestQueryPathing.start.unit_tag":               "UnitTag",
-	"RequestQueryAvailableAbilities.unit_tag":          "UnitTag",
-	"ResponseQueryAvailableAbilities.unit_tag":         "UnitTag",
-	"ResponseQueryAvailableAbilities.unit_type_id":     "unit.Unit",
-	"RequestQueryBuildingPlacement.ability_id":         "ability.Ability",
-	"RequestQueryBuildingPlacement.placing_unit_tag":   "UnitTag",
-	"PowerSource.tag":                                  "UnitTag",
-	"PlayerRaw.upgrade_ids":                            "upgrade.Upgrade",
-	"UnitOrder.ability_id":                             "ability.Ability",
-	"UnitOrder.target.target_unit_tag":                 "UnitTag",
-	"PassengerUnit.tag":                                "UnitTag",
-	"PassengerUnit.unit_type":                          "unit.Unit",
-	"Unit.tag":                                         "UnitTag",
-	"Unit.unit_type":                                   "unit.Unit",
-	"Unit.owner":                                       "PlayerID",
-	"Unit.add_on_tag":                                  "UnitTag",
-	"Unit.buff_ids":                                    "buff.Buff",
-	"Unit.engaged_target_tag":                          "UnitTag",
-	"Event.dead_units":                                 "UnitTag",
-	"Effect.effect_id":                                 "effect.Effect",
-	"ActionRawUnitCommand.ability_id":                  "ability.Ability",
-	"ActionRawUnitCommand.target.target_unit_tag":      "UnitTag",
-	"ActionRawUnitCommand.unit_tags":                   "UnitTag",
-	"ActionRawToggleAutocast.ability_id":               "ability.Ability",
-	"ActionRawToggleAutocast.unit_tags":                "UnitTag",
+	// data.proto
+	"AbilityData.ability_id":           "AbilityID",
+	"AbilityData.remaps_to_ability_id": "AbilityID",
+	"UnitTypeData.unit_id":             "UnitTypeID",
+	"UnitTypeData.ability_id":          "AbilityID",
+	"UnitTypeData.tech_alias":          "UnitTypeID",
+	"UnitTypeData.unit_alias":          "UnitTypeID",
+	"UnitTypeData.tech_requirement":    "UnitTypeID",
+	"UpgradeData.upgrade_id":           "UpgradeID",
+	"UpgradeData.ability_id":           "AbilityID",
+	"BuffData.buff_id":                 "BuffID",
+	"EffectData.effect_id":             "EffectID",
+	// debug.proto
+	"DebugCreateUnit.unit_type":  "UnitTypeID",
+	"DebugCreateUnit.owner":      "PlayerID",
+	"DebugKillUnit.tag":          "UnitTag",
+	"DebugSetUnitValue.unit_tag": "UnitTag",
+	// error.proto
+	// query.proto
+	"RequestQueryPathing.start.unit_tag":             "UnitTag",
+	"RequestQueryAvailableAbilities.unit_tag":        "UnitTag",
+	"ResponseQueryAvailableAbilities.unit_tag":       "UnitTag",
+	"ResponseQueryAvailableAbilities.unit_type_id":   "UnitTypeID",
+	"RequestQueryBuildingPlacement.ability_id":       "AbilityID",
+	"RequestQueryBuildingPlacement.placing_unit_tag": "UnitTag",
+	// raw.proto
+	"PowerSource.tag":                             "UnitTag",
+	"PlayerRaw.upgrade_ids":                       "UpgradeID",
+	"UnitOrder.ability_id":                        "AbilityID",
+	"UnitOrder.target.target_unit_tag":            "UnitTag",
+	"PassengerUnit.tag":                           "UnitTag",
+	"PassengerUnit.unit_type":                     "UnitTypeID",
+	"Unit.tag":                                    "UnitTag",
+	"Unit.unit_type":                              "UnitTypeID",
+	"Unit.owner":                                  "PlayerID",
+	"Unit.add_on_tag":                             "UnitTag",
+	"Unit.buff_ids":                               "BuffID",
+	"Unit.engaged_target_tag":                     "UnitTag",
+	"Event.dead_units":                            "UnitTag",
+	"Effect.effect_id":                            "EffectID",
+	"ActionRawUnitCommand.ability_id":             "AbilityID",
+	"ActionRawUnitCommand.target.target_unit_tag": "UnitTag",
+	"ActionRawUnitCommand.unit_tags":              "UnitTag",
+	"ActionRawToggleAutocast.ability_id":          "AbilityID",
+	"ActionRawToggleAutocast.unit_tags":           "UnitTag",
+	// sc2api.proto
 	"RequestJoinGame.participation.observed_player_id": "PlayerID",
 	"ResponseJoinGame.player_id":                       "PlayerID",
 	"RequestStartReplay.observed_player_id":            "PlayerID",
@@ -228,16 +230,19 @@ var typeMap = map[string]string{
 	"PlayerInfo.player_id":                             "PlayerID",
 	"PlayerCommon.player_id":                           "PlayerID",
 	"ActionError.unit_tag":                             "UnitTag",
-	"ActionError.ability_id":                           "ability.Ability",
+	"ActionError.ability_id":                           "AbilityID",
 	"ActionObserverPlayerPerspective.player_id":        "PlayerID",
 	"ActionObserverCameraFollowPlayer.player_id":       "PlayerID",
 	"ActionObserverCameraFollowUnits.unit_tags":        "UnitTag",
 	"PlayerResult.player_id":                           "PlayerID",
-	"ControlGroup.leader_unit_type":                    "unit.Unit",
-	"UnitInfo.unit_type":                               "unit.Unit",
-	"UnitInfo.player_relative":                         "PlayerID", // TODO: is this correct?
-	"BuildItem.ability_id":                             "ability.Ability",
-	"ActionToggleAutocast.ability_id":                  "ability.Ability",
+	// score.proto
+	// spatial.proto
+	// ui.proto
+	"ControlGroup.leader_unit_type":   "UnitTypeID",
+	"UnitInfo.unit_type":              "UnitTypeID",
+	"UnitInfo.player_relative":        "PlayerID", // TODO: is this correct?
+	"BuildItem.ability_id":            "AbilityID",
+	"ActionToggleAutocast.ability_id": "AbilityID",
 }
 
 // TODO: spatial.proto?

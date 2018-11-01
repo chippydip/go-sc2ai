@@ -1,7 +1,8 @@
 package main
 
-import abilityType "github.com/chippydip/go-sc2ai/api/ability"
-import "github.com/chippydip/go-sc2ai/api"
+import (
+	"github.com/chippydip/go-sc2ai/api"
+)
 
 func (bot *zergRush) ChatSend(msg string) {
 	bot.SendActions([]*api.Action{{
@@ -12,7 +13,7 @@ func (bot *zergRush) ChatSend(msg string) {
 	}})
 }
 
-func (bot *zergRush) unitCommand(unit *api.Unit, ability abilityType.Ability) {
+func (bot *zergRush) unitCommand(unit *api.Unit, ability api.AbilityID) {
 	bot.actions = append(bot.actions, &api.Action{
 		ActionRaw: &api.ActionRaw{
 			Action: &api.ActionRaw_UnitCommand{
@@ -22,7 +23,7 @@ func (bot *zergRush) unitCommand(unit *api.Unit, ability abilityType.Ability) {
 				}}}})
 }
 
-func (bot *zergRush) unitCommandTargetTag(unit *api.Unit, ability abilityType.Ability, target api.UnitTag) {
+func (bot *zergRush) unitCommandTargetTag(unit *api.Unit, ability api.AbilityID, target api.UnitTag) {
 	bot.actions = append(bot.actions, &api.Action{
 		ActionRaw: &api.ActionRaw{
 			Action: &api.ActionRaw_UnitCommand{
@@ -34,7 +35,7 @@ func (bot *zergRush) unitCommandTargetTag(unit *api.Unit, ability abilityType.Ab
 					}}}}})
 }
 
-func (bot *zergRush) unitCommandTargetPos(unit *api.Unit, ability abilityType.Ability, target api.Point2D) {
+func (bot *zergRush) unitCommandTargetPos(unit *api.Unit, ability api.AbilityID, target api.Point2D) {
 	bot.actions = append(bot.actions, &api.Action{
 		ActionRaw: &api.ActionRaw{
 			Action: &api.ActionRaw_UnitCommand{
@@ -46,7 +47,7 @@ func (bot *zergRush) unitCommandTargetPos(unit *api.Unit, ability abilityType.Ab
 					}}}}})
 }
 
-func (bot *zergRush) unitsCommandTargetPos(units []*api.Unit, ability abilityType.Ability, target api.Point2D) {
+func (bot *zergRush) unitsCommandTargetPos(units []*api.Unit, ability api.AbilityID, target api.Point2D) {
 	// I hope, we can avoid this conversion in future
 	uTags := []api.UnitTag{}
 	for _, unit := range units {
