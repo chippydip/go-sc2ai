@@ -11,18 +11,23 @@ import (
 var gamePort = 0
 var startPort = 0
 var ladderServer = ""
+var opponentID = ""
+
 var computerOpponent = false
 var computerRace = api.Race_Terran
 var computerDifficulty = api.Difficulty_Easy
 
 func init() {
 	// Ladder Flags
-	flagInt("g", "GamePort", &gamePort, "Port of client to connect to")
-	flagInt("o", "StartPort", &startPort, "Starting server port")
-	flagStr("l", "LadderServer", &ladderServer, "Ladder server address")
-	flagBool("c", "ComputerOpponent", &computerOpponent, "If we set up a computer opponent")
-	flagVar("a", "ComputerRace", (*raceFlag)(&computerRace), "Race of computer opponent")
-	flagVar("d", "ComputerDifficulty", (*difficultyFlag)(&computerDifficulty), "Difficulty of computer opponent")
+	flagInt("GamePort", &gamePort, "Port of client to connect to")
+	flagInt("StartPort", &startPort, "Starting server port")
+	flagStr("LadderServer", &ladderServer, "Ladder server address")
+	flagStr("OpponentId", &opponentID, "Ladder ID of the opponent (for learning bots)")
+
+	// Testing Flags
+	flagBool("ComputerOpponent", &computerOpponent, "If we set up a computer opponent")
+	flagVar("ComputerRace", (*raceFlag)(&computerRace), "Race of computer opponent")
+	flagVar("ComputerDifficulty", (*difficultyFlag)(&computerDifficulty), "Difficulty of computer opponent")
 }
 
 // RunAgent ...

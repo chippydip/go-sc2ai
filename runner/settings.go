@@ -77,12 +77,11 @@ func init() {
 	}
 
 	// Blizzard Flags
-	flagStr("e", "executable", &processSettings.processPath, "The path to StarCraft II.")
-	flagInt("s", "step_size", &processSettings.stepSize, "How many steps to take per call.")
-	//flagInt("p", "port", &processSettings.portStart, "The port to make StarCraft II listen on.")
-	flagBool("r", "realtime", &processSettings.realtime, "Whether to run StarCraft II in real time or not.")
-	flagStr("m", "map", &gameSettings.mapName, "Which map to run.")
-	flagInt("t", "timeout", &processSettings.timeoutMS, "Timeout for how long the library will block for a response.")
+	flagStr("executable", &processSettings.processPath, "The path to StarCraft II.")
+	//flagInt("port", &processSettings.portStart, "The port to make StarCraft II listen on.")
+	flagBool("realtime", &processSettings.realtime, "Whether to run StarCraft II in real time or not.")
+	flagStr("map", &gameSettings.mapName, "Which map to run.")
+	flagInt("timeout", &processSettings.timeoutMS, "Timeout for how long the library will block for a response.")
 }
 
 func getUserDirectory() (string, error) {
@@ -127,22 +126,18 @@ func getSubdirs(dir string) []string {
 	return dirs
 }
 
-func flagStr(short string, long string, value *string, usage string) {
-	flag.StringVar(value, short, *value, usage)
-	flag.StringVar(value, long, *value, usage)
+func flagStr(name string, value *string, usage string) {
+	flag.StringVar(value, name, *value, usage)
 }
 
-func flagInt(short string, long string, value *int, usage string) {
-	flag.IntVar(value, short, *value, usage)
-	flag.IntVar(value, long, *value, usage)
+func flagInt(name string, value *int, usage string) {
+	flag.IntVar(value, name, *value, usage)
 }
 
-func flagBool(short string, long string, value *bool, usage string) {
-	flag.BoolVar(value, short, *value, usage)
-	flag.BoolVar(value, long, *value, usage)
+func flagBool(name string, value *bool, usage string) {
+	flag.BoolVar(value, name, *value, usage)
 }
 
-func flagVar(short string, long string, value flag.Value, usage string) {
-	flag.Var(value, short, usage)
-	flag.Var(value, long, usage)
+func flagVar(name string, value flag.Value, usage string) {
+	flag.Var(value, name, usage)
 }
