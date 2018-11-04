@@ -48,7 +48,6 @@ func (c *connection) Connect(address string, port int, timeout time.Duration) er
 	c.conn = conn
 
 	c.requests = make(chan request)
-	callbacks := make(chan chan<- response)
 
 	c.conn.SetCloseHandler(func(code int, text string) error {
 		//control.Error(ClientError_ConnectionClosed)
@@ -56,11 +55,12 @@ func (c *connection) Connect(address string, port int, timeout time.Duration) er
 		return nil
 	})
 
-	// Send worker
+	// Worker
 	go func() {
 		defer recoverPanic()
 
 		for r := range c.requests {
+			// Send
 			data, err := proto.Marshal(r.Request)
 			if err != nil {
 				r.callback <- response{nil, err}
@@ -71,30 +71,22 @@ func (c *connection) Connect(address string, port int, timeout time.Duration) er
 				r.callback <- response{nil, err}
 				continue
 			}
-			callbacks <- r.callback
-		}
-		close(callbacks)
-	}()
 
-	// Receive worker
-	go func() {
-		defer recoverPanic()
-
-		for cb := range callbacks {
-			_, data, err := c.conn.ReadMessage()
+			// Receive
+			_, data, err = c.conn.ReadMessage()
 			if err != nil {
-				cb <- response{nil, err}
+				r.callback <- response{nil, err}
 				continue
 			}
 
-			r := &api.Response{}
-			err = proto.Unmarshal(data, r)
+			resp := &api.Response{}
+			err = proto.Unmarshal(data, resp)
 			if err != nil {
-				cb <- response{nil, err}
+				r.callback <- response{nil, err}
 				continue
 			}
 
-			cb <- response{r, c.onResponse(r)}
+			r.callback <- response{resp, c.onResponse(resp)}
 		}
 	}()
 
@@ -140,9 +132,23 @@ func (c *connection) onResponse(r *api.Response) error {
 
 func (c *connection) request(req *api.Request) func() (*api.Response, error) {
 	out := make(chan response, 1)
-	c.requests <- request{req, out}
+loop:
+	for {
+		select {
+		case c.requests <- request{req, out}:
+			break loop
+		case <-time.After(time.Second):
+			fmt.Printf("waiting to send request %t\n", req)
+		}
+	}
 	return func() (*api.Response, error) {
-		r := <-out
-		return r.Response, r.error
+		for {
+			select {
+			case r := <-out:
+				return r.Response, r.error
+			case <-time.After(10 * time.Second):
+				fmt.Printf("waiting for response %t\n", req)
+			}
+		}
 	}
 }
