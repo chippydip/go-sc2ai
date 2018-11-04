@@ -40,7 +40,7 @@ func RunAgent(agent client.PlayerSetup) {
 	// fmt.Println(processSettings, gameSettings)
 
 	var numAgents = 1
-	if computerOpponent {
+	if computerOpponent && gamePort == 0 {
 		SetParticipants(agent, client.NewComputer(computerRace, computerDifficulty))
 	} else {
 		numAgents = 2

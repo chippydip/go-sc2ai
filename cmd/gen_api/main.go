@@ -21,7 +21,7 @@ func main() {
 	// // Preserve the test directory to look at
 	// defer func() {
 	// 	if err := recover(); err != nil {
-	// 		fmt.Println(err)
+	// 		fmt.Fprintln(os.Stderr, err)
 	// 	}
 
 	// 	fmt.Print("Press 'Enter' to continue...")

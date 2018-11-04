@@ -22,7 +22,7 @@ var lastPort = 0
 // StartGame ...
 func StartGame(mapPath string) {
 	if !CreateGame(mapPath) {
-		fmt.Println("Failed to create game.")
+		fmt.Fprintln(os.Stderr, "Failed to create game.")
 		os.Exit(1)
 	}
 	JoinGame()
@@ -40,7 +40,7 @@ func CreateGame(mapPath string) bool {
 	// Create with the first client
 	err := clients[0].CreateGame(gameSettings.mapName, gameSettings.playerSetup, processSettings.realtime)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 		return false
 	}
 	return true
@@ -51,7 +51,7 @@ func JoinGame() bool {
 	// TODO: Make this parallel and get rid of the WaitJoinGame method
 	for i, client := range clients {
 		if err := client.RequestJoinGame(gameSettings.playerSetup[i], interfaceOptions, gameSettings.ports); err != nil {
-			fmt.Printf("Unable to join game: %v", err)
+			fmt.Fprintf(os.Stderr, "Unable to join game: %v", err)
 			os.Exit(1)
 		}
 	}
@@ -103,9 +103,9 @@ func SetParticipants(participants ...client.PlayerSetup) {
 // LaunchStarcraft ...
 func LaunchStarcraft() {
 	if _, err := os.Stat(processSettings.processPath); err != nil {
-		fmt.Println("Executable path can't be found, try running the StarCraft II executable first.")
+		fmt.Fprintln(os.Stderr, "Executable path can't be found, try running the StarCraft II executable first.")
 		if len(processSettings.processPath) > 0 {
-			fmt.Printf("%v does not exist on your filesystem.\n", processSettings.processPath)
+			fmt.Fprintf(os.Stderr, "%v does not exist on your filesystem.\n", processSettings.processPath)
 		}
 		os.Exit(1)
 	}
@@ -157,9 +157,9 @@ func launchProcess(c *client.Client, clientIndex int) int {
 	pi.Path = processSettings.processPath
 	pi.PID = startProcess(processSettings.processPath, args)
 	if pi.PID == 0 {
-		fmt.Printf("Unable to start sc2 executable with path: %v\n", processSettings.processPath)
+		fmt.Fprintf(os.Stderr, "Unable to start sc2 executable with path: %v\n", processSettings.processPath)
 	} else {
-		fmt.Printf("Lanched SC2 (%v), PID: %v\n", processSettings.processPath, pi.PID)
+		fmt.Fprintf(os.Stderr, "Lanched SC2 (%v), PID: %v\n", processSettings.processPath, pi.PID)
 	}
 
 	c.SetProcessInfo(pi)
@@ -186,7 +186,7 @@ func startProcess(path string, args []string) int {
 	}
 
 	if err := cmd.Start(); err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 		return 0
 	}
 
@@ -247,7 +247,7 @@ func runAgent(c *client.Client) {
 		for c.IsInGame() {
 			_, err := c.Update(224) // 10 seconds per update
 			if err != nil {
-				fmt.Println(err)
+				fmt.Fprintln(os.Stderr, err)
 				break
 			}
 		}
@@ -266,7 +266,7 @@ func cleanup(c *client.Client) {
 	// Print the winner
 	for _, player := range c.Observation().GetPlayerResult() {
 		if player.GetPlayerId() == c.PlayerID() {
-			fmt.Println(player.GetResult())
+			fmt.Fprintln(os.Stderr, player.GetResult())
 		}
 	}
 }
@@ -286,8 +286,10 @@ func SetupPorts(numAgents int, startPort int, checkSingle bool) {
 	if humans > 1 {
 		var ports = gameSettings.ports
 		ports.SharedPort = int32(startPort + 1)
-		ports.ServerPorts.GamePort = int32(startPort + 2)
-		ports.ServerPorts.BasePort = int32(startPort + 3)
+		ports.ServerPorts = &api.PortSet{
+			GamePort: int32(startPort + 2),
+			BasePort: int32(startPort + 3),
+		}
 
 		for i := 0; i < numAgents; i++ {
 			var base = int32(startPort + 4 + i*2)

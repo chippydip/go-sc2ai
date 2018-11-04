@@ -2,6 +2,7 @@ package agent
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/chippydip/go-sc2ai/api"
 	"github.com/chippydip/go-sc2ai/client"
@@ -42,7 +43,7 @@ func (a *Agent) Update(stepSize int) []api.UpgradeID {
 	a.sendActions()
 	upgrades, err := a.info.Update(stepSize)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 		a.done = true
 		return nil
 	}

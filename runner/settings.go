@@ -16,7 +16,7 @@ import (
 // Set ...
 func Set(name, value string) {
 	if err := flag.Set(name, value); err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 	}
 }
 
@@ -26,7 +26,7 @@ func LoadSettings() bool {
 	flag.Parse()
 
 	if len(processSettings.processPath) == 0 {
-		fmt.Println("Please run StarCraft II before running this API")
+		fmt.Fprintln(os.Stderr, "Please run StarCraft II before running this API")
 		flag.CommandLine.Usage()
 		return false
 	}
@@ -93,7 +93,7 @@ func getUserDirectory() (string, error) {
 
 		sout := strings.TrimSpace(string(out))
 		if err != nil {
-			fmt.Println("Documents directory lookup failed", sout)
+			fmt.Fprintln(os.Stderr, "Documents directory lookup failed", sout)
 			return "", err
 		}
 

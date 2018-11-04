@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/chippydip/go-sc2ai/api"
 )
@@ -61,7 +62,7 @@ func (c *Client) Query(query api.RequestQuery) func() *api.ResponseQuery {
 	return func() *api.ResponseQuery {
 		resp, err := f()
 		if err != nil {
-			fmt.Println(err)
+			fmt.Fprintln(os.Stderr, err)
 			return nil
 		}
 		return resp
@@ -76,7 +77,7 @@ func (c *Client) SendActions(actions []*api.Action) func() []api.ActionResult {
 	return func() []api.ActionResult {
 		resp, err := f()
 		if err != nil {
-			fmt.Println(err)
+			fmt.Fprintln(os.Stderr, err)
 			return nil
 		}
 		return resp.GetResult()
