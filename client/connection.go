@@ -3,6 +3,8 @@ package client
 import (
 	"fmt"
 	"net/url"
+	"os"
+	"runtime"
 	"time"
 
 	"github.com/chippydip/go-sc2ai/api"
@@ -56,6 +58,8 @@ func (c *connection) Connect(address string, port int, timeout time.Duration) er
 
 	// Send worker
 	go func() {
+		defer recoverPanic()
+
 		for r := range c.requests {
 			data, err := proto.Marshal(r.Request)
 			if err != nil {
@@ -74,6 +78,8 @@ func (c *connection) Connect(address string, port int, timeout time.Duration) er
 
 	// Receive worker
 	go func() {
+		defer recoverPanic()
+
 		for cb := range callbacks {
 			_, data, err := c.conn.ReadMessage()
 			if err != nil {
@@ -94,6 +100,29 @@ func (c *connection) Connect(address string, port int, timeout time.Duration) er
 
 	_, err = c.ping(api.RequestPing{})()
 	return err
+}
+
+func recoverPanic() {
+	if p := recover(); p != nil {
+		ReportPanic(p)
+	}
+}
+
+// ReportPanic ...
+func ReportPanic(p interface{}) {
+	fmt.Fprintln(os.Stderr, p)
+
+	// Nicer format than what debug.PrintStack() gives us
+	var pc [32]uintptr
+	n := runtime.Callers(3, pc[:]) // skip the defer, this func, and runtime.Callers
+	for _, pc := range pc[:n] {
+		fn := runtime.FuncForPC(pc)
+		if fn == nil {
+			continue
+		}
+		file, line := fn.FileLine(pc)
+		fmt.Fprintf(os.Stderr, "%v:%v in %v\n", file, line, fn.Name())
+	}
 }
 
 func (c *connection) onResponse(r *api.Response) error {

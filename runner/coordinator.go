@@ -227,52 +227,48 @@ func Run() {
 
 	for _, c := range clients {
 		go func(client *client.Client) {
-			defer func() {
-				if p := recover(); p != nil {
-					fmt.Printf("Panic: %v\n", p)
-				}
-				wg.Done()
-			}()
+			defer wg.Done()
 
 			runAgent(client)
+			cleanup(client)
 		}(c)
 	}
 
 	wg.Wait()
 }
 
-func runAgent(client *client.Client) {
-	stepSize := processSettings.stepSize
-	if processSettings.realtime {
-		stepSize = 0
-	}
+func runAgent(c *client.Client) {
+	defer func() {
+		if p := recover(); p != nil {
+			client.ReportPanic(p)
+		}
 
-	err := client.Init() // get GameInfo, Data, and Observation
-	agent := client.Agent
-
-	if err == nil && client.IsInGame() {
-		agent.OnGameStart(client)
-		for {
-			err := client.Update(stepSize)
-
-			if err != nil || !client.IsInGame() {
+		// If the bot crashed before losing, keep the game running (force the opponent to earn the win)
+		for c.IsInGame() {
+			_, err := c.Update(224) // 10 seconds per update
+			if err != nil {
+				fmt.Println(err)
 				break
 			}
-
-			agent.OnStep()
 		}
+	}()
+
+	err := c.Init() // get GameInfo, Data, and Observation
+	if err == nil && c.IsInGame() {
+		c.Agent.RunAgent(c)
 	}
+}
 
-	agent.OnGameEnd()
-	client.RequestLeaveGame()
+func cleanup(c *client.Client) {
+	// Leave the game
+	c.RequestLeaveGame()
 
-	for _, player := range client.Observation().GetPlayerResult() {
-		if player.GetPlayerId() == client.PlayerID() {
+	// Print the winner
+	for _, player := range c.Observation().GetPlayerResult() {
+		if player.GetPlayerId() == c.PlayerID() {
 			fmt.Println(player.GetResult())
 		}
 	}
-
-	return
 }
 
 // SetupPorts ...

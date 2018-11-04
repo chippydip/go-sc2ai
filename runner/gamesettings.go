@@ -7,7 +7,6 @@ import (
 
 var processSettings = struct {
 	realtime          bool
-	stepSize          int
 	processPath       string
 	dataVersion       string
 	netAddress        string
@@ -15,7 +14,7 @@ var processSettings = struct {
 	portStart         int
 	extraCommandLines []string
 	processInfo       []client.ProcessInfo
-}{false, 1, "", "", "127.0.0.1", 120000, 8168, nil, nil}
+}{false, "", "", "127.0.0.1", 120000, 8168, nil, nil}
 
 var renderSettings = struct {
 }{}

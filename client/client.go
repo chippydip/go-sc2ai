@@ -137,7 +137,7 @@ func (c *Client) Init() error {
 }
 
 // Update ...
-func (c *Client) Update(stepSize int) error {
+func (c *Client) Update(stepSize int) ([]api.UpgradeID, error) {
 	// Step the simulation forward if this isn't in realtime mode
 	stepReq := func() error { return nil }
 	if stepSize > 0 {
@@ -155,28 +155,28 @@ func (c *Client) Update(stepSize int) error {
 	stepErr = stepReq()
 	c.observation, obsErr = obsReq()
 	if err := firstOrNil(stepErr, obsErr); err != nil {
-		return err
+		return nil, err
 	}
 
 	// Check for new upgrades
-	upgradeCompleted := false
+	var newUpgrades []api.UpgradeID
 	for _, upgrade := range c.observation.GetObservation().GetRawData().GetPlayer().UpgradeIds {
 		if _, ok := c.upgrades[upgrade]; !ok {
-			upgradeCompleted = true
+			newUpgrades = append(newUpgrades, upgrade)
 			c.upgrades[upgrade] = struct{}{}
-			// TODO: raise event here since we're already detecting it?
 		}
 	}
-	if upgradeCompleted {
-		// Re-fetch unit data since some of it is upgrade-dependent
-		// TODO: also (re-)fetch unit -> ability mapping?
-		data, err := c.connection.data(api.RequestData{
-			UnitTypeId: true,
-		})()
-		c.data.Units = data.GetUnits()
-		return err
+	if len(newUpgrades) == 0 {
+		return nil, nil
 	}
-	return nil
+
+	// Re-fetch unit data since some of it is upgrade-dependent
+	// TODO: also (re-)fetch unit -> ability mapping?
+	data, err := c.connection.data(api.RequestData{
+		UnitTypeId: true,
+	})()
+	c.data.Units = data.GetUnits()
+	return newUpgrades, err
 }
 
 // SaveReplay(path string) error

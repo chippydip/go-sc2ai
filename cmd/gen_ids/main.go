@@ -16,21 +16,17 @@ import (
 func main() {
 	runner.Set("map", runner.Random1v1Map())
 
-	runner.RunAgent(client.NewParticipant(api.Race_Random, &myBot{}))
+	agent := client.AgentFunc(generate)
+	runner.RunAgent(client.NewParticipant(api.Race_Random, agent))
 }
 
-type myBot struct{}
-
-func (myBot) OnGameStart(info client.AgentInfo) {
+func generate(info client.AgentInfo) {
 	dumpAbilities(info.Data().GetAbilities(), info.Data().GetUnits())
 	dumpBuffs(info.Data().GetBuffs())
 	dumpEffects(info.Data().GetEffects())
 	dumpUnits(info.Data().GetUnits())
 	dumpUpgrades(info.Data().GetUpgrades())
 }
-
-func (myBot) OnStep()    {}
-func (myBot) OnGameEnd() {}
 
 func dumpAbilities(abilities []*api.AbilityData, units []*api.UnitTypeData) {
 	// Detect base abilities of things with assigned hotkeys

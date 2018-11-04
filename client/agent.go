@@ -8,9 +8,15 @@ import (
 
 // Agent ...
 type Agent interface {
-	OnGameStart(AgentInfo)
-	OnStep()
-	OnGameEnd()
+	RunAgent(AgentInfo)
+}
+
+// AgentFunc ...
+type AgentFunc func(AgentInfo)
+
+// RunAgent ...
+func (f AgentFunc) RunAgent(info AgentInfo) {
+	f(info)
 }
 
 // AgentInfo ...
@@ -19,11 +25,14 @@ type AgentInfo interface {
 	GameInfo() *api.ResponseGameInfo
 	Data() *api.ResponseData
 	Observation() *api.ResponseObservation
-	Query(query api.RequestQuery) *api.ResponseQuery
-	SendActions(actions []*api.Action) []api.ActionResult
+	Query(query api.RequestQuery) func() *api.ResponseQuery
+	SendActions(actions []*api.Action) func() []api.ActionResult
 	SendObserverActions(obsActions []*api.ObserverAction)
 	SendDebugCommands(commands []*api.DebugCommand)
 	LeaveGame()
+
+	IsInGame() bool
+	Update(stepSize int) ([]api.UpgradeID, error)
 }
 
 // PlayerID ...
@@ -47,25 +56,31 @@ func (c *Client) Observation() *api.ResponseObservation {
 }
 
 // Query ...
-func (c *Client) Query(query api.RequestQuery) *api.ResponseQuery {
-	resp, err := c.connection.query(query)()
-	if err != nil {
-		fmt.Println(err)
-		return nil
+func (c *Client) Query(query api.RequestQuery) func() *api.ResponseQuery {
+	f := c.connection.query(query)
+	return func() *api.ResponseQuery {
+		resp, err := f()
+		if err != nil {
+			fmt.Println(err)
+			return nil
+		}
+		return resp
 	}
-	return resp
 }
 
 // SendActions ...
-func (c *Client) SendActions(actions []*api.Action) []api.ActionResult {
-	resp, err := c.connection.action(api.RequestAction{
+func (c *Client) SendActions(actions []*api.Action) func() []api.ActionResult {
+	f := c.connection.action(api.RequestAction{
 		Actions: actions,
-	})()
-	if err != nil {
-		fmt.Println(err)
-		return nil
+	})
+	return func() []api.ActionResult {
+		resp, err := f()
+		if err != nil {
+			fmt.Println(err)
+			return nil
+		}
+		return resp.GetResult()
 	}
-	return resp.GetResult()
 }
 
 // SendObserverActions ...
