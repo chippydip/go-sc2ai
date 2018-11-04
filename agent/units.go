@@ -10,28 +10,8 @@ import (
 	"github.com/chippydip/go-sc2ai/search"
 )
 
-type Units []*api.Unit
-
-func (units Units) Tags() []api.UnitTag {
-	tags := make([]api.UnitTag, len(units))
-	for i, u := range units {
-		tags[i] = u.Tag
-	}
-	return tags
-}
-
-func (units Units) Filter(filter func(*api.Unit) bool) Units {
-	var result []*api.Unit
-	for _, u := range units {
-		if filter(u) {
-			result = append(result, u)
-		}
-	}
-	return result
-}
-
 // GetAllUnits returns all units from the latest observation.
-func (a *Agent) GetAllUnits() Units {
+func (a *Agent) GetAllUnits() filter.Units {
 	return a.info.Observation().GetObservation().GetRawData().GetUnits()
 }
 
@@ -51,7 +31,7 @@ func (a *Agent) GetClosestUnit(pos api.Point2D, filter func(*api.Unit) bool) *ap
 }
 
 // GetUnits returns all units matching the given filter from the latest observation.
-func (a *Agent) GetUnits(filter func(*api.Unit) bool) Units {
+func (a *Agent) GetUnits(filter func(*api.Unit) bool) filter.Units {
 	var list []*api.Unit
 	for _, unit := range a.GetAllUnits() {
 		if filter(unit) {
