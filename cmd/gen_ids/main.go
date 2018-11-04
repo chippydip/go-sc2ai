@@ -14,8 +14,7 @@ import (
 )
 
 func main() {
-	// TODO: remove this and make it use a random map
-	runner.Set("map", "InterloperLE.SC2Map")
+	runner.Set("map", runner.Random1v1Map())
 
 	runner.RunAgent(client.NewParticipant(api.Race_Random, &myBot{}))
 }
@@ -23,7 +22,7 @@ func main() {
 type myBot struct{}
 
 func (myBot) OnGameStart(info client.AgentInfo) {
-	dumpAbilities(info.Data().GetAbilities())
+	dumpAbilities(info.Data().GetAbilities(), info.Data().GetUnits())
 	dumpBuffs(info.Data().GetBuffs())
 	dumpEffects(info.Data().GetEffects())
 	dumpUnits(info.Data().GetUnits())
@@ -33,7 +32,7 @@ func (myBot) OnGameStart(info client.AgentInfo) {
 func (myBot) OnStep()    {}
 func (myBot) OnGameEnd() {}
 
-func dumpAbilities(abilities []*api.AbilityData) {
+func dumpAbilities(abilities []*api.AbilityData, units []*api.UnitTypeData) {
 	// Detect base abilities of things with assigned hotkeys
 	remaps := map[api.AbilityID]bool{}
 	for _, ability := range abilities {
@@ -81,6 +80,9 @@ func dumpAbilities(abilities []*api.AbilityData) {
 	values["Invalid"] = 0
 	values["Smart"] = 1
 	writeEnum("ability", "AbilityID", append([]string{"Invalid", "Smart"}, names...), values)
+
+	// Map to built units
+	mapAbilityToProducedUnit(names, units)
 }
 
 func dumpBuffs(buffs []*api.BuffData) {
