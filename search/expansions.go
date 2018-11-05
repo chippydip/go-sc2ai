@@ -9,7 +9,9 @@ import (
 // CalculateExpansionLocations groups resources into clusters and determines the best town hall location for each cluster.
 // The Center() point of each cluster is the optimal town hall location. If debug is true then the results will also
 // be visualized in-game (until new debug info is drawn).
-func CalculateExpansionLocations(units filter.Units, bot client.AgentInfo, debug bool) []UnitCluster {
+func CalculateExpansionLocations(bot client.AgentInfo, debug bool) []UnitCluster {
+	units := filter.Units(bot.Observation().Observation.RawData.Units)
+
 	// Start by finding resource clusters
 	resources := units.Filter(func(u *api.Unit) bool {
 		return filter.IsMineral(u) || filter.IsGeyser(u)
