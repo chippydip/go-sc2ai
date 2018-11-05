@@ -50,6 +50,15 @@ func (c *Client) Connect(address string, port int, timeout time.Duration) error 
 	return nil
 }
 
+// TryConnect ...
+func (c *Client) TryConnect(address string, port int, timeout time.Duration) error {
+	err := c.connection.Connect(address, port, timeout)
+	if err == nil {
+		fmt.Printf("Connected to %v:%v\n", address, port)
+	}
+	return err
+}
+
 // RemoteSaveMap(data []byte, remotePath string) error
 
 // CreateGame ...

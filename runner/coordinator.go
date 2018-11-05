@@ -125,46 +125,62 @@ func LaunchStarcraft() {
 }
 
 func launchProcesses() int {
-	lastPort := 0
+	processSettings.processInfo = make([]client.ProcessInfo, len(clients))
+
 	// Start an sc2 process for each bot
-	for i, client := range clients {
-		lastPort = launchProcess(client, i)
+	var wg sync.WaitGroup
+	for i, c := range clients {
+		wg.Add(1)
+		go func(i int, c *client.Client) {
+			defer wg.Done()
+
+			launchAndAttach(c, i)
+
+		}(i, c)
 	}
+	wg.Wait()
 
-	attachClients()
-
-	return lastPort
+	return processSettings.portStart + len(clients) - 1
 }
 
-func launchProcess(c *client.Client, clientIndex int) int {
+func launchAndAttach(c *client.Client, clientIndex int) {
+	timeout := time.Duration(processSettings.timeoutMS) * time.Millisecond
+
 	pi := client.ProcessInfo{}
 	pi.Port = processSettings.portStart + len(processSettings.processInfo) - 1
 
-	args := []string{
-		"-listen", processSettings.netAddress,
-		"-port", strconv.Itoa(pi.Port),
-		// DirectX will fail if multiple games try to launch in fullscreen mode. Force them into windowed mode.
-		"-displayMode", "0",
-	}
+	// See if we can connect to an old instance real quick before launching
+	if err := c.TryConnect(processSettings.netAddress, pi.Port, timeout); err != nil {
+		args := []string{
+			"-listen", processSettings.netAddress,
+			"-port", strconv.Itoa(pi.Port),
+			// DirectX will fail if multiple games try to launch in fullscreen mode. Force them into windowed mode.
+			"-displayMode", "0",
+		}
 
-	if len(processSettings.dataVersion) > 0 {
-		args = append(args, "-dataVersion", processSettings.dataVersion)
-	}
-	args = append(args, processSettings.extraCommandLines...)
+		if len(processSettings.dataVersion) > 0 {
+			args = append(args, "-dataVersion", processSettings.dataVersion)
+		}
+		args = append(args, processSettings.extraCommandLines...)
 
-	// TODO: window size and position
+		// TODO: window size and position
 
-	pi.Path = processSettings.processPath
-	pi.PID = startProcess(processSettings.processPath, args)
-	if pi.PID == 0 {
-		fmt.Fprintf(os.Stderr, "Unable to start sc2 executable with path: %v\n", processSettings.processPath)
-	} else {
-		fmt.Fprintf(os.Stderr, "Lanched SC2 (%v), PID: %v\n", processSettings.processPath, pi.PID)
+		pi.Path = processSettings.processPath
+		pi.PID = startProcess(processSettings.processPath, args)
+		if pi.PID == 0 {
+			fmt.Fprintf(os.Stderr, "Unable to start sc2 executable with path: %v\n", processSettings.processPath)
+		} else {
+			fmt.Fprintf(os.Stderr, "Lanched SC2 (%v), PID: %v\n", processSettings.processPath, pi.PID)
+		}
+
+		// Attach
+		if err := c.Connect(processSettings.netAddress, pi.Port, timeout); err != nil {
+			panic("Failed to connect")
+		}
 	}
 
 	c.SetProcessInfo(pi)
-	processSettings.processInfo = append(processSettings.processInfo, pi)
-	return pi.Port
+	processSettings.processInfo[clientIndex] = pi
 }
 
 func startProcess(path string, args []string) int {
