@@ -76,6 +76,11 @@ func (v Vec2D) Mul(c float32) Vec2D {
 	return Vec2D{v.X * c, v.Y * c}
 }
 
+// Div scaled the vector by the inverse of a constant.
+func (v Vec2D) Div(c float32) Vec2D {
+	return Vec2D{v.X / c, v.Y / c}
+}
+
 // Mul64 scales the vector by a 64-bit constant. This involves additional casting so Mul should be preferred when 32-bits are sufficient.
 func (v Vec2D) Mul64(c float64) Vec2D {
 	return Vec2D{float32(float64(v.X) * c), float32(float64(v.Y) * c)}
@@ -133,6 +138,11 @@ func (v Vec) Sub(v2 Vec) Vec {
 // Mul scales the vector by a constant.
 func (v Vec) Mul(c float32) Vec {
 	return Vec{v.X * c, v.Y * c, v.Z * c}
+}
+
+// Div scaled the vector by the inverse of a constant.
+func (v Vec) Div(c float32) Vec {
+	return Vec{v.X / c, v.Y / c, v.Z / c}
 }
 
 // Mul64 scales the vector by a 64-bit constant. This involves additional casting so Mul should be preferred when 32-bits are sufficient.
