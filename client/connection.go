@@ -2,7 +2,6 @@ package client
 
 import (
 	"fmt"
-	"net/url"
 	"os"
 	"runtime"
 	"time"
@@ -32,16 +31,23 @@ type response struct {
 	error
 }
 
+// MaxMessageSize is the largest protobuf message that can be sent without getting disconnected.
+// The gorilla/websocket implementation fragments messages above it's write buffer size and the
+// SC2 game doesn't seem to be able to deal with these messages. There is not a check in place
+// to prevent large messages from being sent and warnings will be printed if a message size
+// exceeds half of this limit. The default is now 2MB (up from 4kb) but can be overrided by
+// modifying this value before connecting to SC2.
+var MaxMessageSize = 2 * 1024 * 1024
+
 // Connect ...
 func (c *connection) Connect(address string, port int, timeout time.Duration) error {
 	c.Status = api.Status_unknown
 
 	// Save the connection info in case we need to re-connect
-	host := fmt.Sprintf("%v:%v", address, port)
-	u := url.URL{Scheme: "ws", Host: host, Path: "/sc2api"}
-	c.urlStr = u.String()
+	c.urlStr = fmt.Sprintf("ws://%v:%v/sc2api", address, port)
 
-	conn, _, err := websocket.DefaultDialer.Dial(c.urlStr, nil)
+	dialer := websocket.Dialer{WriteBufferSize: MaxMessageSize}
+	conn, _, err := dialer.Dial(c.urlStr, nil)
 	if err != nil {
 		return err
 	}
@@ -62,6 +68,14 @@ func (c *connection) Connect(address string, port int, timeout time.Duration) er
 		for r := range c.requests {
 			// Send
 			data, err := proto.Marshal(r.Request)
+			if len(data) > MaxMessageSize {
+				err = fmt.Errorf("message too large: %v (max %v)", len(data), MaxMessageSize)
+				fmt.Fprintln(os.Stderr, err)
+				r.callback <- response{nil, err}
+				continue
+			} else if len(data) > MaxMessageSize/2 {
+				fmt.Fprintln(os.Stderr, "warning, large message size:", len(data))
+			}
 			if err != nil {
 				r.callback <- response{nil, err}
 				continue
