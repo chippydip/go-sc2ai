@@ -110,6 +110,7 @@ func (a *Agent) BuildUnits(producer api.UnitTypeID, train api.AbilityID, count i
 		a.UnitCommand(u.Tag, train)
 
 		a.spend(cost)
+		count--
 	}
 
 	return origCount - count
@@ -194,8 +195,12 @@ func (a *Agent) getNextProducer(i *int, producer api.UnitTypeID) *api.Unit {
 	units := a.GetAllUnits()
 	for ; *i < len(units); *i++ {
 		u := units[*i]
+		if u.Alliance != api.Alliance_Self {
+			continue
+		}
 		// TODO: Take reactors into accountfor len(u.Orders)? u.AddOnTag -> Unit -> isReactor
 		if u.UnitType == producer && u.BuildProgress == 1 && (len(u.Orders) == 0 || filter.IsWorker(u)) {
+			*i++
 			return u
 		}
 	}
