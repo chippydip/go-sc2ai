@@ -1,6 +1,8 @@
 package agent
 
 import (
+	"fmt"
+
 	"github.com/chippydip/go-sc2ai/api"
 )
 
@@ -8,7 +10,11 @@ func (a *Agent) sendActions() {
 	if len(a.actions) > 0 {
 		// TODO: can we automatically call this from the client via a callback when in step mode?
 		// TODO: should this be async?
-		a.info.SendActions(a.actions)
+		for i, r := range a.info.SendActions(a.actions)() {
+			if r != api.ActionResult_Success {
+				fmt.Println("ActionError:", r, a.actions[i])
+			}
+		}
 		a.actions = nil
 	}
 }
@@ -27,6 +33,18 @@ func (a *Agent) ChatTeam(msg string) {
 		ActionChat: &api.ActionChat{
 			Channel: api.ActionChat_Team,
 			Message: msg,
+		},
+	})
+}
+
+func (a *Agent) MoveCamera(pt api.Point2D) {
+	a.actions = append(a.actions, &api.Action{
+		ActionRaw: &api.ActionRaw{
+			Action: &api.ActionRaw_CameraMove{
+				CameraMove: &api.ActionRawCameraMove{
+					CenterWorldSpace: &api.Point{X: pt.X, Y: pt.Y, Z: 0},
+				},
+			},
 		},
 	})
 }
@@ -69,6 +87,9 @@ func (a *Agent) UnitCommandAtPos(unitTag api.UnitTag, ability api.AbilityID, tar
 }
 
 func (a *Agent) UnitsCommand(unitTags []api.UnitTag, ability api.AbilityID) {
+	if len(unitTags) == 0 {
+		return
+	}
 	a.unitCommand(&api.ActionRawUnitCommand{
 		AbilityId: ability,
 		UnitTags:  unitTags,
@@ -76,6 +97,9 @@ func (a *Agent) UnitsCommand(unitTags []api.UnitTag, ability api.AbilityID) {
 }
 
 func (a *Agent) UnitsCommandAtTarget(unitTags []api.UnitTag, ability api.AbilityID, target api.UnitTag) {
+	if len(unitTags) == 0 {
+		return
+	}
 	a.unitCommand(&api.ActionRawUnitCommand{
 		AbilityId: ability,
 		UnitTags:  unitTags,
@@ -86,6 +110,9 @@ func (a *Agent) UnitsCommandAtTarget(unitTags []api.UnitTag, ability api.Ability
 }
 
 func (a *Agent) UnitsCommandAtPos(unitTags []api.UnitTag, ability api.AbilityID, target api.Point2D) {
+	if len(unitTags) == 0 {
+		return
+	}
 	a.unitCommand(&api.ActionRawUnitCommand{
 		AbilityId: ability,
 		UnitTags:  unitTags,

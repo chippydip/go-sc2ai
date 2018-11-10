@@ -11,7 +11,9 @@ import (
 type AgentFunc func(Agent)
 
 func (f AgentFunc) RunAgent(info client.AgentInfo) {
-	f(Agent{info: info})
+	a := Agent{info: info}
+	a.updateFood()
+	f(a)
 }
 
 type Agent struct {
@@ -42,6 +44,7 @@ func (a *Agent) IsInGame() bool {
 func (a *Agent) Update(stepSize int) []api.UpgradeID {
 	a.sendActions()
 	upgrades, err := a.info.Update(stepSize)
+	a.updateFood()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		a.done = true
@@ -52,4 +55,20 @@ func (a *Agent) Update(stepSize int) []api.UpgradeID {
 
 func (a *Agent) LeaveGame() {
 	a.info.LeaveGame()
+}
+
+func (a *Agent) updateFood() {
+	// TODO: skip out if player is not zerg?
+	n, data := 0, a.Info().Data().Units
+	for _, u := range a.GetAllUnits() {
+		// Count number of units that consume half a food
+		if u.Alliance == api.Alliance_Self && data[u.UnitType].FoodRequired == 0.5 {
+			n++
+		}
+	}
+	// The game rounds fractional food down, but should really round up since you
+	// this makes it seem like you can build units when you actually can't.
+	if n%2 != 0 {
+		a.playerCommon().FoodUsed++
+	}
 }

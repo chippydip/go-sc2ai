@@ -91,6 +91,10 @@ func (a *Agent) BuildUnit(producer api.UnitTypeID, train api.AbilityID) bool {
 // BuildUnits commands available producers to use the train ability to build/morph/train/warp count units.
 // Returns the number of units actually ordered based on producer, food, mineral, and vespene availability.
 func (a *Agent) BuildUnits(producer api.UnitTypeID, train api.AbilityID, count int) int {
+	if count <= 0 {
+		return 0
+	}
+
 	cost := a.getProductionCost(producer, train)
 
 	// Loop until done
@@ -108,7 +112,6 @@ func (a *Agent) BuildUnits(producer api.UnitTypeID, train api.AbilityID, count i
 
 		// Produce the unit and adjust available resources
 		a.UnitCommand(u.Tag, train)
-
 		a.spend(cost)
 		count--
 	}
@@ -153,8 +156,7 @@ func (a *Agent) getProductionCost(producerType api.UnitTypeID, train api.Ability
 	//  interceptors should be net negative (clamp to zero)
 	//  normal production will just be the target requirement
 	//  zerglings are producded two at a time
-	food := target.FoodRequired - producer.FoodRequired
-	multiplier := 1
+	food, multiplier := target.FoodRequired-producer.FoodRequired, 1
 	if food < 0 {
 		food = 0
 	} else if food == 0.5 {
