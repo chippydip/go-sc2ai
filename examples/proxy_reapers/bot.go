@@ -39,7 +39,7 @@ func (bot *proxyReapers) findBuildingsPositions() {
 	}
 	resp := bot.info.Query(api.RequestQuery{
 		Placements:                 pfb,
-		IgnoreResourceRequirements: true})()
+		IgnoreResourceRequirements: true})
 
 	for key, result := range resp.Placements {
 		if result.Result == api.ActionResult_Success {
@@ -115,8 +115,7 @@ func (bot *proxyReapers) strategy() {
 		return
 	}
 	if rax := bot.units[terran.Barracks].
-		FirstFiltered(func(unit *Unit) bool { return unit.IsReady() && unit.IsIdle() });
-		rax != nil && bot.CanBuy(ability.Train_Reaper) {
+		FirstFiltered(func(unit *Unit) bool { return unit.IsReady() && unit.IsIdle() }); rax != nil && bot.CanBuy(ability.Train_Reaper) {
 		bot.unitCommand(rax, ability.Train_Reaper)
 	}
 }
@@ -130,7 +129,7 @@ func (bot *proxyReapers) tactics() {
 		}
 	}
 	// Don't issue orders too often, or game won't be able to react
-	if step % 6 == 0 {
+	if step%6 == 0 {
 		// If there is ready unsaturated refinery and an scv gathering, send it there
 		refinery := bot.units[terran.Refinery].
 			FirstFiltered(func(unit *Unit) bool { return unit.IsReady() && unit.AssignedHarvesters < 3 })

@@ -150,7 +150,7 @@ func launchAndAttach(c *client.Client, clientIndex int) {
 	pi.Port = processSettings.portStart + len(processSettings.processInfo) - 1
 
 	// See if we can connect to an old instance real quick before launching
-	if err := c.TryConnect(processSettings.netAddress, pi.Port, timeout); err != nil {
+	if err := c.TryConnect(processSettings.netAddress, pi.Port); err != nil {
 		args := []string{
 			"-listen", processSettings.netAddress,
 			"-port", strconv.Itoa(pi.Port),

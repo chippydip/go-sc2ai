@@ -1,9 +1,11 @@
 package client
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"os"
-	"runtime"
+	"reflect"
 	"time"
 
 	"github.com/chippydip/go-sc2ai/api"
@@ -14,20 +16,16 @@ import (
 type connection struct {
 	Status api.Status
 
-	urlStr  string
-	timeout time.Duration
-
-	conn     *websocket.Conn
-	requests chan request
+	requests chan<- request
 }
 
 type request struct {
-	*api.Request
-	callback chan response
+	data     []byte
+	response chan<- response
 }
 
 type response struct {
-	*api.Response
+	data []byte
 	error
 }
 
@@ -40,129 +38,101 @@ type response struct {
 var MaxMessageSize = 2 * 1024 * 1024
 
 // Connect ...
-func (c *connection) Connect(address string, port int, timeout time.Duration) error {
+func (c *connection) Connect(address string, port int) error {
 	c.Status = api.Status_unknown
 
-	// Save the connection info in case we need to re-connect
-	c.urlStr = fmt.Sprintf("ws://%v:%v/sc2api", address, port)
-
 	dialer := websocket.Dialer{WriteBufferSize: MaxMessageSize}
-	conn, _, err := dialer.Dial(c.urlStr, nil)
+	url := fmt.Sprintf("ws://%v:%v/sc2api", address, port)
+
+	ws, _, err := dialer.Dial(url, nil)
 	if err != nil {
 		return err
 	}
-	c.conn = conn
 
-	c.requests = make(chan request)
-
-	c.conn.SetCloseHandler(func(code int, text string) error {
-		//control.Error(ClientError_ConnectionClosed)
-		close(c.requests)
+	requests := make(chan request)
+	ws.SetCloseHandler(func(code int, text string) error {
+		close(requests)
 		return nil
 	})
+	c.requests = requests
 
 	// Worker
 	go func() {
 		defer recoverPanic()
 
-		for r := range c.requests {
-			// Send
-			data, err := proto.Marshal(r.Request)
-			if len(data) > MaxMessageSize {
-				err = fmt.Errorf("message too large: %v (max %v)", len(data), MaxMessageSize)
-				fmt.Fprintln(os.Stderr, err)
-				r.callback <- response{nil, err}
-				continue
-			} else if len(data) > MaxMessageSize/2 {
-				fmt.Fprintln(os.Stderr, "warning, large message size:", len(data))
-			}
-			if err != nil {
-				r.callback <- response{nil, err}
-				continue
-			}
-			err = c.conn.WriteMessage(websocket.TextMessage, data)
-			if err != nil {
-				r.callback <- response{nil, err}
-				continue
-			}
-
-			// Receive
-			_, data, err = c.conn.ReadMessage()
-			if err != nil {
-				r.callback <- response{nil, err}
-				continue
-			}
-
-			resp := &api.Response{}
-			err = proto.Unmarshal(data, resp)
-			if err != nil {
-				r.callback <- response{nil, err}
-				continue
-			}
-
-			r.callback <- response{resp, c.onResponse(resp)}
+		for r := range requests {
+			r.process(ws)
 		}
 	}()
 
-	_, err = c.ping(api.RequestPing{})()
+	_, err = c.ping(api.RequestPing{})
 	return err
 }
 
-func recoverPanic() {
-	if p := recover(); p != nil {
-		ReportPanic(p)
+func (r request) process(ws *websocket.Conn) {
+	data, err := []byte(nil), ws.WriteMessage(websocket.TextMessage, r.data)
+	if err == nil {
+		_, data, err = ws.ReadMessage()
 	}
+
+	r.response <- response{data, err}
+	close(r.response)
 }
 
-// ReportPanic ...
-func ReportPanic(p interface{}) {
-	fmt.Fprintln(os.Stderr, p)
+func (c *connection) sendRecv(data []byte, name string) ([]byte, error) {
+	out := make(chan response)
+	c.requests <- request{data, out}
 
-	// Nicer format than what debug.PrintStack() gives us
-	var pc [32]uintptr
-	n := runtime.Callers(3, pc[:]) // skip the defer, this func, and runtime.Callers
-	for _, pc := range pc[:n] {
-		fn := runtime.FuncForPC(pc)
-		if fn == nil {
-			continue
-		}
-		file, line := fn.FileLine(pc)
-		fmt.Fprintf(os.Stderr, "%v:%v in %v\n", file, line, fn.Name())
-	}
-}
-
-func (c *connection) onResponse(r *api.Response) error {
-	if r.Status != api.Status_nil {
-		c.Status = r.Status
-	}
-	// for _, e := range r.Error {
-	// 	// TODO: error callback
-	// }
-	if len(r.Error) > 0 {
-		return fmt.Errorf("%v", r.Error)
-	}
-	return nil
-}
-
-func (c *connection) request(req *api.Request) func() (*api.Response, error) {
-	out := make(chan response, 1)
-loop:
 	for {
 		select {
-		case c.requests <- request{req, out}:
-			break loop
-		case <-time.After(time.Second):
-			fmt.Printf("waiting to send request %t\n", req)
+		case r := <-out:
+			return r.data, r.error
+		case <-time.After(10 * time.Second):
+			fmt.Printf("waiting for %v response\n", name)
 		}
 	}
-	return func() (*api.Response, error) {
-		for {
-			select {
-			case r := <-out:
-				return r.Response, r.error
-			case <-time.After(10 * time.Second):
-				fmt.Printf("waiting for response %t\n", req)
-			}
-		}
+}
+
+func (c *connection) request(r *api.Request) (*api.Response, error) {
+	// Serialize
+	data, err := proto.Marshal(r)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(data) > MaxMessageSize {
+		err = fmt.Errorf("message too large: %v (max %v)", len(data), MaxMessageSize)
+		log.Println(os.Stderr, err)
+		return nil, err
+	} else if len(data) > MaxMessageSize/2 {
+		log.Println(os.Stderr, "warning, large message size:", len(data))
+	}
+
+	// Send/Recv
+	data, err = c.sendRecv(data, reflect.TypeOf(r.Request).String())
+	if err != nil {
+		return nil, err
+	}
+
+	// Deserialize
+	resp := &api.Response{}
+	err = proto.Unmarshal(data, resp)
+	if err != nil {
+		return nil, err
+	}
+
+	// Update status
+	if resp.Status != api.Status_nil {
+		c.Status = resp.Status
+	}
+
+	// Report errors (if any) and return
+	switch len(resp.Error) {
+	case 0:
+		return resp, nil
+	case 1:
+		return nil, errors.New(resp.Error[0])
+	default:
+		return nil, fmt.Errorf("%v", resp.Error)
 	}
 }

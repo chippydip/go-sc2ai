@@ -43,16 +43,13 @@ import (
 `
 
 const methodTemplate = `
-func (c *connection) {{.Arg}}({{.Arg}} api.Request{{.Name}}) func() (*api.Response{{.Name}}, error) {
-	f := c.request(&api.Request{
+func (c *connection) {{.Arg}}({{.Arg}} api.Request{{.Name}}) (*api.Response{{.Name}}, error) {
+	r, err := c.request(&api.Request{
 		Request: &api.Request_{{.Short}}{
 			{{.Short}}: &{{.Arg}},
 		},
 	})
-	return func() (*api.Response{{.Name}}, error) {
-		r, err := f()
-		return r.Get{{.Short}}(), err
-	}
+	return r.Get{{.Short}}(), err
 }
 `
 

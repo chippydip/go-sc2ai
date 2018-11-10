@@ -10,7 +10,7 @@ func (a *Agent) sendActions() {
 	if len(a.actions) > 0 {
 		// TODO: can we automatically call this from the client via a callback when in step mode?
 		// TODO: should this be async?
-		for i, r := range a.info.SendActions(a.actions)() {
+		for i, r := range a.info.SendActions(a.actions) {
 			if r != api.ActionResult_Success {
 				fmt.Println("ActionError:", r, a.actions[i])
 			}

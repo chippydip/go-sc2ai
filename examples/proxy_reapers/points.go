@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/chippydip/go-sc2ai/api"
 	"math"
+
+	"github.com/chippydip/go-sc2ai/api"
 )
 
 func FloorP2D(p api.Point2D) api.Point2D {

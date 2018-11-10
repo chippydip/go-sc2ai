@@ -50,7 +50,7 @@ func (bot *bot) init() {
 			EndPos: &pos,
 		}
 	}
-	resp := bot.Info().Query(api.RequestQuery{Pathing: query})()
+	resp := bot.Info().Query(api.RequestQuery{Pathing: query})
 	best, minDist := -1, float32(256)
 	for i, result := range resp.GetPathing() {
 		if result.Distance < minDist && result.Distance > 5 {

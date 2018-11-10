@@ -21,14 +21,14 @@ type Client struct {
 
 // Connect ...
 func (c *Client) Connect(address string, port int, timeout time.Duration) error {
-	attempts := (int(timeout.Seconds()*1000) + 1500) / 1000
+	attempts := int(timeout.Seconds() + 1.5)
 	if attempts < 1 {
 		attempts = 1
 	}
 
 	connected := false
 	for i := 0; i < attempts; i++ {
-		if err := c.connection.Connect(address, port, timeout); err == nil {
+		if err := c.connection.Connect(address, port); err == nil {
 			connected = true
 			break
 		}
@@ -51,8 +51,8 @@ func (c *Client) Connect(address string, port int, timeout time.Duration) error 
 }
 
 // TryConnect ...
-func (c *Client) TryConnect(address string, port int, timeout time.Duration) error {
-	err := c.connection.Connect(address, port, timeout)
+func (c *Client) TryConnect(address string, port int) error {
+	err := c.connection.Connect(address, port)
 	if err == nil {
 		fmt.Printf("Connected to %v:%v\n", address, port)
 	}
@@ -80,7 +80,7 @@ func (c *Client) CreateGame(mapPath string, players []PlayerSetup, realtime bool
 		},
 		PlayerSetup: playerSetup,
 		Realtime:    realtime,
-	})()
+	})
 	if err != nil {
 		return err
 	}
@@ -105,7 +105,7 @@ func (c *Client) RequestJoinGame(setup PlayerSetup, options *api.InterfaceOption
 		req.ServerPorts = ports.ServerPorts
 		req.ClientPorts = ports.ClientPorts
 	}
-	r, err := c.connection.joinGame(req)()
+	r, err := c.connection.joinGame(req)
 	if err != nil {
 		return err
 	}
@@ -120,49 +120,42 @@ func (c *Client) RequestJoinGame(setup PlayerSetup, options *api.InterfaceOption
 
 // RequestLeaveGame ...
 func (c *Client) RequestLeaveGame() error {
-	_, err := c.connection.leaveGame(api.RequestLeaveGame{})()
+	_, err := c.connection.leaveGame(api.RequestLeaveGame{})
 	return err
 }
 
 // Init ...
 func (c *Client) Init() error {
+	var infoErr, dataErr, obsErr error
+
 	// Fire off all three requests
-	infoReq := c.connection.gameInfo(api.RequestGameInfo{})
-	dataReq := c.connection.data(api.RequestData{
+	c.gameInfo, infoErr = c.connection.gameInfo(api.RequestGameInfo{})
+	c.data, dataErr = c.connection.data(api.RequestData{
 		AbilityId:  true,
 		UnitTypeId: true,
 		UpgradeId:  true,
 		BuffId:     true,
 		EffectId:   true,
 	})
-	obsReq := c.connection.observation(api.RequestObservation{})
+	c.observation, obsErr = c.connection.observation(api.RequestObservation{})
 
-	// Wait for completion
-	var infoErr, dataErr, obsErr error
-	c.gameInfo, infoErr = infoReq()
-	c.data, dataErr = dataReq()
-	c.observation, obsErr = obsReq()
 	return firstOrNil(infoErr, dataErr, obsErr)
 }
 
 // Update ...
 func (c *Client) Update(stepSize int) ([]api.UpgradeID, error) {
+	var stepErr, obsErr error
+
 	// Step the simulation forward if this isn't in realtime mode
-	stepReq := func() error { return nil }
 	if stepSize > 0 {
-		f := c.connection.step(api.RequestStep{
+		_, stepErr = c.connection.step(api.RequestStep{
 			Count: uint32(stepSize),
 		})
-		stepReq = func() error { _, err := f(); return err }
 	}
 
 	// Get an updated observation
-	obsReq := c.connection.observation(api.RequestObservation{})
+	c.observation, obsErr = c.connection.observation(api.RequestObservation{})
 
-	// Wait for completion
-	var stepErr, obsErr error
-	stepErr = stepReq()
-	c.observation, obsErr = obsReq()
 	if err := firstOrNil(stepErr, obsErr); err != nil {
 		return nil, err
 	}
@@ -183,7 +176,7 @@ func (c *Client) Update(stepSize int) ([]api.UpgradeID, error) {
 	// TODO: also (re-)fetch unit -> ability mapping?
 	data, err := c.connection.data(api.RequestData{
 		UnitTypeId: true,
-	})()
+	})
 	c.data.Units = data.GetUnits()
 	return newUpgrades, err
 }
@@ -216,7 +209,7 @@ func (c *Client) IsInGame() bool {
 
 // GetObservation ...
 func (c *Client) GetObservation() (*api.ResponseObservation, error) {
-	return c.connection.observation(api.RequestObservation{})()
+	return c.connection.observation(api.RequestObservation{})
 }
 
 // PollResponse() bool
