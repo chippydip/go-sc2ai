@@ -20,6 +20,41 @@ var clients []*client.Client
 var started = false
 var lastPort = 0
 
+// SetParticipants ...
+func SetParticipants(participants ...client.PlayerSetup) {
+	gameSettings.playerSetup, clients, started, lastPort, processSettings.processInfo = nil, nil, false, 0, nil
+	for _, p := range participants {
+		if p.Agent != nil {
+			clients = append(clients, &client.Client{Agent: p.Agent})
+		}
+		gameSettings.playerSetup = append(gameSettings.playerSetup, p.PlayerSetup)
+	}
+}
+
+// LaunchStarcraft ...
+func LaunchStarcraft() {
+	if _, err := os.Stat(processSettings.processPath); err != nil {
+		log.Print("Executable path can't be found, try running the StarCraft II executable first.")
+		if len(processSettings.processPath) > 0 {
+			log.Printf("%v does not exist on your filesystem.", processSettings.processPath)
+		}
+		os.Exit(1)
+	}
+
+	if len(clients) == 0 {
+		panic("No agents set")
+	}
+
+	portStart := 0
+	if len(processSettings.processInfo) != len(clients) {
+		portStart = launchProcesses()
+	}
+
+	SetupPorts(len(clients), portStart, true)
+	started = true
+	lastPort = portStart
+}
+
 // StartGame ...
 func StartGame(mapPath string) {
 	if !CreateGame(mapPath) {
@@ -85,42 +120,6 @@ func JoinGame() bool {
 	// 	agent.Control().IssueEvents(agent.Actions().Commands())
 	// }
 	return true
-}
-
-// SetParticipants ...
-func SetParticipants(participants ...client.PlayerSetup) {
-	gameSettings.playerSetup = nil
-	clients = nil
-	for _, p := range participants {
-		if p.Agent != nil {
-			clients = append(clients, &client.Client{Agent: p.Agent})
-		}
-		gameSettings.playerSetup = append(gameSettings.playerSetup, p)
-	}
-}
-
-// LaunchStarcraft ...
-func LaunchStarcraft() {
-	if _, err := os.Stat(processSettings.processPath); err != nil {
-		fmt.Fprintln(os.Stderr, "Executable path can't be found, try running the StarCraft II executable first.")
-		if len(processSettings.processPath) > 0 {
-			fmt.Fprintf(os.Stderr, "%v does not exist on your filesystem.\n", processSettings.processPath)
-		}
-		os.Exit(1)
-	}
-
-	if len(clients) == 0 {
-		panic("No agents set")
-	}
-
-	portStart := 0
-	if len(processSettings.processInfo) != len(clients) {
-		portStart = launchProcesses()
-	}
-
-	SetupPorts(len(clients), portStart, true)
-	started = true
-	lastPort = portStart
 }
 
 func launchProcesses() int {
@@ -235,6 +234,34 @@ func Connect(port int) {
 	started = true
 }
 
+// SetupPorts ...
+func SetupPorts(numAgents int, startPort int, checkSingle bool) {
+	humans := numAgents
+	if checkSingle {
+		humans = 0
+		for _, p := range gameSettings.playerSetup {
+			if p.Type == api.PlayerType_Participant {
+				humans++
+			}
+		}
+	}
+
+	if humans > 1 {
+		var ports = gameSettings.ports
+		ports.SharedPort = int32(startPort + 1)
+		ports.ServerPorts = &api.PortSet{
+			GamePort: int32(startPort + 2),
+			BasePort: int32(startPort + 3),
+		}
+
+		for i := 0; i < numAgents; i++ {
+			var base = int32(startPort + 4 + i*2)
+			ports.ClientPorts = append(ports.ClientPorts, &api.PortSet{GamePort: base, BasePort: base + 1})
+		}
+		gameSettings.ports = ports
+	}
+}
+
 // Run ...
 func Run() {
 	wg := sync.WaitGroup{}
@@ -282,33 +309,5 @@ func cleanup(c *client.Client) {
 		if player.GetPlayerId() == c.PlayerID() {
 			log.Print(player.GetResult())
 		}
-	}
-}
-
-// SetupPorts ...
-func SetupPorts(numAgents int, startPort int, checkSingle bool) {
-	humans := numAgents
-	if checkSingle {
-		humans = 0
-		for _, p := range gameSettings.playerSetup {
-			if p.PlayerType == api.PlayerType_Participant {
-				humans++
-			}
-		}
-	}
-
-	if humans > 1 {
-		var ports = gameSettings.ports
-		ports.SharedPort = int32(startPort + 1)
-		ports.ServerPorts = &api.PortSet{
-			GamePort: int32(startPort + 2),
-			BasePort: int32(startPort + 3),
-		}
-
-		for i := 0; i < numAgents; i++ {
-			var base = int32(startPort + 4 + i*2)
-			ports.ClientPorts = append(ports.ClientPorts, &api.PortSet{GamePort: base, BasePort: base + 1})
-		}
-		gameSettings.ports = ports
 	}
 }
