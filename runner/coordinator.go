@@ -1,7 +1,6 @@
 package runner
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -168,7 +167,7 @@ func launchAndAttach(c *client.Client, clientIndex int) {
 		if pi.PID == 0 {
 			log.Print("Unable to start sc2 executable with path: ", processSettings.processPath)
 		} else {
-			fmt.Fprintf(os.Stderr, "Lanched SC2 (%v), PID: %v\n", processSettings.processPath, pi.PID)
+			log.Printf("Lanched SC2 (%v), PID: %v", processSettings.processPath, pi.PID)
 		}
 
 		// Attach

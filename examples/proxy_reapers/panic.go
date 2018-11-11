@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"log"
 	"runtime"
 	"runtime/debug"
 	"strings"
@@ -41,6 +41,6 @@ func recoverPanic() {
 	if r == nil {
 		return
 	}
-	fmt.Fprintln(os.Stderr, identifyPanic(), r)
+	log.Print(identifyPanic(), r)
 	debug.PrintStack()
 }

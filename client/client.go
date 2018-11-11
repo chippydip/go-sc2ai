@@ -54,11 +54,12 @@ func (c *Client) Connect(address string, port int, timeout time.Duration) error 
 
 // TryConnect ...
 func (c *Client) TryConnect(address string, port int) error {
-	err := c.connection.Connect(address, port)
-	if err == nil {
-		fmt.Printf("Connected to %v:%v\n", address, port)
+	if err := c.connection.Connect(address, port); err != nil {
+		return err
 	}
-	return err
+
+	log.Printf("Connected to %v:%v", address, port)
+	return nil
 }
 
 // RemoteSaveMap(data []byte, remotePath string) error
@@ -79,7 +80,7 @@ func (c *Client) CreateGame(mapPath string, players []*api.PlayerSetup, realtime
 	}
 
 	if r.Error != api.ResponseCreateGame_nil {
-		return fmt.Errorf("%v: %v", r.Error.String(), r.GetErrorDetails())
+		return fmt.Errorf("%v: %v", r.Error, r.GetErrorDetails())
 	}
 
 	return nil

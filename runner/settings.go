@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"os/user"
@@ -16,7 +17,7 @@ import (
 // Set ...
 func Set(name, value string) {
 	if err := flag.Set(name, value); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		log.Print(err)
 	}
 }
 
@@ -32,7 +33,7 @@ func LoadSettings() bool {
 	flag.Parse()
 
 	if len(processSettings.processPath) == 0 {
-		fmt.Fprintln(os.Stderr, "Please run StarCraft II before running this API")
+		fmt.Fprintln(flag.CommandLine.Output(), "Please run StarCraft II before running this API")
 		flag.CommandLine.Usage()
 		return false
 	}
@@ -100,7 +101,7 @@ func getUserDirectory() (string, error) {
 
 		sout := strings.TrimSpace(string(out))
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Documents directory lookup failed", sout)
+			log.Print("Documents directory lookup failed: ", sout)
 			return "", err
 		}
 

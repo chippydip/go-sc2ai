@@ -1,8 +1,7 @@
 package agent
 
 import (
-	"fmt"
-	"os"
+	"log"
 
 	"github.com/chippydip/go-sc2ai/api"
 	"github.com/chippydip/go-sc2ai/client"
@@ -46,7 +45,7 @@ func (a *Agent) Step(stepSize int) {
 	err := a.info.Step(stepSize)
 	a.updateFood()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		log.Print(err)
 		a.done = true
 	}
 }

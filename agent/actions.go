@@ -1,7 +1,7 @@
 package agent
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/chippydip/go-sc2ai/api"
 )
@@ -12,7 +12,7 @@ func (a *Agent) sendActions() {
 		// TODO: should this be async?
 		for i, r := range a.info.SendActions(a.actions) {
 			if r != api.ActionResult_Success {
-				fmt.Println("ActionError:", r, a.actions[i])
+				log.Print("ActionError: ", r, a.actions[i])
 			}
 		}
 		a.actions = nil

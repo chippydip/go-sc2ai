@@ -1,8 +1,7 @@
 package client
 
 import (
-	"fmt"
-	"os"
+	"log"
 	"runtime"
 )
 
@@ -14,7 +13,7 @@ func recoverPanic() {
 
 // ReportPanic ...
 func ReportPanic(p interface{}) {
-	fmt.Fprintln(os.Stderr, p)
+	log.Print(p)
 
 	// Nicer format than what debug.PrintStack() gives us
 	var pc [32]uintptr
@@ -25,6 +24,6 @@ func ReportPanic(p interface{}) {
 			continue
 		}
 		file, line := fn.FileLine(pc)
-		fmt.Fprintf(os.Stderr, "%v:%v in %v\n", file, line, fn.Name())
+		log.Printf("%v:%v in %v", file, line, fn.Name())
 	}
 }

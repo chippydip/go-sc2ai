@@ -1,9 +1,8 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"math/rand"
-	"os"
 	"time"
 
 	"github.com/chippydip/go-sc2ai/api"
@@ -72,7 +71,7 @@ func (bot *proxyReapers) parseUnits() {
 				units = &bot.neutralUnits
 			}
 		default:
-			fmt.Fprintln(os.Stderr, "Not supported alliance: ", unit)
+			log.Print("Not supported alliance: ", unit)
 			continue
 		}
 		units.AddFromApi(unit.UnitType, unit)

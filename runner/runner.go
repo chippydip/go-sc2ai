@@ -2,6 +2,7 @@ package runner
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/chippydip/go-sc2ai/api"
@@ -48,12 +49,12 @@ func RunAgent(agent client.PlayerSetup) {
 	}
 
 	if gamePort > 0 {
-		fmt.Println("Connecting to port", gamePort)
+		log.Print("Connecting to port ", gamePort)
 		Connect(gamePort)
 		SetupPorts(numAgents, startPort, false)
 		JoinGame()
 		processSettings.timeoutMS = 10000
-		fmt.Println(" Successfully joined game")
+		log.Print(" Successfully joined game")
 	} else {
 		LaunchStarcraft()
 		StartGame(gameSettings.mapName)

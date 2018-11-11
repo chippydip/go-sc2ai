@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 	"reflect"
 	"time"
 
@@ -88,7 +87,7 @@ func (c *connection) sendRecv(data []byte, name string) ([]byte, error) {
 		case r := <-out:
 			return r.data, r.error
 		case <-time.After(10 * time.Second):
-			fmt.Printf("waiting for %v response\n", name)
+			log.Printf("waiting for %v response", name)
 		}
 	}
 }
@@ -102,10 +101,10 @@ func (c *connection) request(r *api.Request) (*api.Response, error) {
 
 	if len(data) > MaxMessageSize {
 		err = fmt.Errorf("message too large: %v (max %v)", len(data), MaxMessageSize)
-		log.Println(os.Stderr, err)
+		log.Print(err)
 		return nil, err
 	} else if len(data) > MaxMessageSize/2 {
-		log.Println(os.Stderr, "warning, large message size:", len(data))
+		log.Print("warning, large message size: ", len(data))
 	}
 
 	// Send/Recv
