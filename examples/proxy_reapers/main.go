@@ -6,7 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/chippydip/go-sc2ai/agent"
 	"github.com/chippydip/go-sc2ai/api"
 	"github.com/chippydip/go-sc2ai/client"
 	"github.com/chippydip/go-sc2ai/runner"
@@ -14,8 +13,7 @@ import (
 )
 
 type proxyReapers struct {
-	agent agent.Agent
-	info  client.AgentInfo
+	info client.AgentInfo
 
 	actions            []*api.Action
 	myStartLocation    api.Point2D
@@ -96,7 +94,6 @@ func (bot *proxyReapers) parseOrders() {
 func (bot *proxyReapers) OnGameStart() {
 	defer recoverPanic()
 
-	bot.info = bot.agent.Info()
 	InitUnits(bot.info.Data().Units)
 	bot.parseUnits()
 	bot.initLocations()
@@ -114,7 +111,6 @@ func (bot *proxyReapers) OnGameStart() {
 func (bot *proxyReapers) OnStep() {
 	defer recoverPanic()
 
-	bot.info = bot.agent.Info()
 	bot.parseObservation()
 	bot.parseUnits()
 	bot.parseOrders()
@@ -133,13 +129,13 @@ func (bot *proxyReapers) OnGameEnd() {
 	bot.chatSend("(gg)")
 }
 
-func runAgent(a agent.Agent) {
-	bot := proxyReapers{agent: a}
+func runAgent(info client.AgentInfo) {
+	bot := proxyReapers{info: info}
 	bot.OnGameStart()
 
 	for bot.info.IsInGame() {
 		bot.OnStep()
-		bot.info.Update(1)
+		bot.info.Step(1)
 	}
 	bot.OnGameEnd()
 }
@@ -156,5 +152,5 @@ func main() {
 	runner.Set("ComputerDifficulty", "VeryHard")
 
 	// Create the agent and then start the game
-	runner.RunAgent(client.NewParticipant(api.Race_Terran, agent.AgentFunc(runAgent)))
+	runner.RunAgent(client.NewParticipant(api.Race_Terran, client.AgentFunc(runAgent), "ProxyReapers"))
 }

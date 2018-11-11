@@ -15,5 +15,5 @@ func main() {
 
 	// Create the agent and then start the game
 	agent := agent.AgentFunc(runAgent)
-	runner.RunAgent(client.NewParticipant(api.Race_Zerg, agent))
+	runner.RunAgent(client.NewParticipant(api.Race_Zerg, agent, "ZergRush"))
 }

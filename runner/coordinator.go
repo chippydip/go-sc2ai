@@ -2,6 +2,7 @@ package runner
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -22,8 +23,7 @@ var lastPort = 0
 // StartGame ...
 func StartGame(mapPath string) {
 	if !CreateGame(mapPath) {
-		fmt.Fprintln(os.Stderr, "Failed to create game.")
-		os.Exit(1)
+		log.Fatal("Failed to create game.")
 	}
 	JoinGame()
 }
@@ -40,7 +40,7 @@ func CreateGame(mapPath string) bool {
 	// Create with the first client
 	err := clients[0].CreateGame(gameSettings.mapName, gameSettings.playerSetup, processSettings.realtime)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		log.Print(err)
 		return false
 	}
 	return true
@@ -51,8 +51,7 @@ func JoinGame() bool {
 	// TODO: Make this parallel and get rid of the WaitJoinGame method
 	for i, client := range clients {
 		if err := client.RequestJoinGame(gameSettings.playerSetup[i], interfaceOptions, gameSettings.ports); err != nil {
-			fmt.Fprintf(os.Stderr, "Unable to join game: %v", err)
-			os.Exit(1)
+			log.Fatalf("Unable to join game: %v", err)
 		}
 	}
 
@@ -168,7 +167,7 @@ func launchAndAttach(c *client.Client, clientIndex int) {
 		pi.Path = processSettings.processPath
 		pi.PID = startProcess(processSettings.processPath, args)
 		if pi.PID == 0 {
-			fmt.Fprintf(os.Stderr, "Unable to start sc2 executable with path: %v\n", processSettings.processPath)
+			log.Print("Unable to start sc2 executable with path: ", processSettings.processPath)
 		} else {
 			fmt.Fprintf(os.Stderr, "Lanched SC2 (%v), PID: %v\n", processSettings.processPath, pi.PID)
 		}
@@ -202,7 +201,7 @@ func startProcess(path string, args []string) int {
 	}
 
 	if err := cmd.Start(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		log.Print(err)
 		return 0
 	}
 
@@ -261,9 +260,8 @@ func runAgent(c *client.Client) {
 
 		// If the bot crashed before losing, keep the game running (force the opponent to earn the win)
 		for c.IsInGame() {
-			_, err := c.Update(224) // 10 seconds per update
-			if err != nil {
-				fmt.Fprintln(os.Stderr, err)
+			if err := c.Step(224); err != nil { // 10 seconds per update
+				log.Print(err)
 				break
 			}
 		}
@@ -282,7 +280,7 @@ func cleanup(c *client.Client) {
 	// Print the winner
 	for _, player := range c.Observation().GetPlayerResult() {
 		if player.GetPlayerId() == c.PlayerID() {
-			fmt.Fprintln(os.Stderr, player.GetResult())
+			log.Print(player.GetResult())
 		}
 	}
 }

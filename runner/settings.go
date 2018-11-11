@@ -20,8 +20,14 @@ func Set(name, value string) {
 	}
 }
 
+var hasLoaded = false
+
 // LoadSettings ...
 func LoadSettings() bool {
+	if flag.Parsed() {
+		return hasLoaded
+	}
+
 	// Parse the command line arguments
 	flag.Parse()
 
@@ -31,6 +37,7 @@ func LoadSettings() bool {
 		return false
 	}
 
+	hasLoaded = true
 	return true
 }
 

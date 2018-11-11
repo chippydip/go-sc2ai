@@ -26,7 +26,7 @@ var interfaceOptions = &api.InterfaceOptions{Raw: true, Score: true}
 
 var gameSettings = struct {
 	mapName     string
-	playerSetup []client.PlayerSetup
+	playerSetup []*api.PlayerSetup
 	ports       client.Ports
 }{}
 

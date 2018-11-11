@@ -28,7 +28,7 @@ func runAgent(a agent.Agent) {
 		bot.strategy()
 		bot.tactics()
 
-		bot.Update(1)
+		bot.Step(1)
 	}
 }
 

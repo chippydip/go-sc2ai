@@ -25,14 +25,16 @@ type AgentInfo interface {
 	GameInfo() *api.ResponseGameInfo
 	Data() *api.ResponseData
 	Observation() *api.ResponseObservation
+	Upgrades() []api.UpgradeID
+
+	IsInGame() bool
+	Step(stepSize int) error
+
 	Query(query api.RequestQuery) *api.ResponseQuery
 	SendActions(actions []*api.Action) []api.ActionResult
 	SendObserverActions(obsActions []*api.ObserverAction)
 	SendDebugCommands(commands []*api.DebugCommand)
 	LeaveGame()
-
-	IsInGame() bool
-	Update(stepSize int) ([]api.UpgradeID, error)
 }
 
 // PlayerID ...
@@ -53,6 +55,11 @@ func (c *Client) Data() *api.ResponseData {
 // Observation ...
 func (c *Client) Observation() *api.ResponseObservation {
 	return c.observation
+}
+
+// Upgrades ...
+func (c *Client) Upgrades() []api.UpgradeID {
+	return c.newUpgrades
 }
 
 // Query ...

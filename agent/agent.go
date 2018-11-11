@@ -41,16 +41,14 @@ func (a *Agent) IsInGame() bool {
 	return !a.done && a.info.IsInGame()
 }
 
-func (a *Agent) Update(stepSize int) []api.UpgradeID {
+func (a *Agent) Step(stepSize int) {
 	a.sendActions()
-	upgrades, err := a.info.Update(stepSize)
+	err := a.info.Step(stepSize)
 	a.updateFood()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		a.done = true
-		return nil
 	}
-	return upgrades
 }
 
 func (a *Agent) LeaveGame() {

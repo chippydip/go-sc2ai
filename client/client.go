@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/chippydip/go-sc2ai/api"
@@ -17,6 +18,7 @@ type Client struct {
 	data        *api.ResponseData
 	observation *api.ResponseObservation
 	upgrades    map[api.UpgradeID]struct{}
+	newUpgrades []api.UpgradeID
 }
 
 // Connect ...
@@ -62,23 +64,14 @@ func (c *Client) TryConnect(address string, port int) error {
 // RemoteSaveMap(data []byte, remotePath string) error
 
 // CreateGame ...
-func (c *Client) CreateGame(mapPath string, players []PlayerSetup, realtime bool) error {
-	playerSetup := make([]*api.PlayerSetup, len(players))
-	for i, p := range players {
-		playerType, race, difficulty := p.PlayerType, p.Race, p.Difficulty
-		playerSetup[i] = &api.PlayerSetup{
-			Type:       playerType,
-			Race:       race,
-			Difficulty: difficulty,
-		}
-	}
+func (c *Client) CreateGame(mapPath string, players []*api.PlayerSetup, realtime bool) error {
 	r, err := c.connection.createGame(api.RequestCreateGame{
 		Map: &api.RequestCreateGame_LocalMap{
 			LocalMap: &api.LocalMap{
 				MapPath: mapPath,
 			},
 		},
-		PlayerSetup: playerSetup,
+		PlayerSetup: players,
 		Realtime:    realtime,
 	})
 	if err != nil {
@@ -93,7 +86,7 @@ func (c *Client) CreateGame(mapPath string, players []PlayerSetup, realtime bool
 }
 
 // RequestJoinGame ...
-func (c *Client) RequestJoinGame(setup PlayerSetup, options *api.InterfaceOptions, ports Ports) error {
+func (c *Client) RequestJoinGame(setup *api.PlayerSetup, options *api.InterfaceOptions, ports Ports) error {
 	req := api.RequestJoinGame{
 		Participation: &api.RequestJoinGame_Race{
 			Race: setup.Race,
@@ -142,34 +135,34 @@ func (c *Client) Init() error {
 	return firstOrNil(infoErr, dataErr, obsErr)
 }
 
-// Update ...
-func (c *Client) Update(stepSize int) ([]api.UpgradeID, error) {
-	var stepErr, obsErr error
+// Step ...
+func (c *Client) Step(stepSize int) error {
+	var err error
 
 	// Step the simulation forward if this isn't in realtime mode
 	if stepSize > 0 {
-		_, stepErr = c.connection.step(api.RequestStep{
+		if _, err := c.connection.step(api.RequestStep{
 			Count: uint32(stepSize),
-		})
+		}); err != nil {
+			return err
+		}
 	}
 
 	// Get an updated observation
-	c.observation, obsErr = c.connection.observation(api.RequestObservation{})
-
-	if err := firstOrNil(stepErr, obsErr); err != nil {
-		return nil, err
+	if c.observation, err = c.connection.observation(api.RequestObservation{}); err != nil {
+		return err
 	}
 
 	// Check for new upgrades
-	var newUpgrades []api.UpgradeID
+	c.newUpgrades = nil
 	for _, upgrade := range c.observation.GetObservation().GetRawData().GetPlayer().UpgradeIds {
 		if _, ok := c.upgrades[upgrade]; !ok {
-			newUpgrades = append(newUpgrades, upgrade)
+			c.newUpgrades = append(c.newUpgrades, upgrade)
 			c.upgrades[upgrade] = struct{}{}
 		}
 	}
-	if len(newUpgrades) == 0 {
-		return nil, nil
+	if len(c.newUpgrades) == 0 {
+		return nil
 	}
 
 	// Re-fetch unit data since some of it is upgrade-dependent
@@ -178,7 +171,7 @@ func (c *Client) Update(stepSize int) ([]api.UpgradeID, error) {
 		UnitTypeId: true,
 	})
 	c.data.Units = data.GetUnits()
-	return newUpgrades, err
+	return err
 }
 
 // SaveReplay(path string) error

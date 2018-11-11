@@ -13,29 +13,41 @@ type ProcessInfo struct {
 
 // PlayerSetup ...
 type PlayerSetup struct {
-	PlayerType api.PlayerType
-	Agent      Agent
-	Race       api.Race
-	Difficulty api.Difficulty
+	*api.PlayerSetup
+	Agent
 }
 
 // NewParticipant ...
-func NewParticipant(race api.Race, agent Agent) PlayerSetup {
+func NewParticipant(race api.Race, agent Agent, name string) PlayerSetup {
 	return PlayerSetup{
-		api.PlayerType_Participant,
-		agent,
-		race,
-		api.Difficulty_Easy,
+		PlayerSetup: &api.PlayerSetup{
+			Type:       api.PlayerType_Participant,
+			Race:       race,
+			PlayerName: name,
+		},
+		Agent: agent,
 	}
 }
 
 // NewComputer ...
 func NewComputer(race api.Race, difficulty api.Difficulty) PlayerSetup {
 	return PlayerSetup{
-		api.PlayerType_Computer,
-		nil,
-		race,
-		difficulty,
+		PlayerSetup: &api.PlayerSetup{
+			Type:       api.PlayerType_Computer,
+			Race:       race,
+			Difficulty: difficulty,
+		},
+	}
+}
+
+// NewObserver ...
+func NewObserver(agent Agent, name string) PlayerSetup {
+	return PlayerSetup{
+		PlayerSetup: &api.PlayerSetup{
+			Type:       api.PlayerType_Observer,
+			PlayerName: name,
+		},
+		Agent: agent,
 	}
 }
 
