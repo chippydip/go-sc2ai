@@ -41,7 +41,7 @@ func LaunchStarcraft() {
 	}
 
 	if len(clients) == 0 {
-		panic("No agents set")
+		log.Panic("No agents set")
 	}
 
 	portStart := 0
@@ -68,7 +68,7 @@ func CreateGame(mapPath string) bool {
 		mapPath = gameSettings.mapName
 	}
 	if !started {
-		panic("Game not started")
+		log.Panic("Game not started")
 	}
 
 	// Create with the first client
@@ -172,7 +172,7 @@ func launchAndAttach(c *client.Client, clientIndex int) {
 
 		// Attach
 		if err := c.Connect(processSettings.netAddress, pi.Port, timeout); err != nil {
-			panic("Failed to connect")
+			log.Panic("Failed to connect")
 		}
 	}
 
@@ -213,7 +213,7 @@ func attachClients() {
 		pi := processSettings.processInfo[i]
 
 		if err := client.Connect(processSettings.netAddress, pi.Port, timeout); err != nil {
-			panic("Failed to connect")
+			log.Panic("Failed to connect")
 		}
 	}
 }

@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/binary"
-	fmt "fmt"
+	"log"
 )
 
 // Copy returns an ImageData with a separate Data slice copied from the original.
@@ -20,7 +20,7 @@ func (img *ImageData) Copy() *ImageData {
 // assertBPP checks for the expected pixel size and panics if it doesn't match.
 func (img *ImageData) assertBPP(count int32) {
 	if img.BitsPerPixel != count {
-		panic(fmt.Sprintf("bad BitsPerPixel, expected %v got %v", count, img.BitsPerPixel))
+		log.Panicf("bad BitsPerPixel, expected %v got %v", count, img.BitsPerPixel)
 	}
 }
 

@@ -1,7 +1,7 @@
 package agent
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/chippydip/go-sc2ai/api"
 	"github.com/chippydip/go-sc2ai/enums/ability"
@@ -145,7 +145,7 @@ func (a *Agent) getProductionCost(producerType api.UnitTypeID, train api.Ability
 	// Get the unit that will be built/trained
 	targetType := ability.Produces(train)
 	if targetType == unit.Invalid {
-		panic(fmt.Sprintf("%v does not produce a unit", train))
+		log.Panicf("%v does not produce a unit", train)
 	}
 
 	producer := a.info.Data().Units[producerType]
@@ -166,7 +166,7 @@ func (a *Agent) getProductionCost(producerType api.UnitTypeID, train api.Ability
 	// Double-check that we have an integer food cost now (do we need to handle anything other than zerglings?)
 	foodMult := food * float32(multiplier)
 	if float32(int(foodMult)) != foodMult {
-		panic(fmt.Sprintf("unexpected FoodRequirement: %v -> %v x%v for %v", producer.FoodRequired, target.FoodRequired, multiplier, targetType))
+		log.Panicf("unexpected FoodRequirement: %v -> %v x%v for %v", producer.FoodRequired, target.FoodRequired, multiplier, targetType)
 	}
 
 	// Return the per-build cost for this unit
