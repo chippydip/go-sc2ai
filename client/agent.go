@@ -35,6 +35,9 @@ type AgentInfo interface {
 	SendObserverActions(obsActions []*api.ObserverAction)
 	SendDebugCommands(commands []*api.DebugCommand)
 	LeaveGame()
+
+	OnBeforeStep(func())
+	OnAfterStep(func())
 }
 
 // PlayerID ...
@@ -101,4 +104,18 @@ func (c *Client) SendDebugCommands(commands []*api.DebugCommand) {
 // LeaveGame ...
 func (c *Client) LeaveGame() {
 	c.connection.leaveGame(api.RequestLeaveGame{})
+}
+
+// OnBeforeStep ...
+func (c *Client) OnBeforeStep(callback func()) {
+	if callback != nil {
+		c.beforeStep = append(c.beforeStep, callback)
+	}
+}
+
+// OnAfterStep ...
+func (c *Client) OnAfterStep(callback func()) {
+	if callback != nil {
+		c.afterStep = append(c.afterStep, callback)
+	}
 }

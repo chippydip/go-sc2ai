@@ -19,6 +19,9 @@ type Client struct {
 	observation *api.ResponseObservation
 	upgrades    map[api.UpgradeID]struct{}
 	newUpgrades []api.UpgradeID
+
+	beforeStep []func()
+	afterStep  []func()
 }
 
 // Connect ...
@@ -140,6 +143,11 @@ func (c *Client) Init() error {
 func (c *Client) Step(stepSize int) error {
 	var err error
 
+	// Call before callbacks
+	for _, cb := range c.beforeStep {
+		cb()
+	}
+
 	// Step the simulation forward if this isn't in realtime mode
 	if stepSize > 0 {
 		if _, err := c.connection.step(api.RequestStep{
@@ -162,16 +170,21 @@ func (c *Client) Step(stepSize int) error {
 			c.upgrades[upgrade] = struct{}{}
 		}
 	}
-	if len(c.newUpgrades) == 0 {
-		return nil
+
+	if len(c.newUpgrades) > 0 {
+		// Re-fetch unit data since some of it is upgrade-dependent
+		// TODO: also (re-)fetch unit -> ability mapping?
+		var data *api.ResponseData
+		data, err = c.connection.data(api.RequestData{
+			UnitTypeId: true,
+		})
+		c.data.Units = data.GetUnits()
 	}
 
-	// Re-fetch unit data since some of it is upgrade-dependent
-	// TODO: also (re-)fetch unit -> ability mapping?
-	data, err := c.connection.data(api.RequestData{
-		UnitTypeId: true,
-	})
-	c.data.Units = data.GetUnits()
+	// Call after callbacks
+	for _, cb := range c.afterStep {
+		cb()
+	}
 	return err
 }
 
