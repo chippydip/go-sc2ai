@@ -2,33 +2,33 @@ package search
 
 import (
 	"github.com/chippydip/go-sc2ai/api"
+	"github.com/chippydip/go-sc2ai/botutil"
 	"github.com/chippydip/go-sc2ai/client"
-	"github.com/chippydip/go-sc2ai/filter"
 )
 
 // CalculateExpansionLocations groups resources into clusters and determines the best town hall location for each cluster.
 // The Center() point of each cluster is the optimal town hall location. If debug is true then the results will also
 // be visualized in-game (until new debug info is drawn).
-func CalculateExpansionLocations(bot client.AgentInfo, debug bool) []UnitCluster {
-	units := filter.Units(bot.Observation().Observation.RawData.Units)
+func CalculateExpansionLocations(info client.AgentInfo, debug bool) []UnitCluster {
+	units := botutil.NewUnits(info)
 
 	// Start by finding resource clusters
-	resources := units.Filter(func(u *api.Unit) bool {
-		return filter.IsMineral(u) || filter.IsGeyser(u)
+	resources := units.Choose(func(u botutil.Unit) bool {
+		return botutil.IsMineral(u) || botutil.IsGeyser(u)
 	})
 	clusters := Cluster(resources, 15)
 
 	// Add resource-restrictions to the placement grid
-	placement := bot.GameInfo().StartRaw.PlacementGrid.Copy().Bytes()
-	for _, r := range resources {
+	placement := info.GameInfo().StartRaw.PlacementGrid.Copy().Bytes()
+	resources.Each(func(r botutil.Unit) {
 		switch {
-		case filter.IsMineral(r):
+		case botutil.IsMineral(r):
 			markUnbuildable(placement, int(r.Pos.X-0.5), int(r.Pos.Y), 2, 1)
 
-		case filter.IsGeyser(r):
+		case botutil.IsGeyser(r):
 			markUnbuildable(placement, int(r.Pos.X-1), int(r.Pos.Y-1), 3, 3)
 		}
-	}
+	})
 
 	// Mark locations which *can't* have an expansion centers
 	for y := 0; y < placement.Height(); y++ {
@@ -63,11 +63,11 @@ func CalculateExpansionLocations(bot client.AgentInfo, debug bool) []UnitCluster
 		}
 
 		// Update the Center to be the detected location rather than the actual CoM (just don't add new units)
-		clusters[i].sum = api.Vec2D{X: float32(xBest) + 0.5, Y: float32(yBest) + 0.5}.Mul(float32(len(cluster.units)))
+		clusters[i].sum = api.Vec2D{X: float32(xBest) + 0.5, Y: float32(yBest) + 0.5}.Mul(float32(cluster.units.Len()))
 	}
 
 	if debug {
-		debugPrint(clusters, placement, bot)
+		debugPrint(clusters, placement, info)
 	}
 
 	return clusters
@@ -150,6 +150,11 @@ func debugPrint(clusters []UnitCluster, placement api.ImageDataBytes, bot client
 				Draw: &api.DebugDraw{
 					Boxes: boxes,
 				},
+			},
+		},
+		&api.DebugCommand{
+			Command: &api.DebugCommand_GameState{
+				GameState: api.DebugGameState_show_map,
 			},
 		},
 	})
