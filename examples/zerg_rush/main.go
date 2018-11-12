@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/chippydip/go-sc2ai/agent"
 	"github.com/chippydip/go-sc2ai/api"
 	"github.com/chippydip/go-sc2ai/client"
 	"github.com/chippydip/go-sc2ai/runner"
@@ -14,6 +13,6 @@ func main() {
 	runner.Set("ComputerDifficulty", "Medium")
 
 	// Create the agent and then start the game
-	agent := agent.AgentFunc(runAgent)
+	agent := client.AgentFunc(runAgent)
 	runner.RunAgent(client.NewParticipant(api.Race_Zerg, agent, "ZergRush"))
 }
