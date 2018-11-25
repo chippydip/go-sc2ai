@@ -4,23 +4,18 @@ import (
 	"log"
 
 	"github.com/chippydip/go-sc2ai/api"
+	"github.com/chippydip/go-sc2ai/client"
 )
-
-// agentInfo is the subset of the client.AgentInfo interface required by Actions.
-type agentInfo interface {
-	OnBeforeStep(func())
-	SendActions([]*api.Action) []api.ActionResult
-}
 
 // Actions provides convenience methods for queueing actions to be sent in a batch.
 type Actions struct {
-	info    agentInfo
+	info    client.AgentInfo
 	actions []*api.Action
 }
 
 // NewActions creates a new Actions manager. It's Send() method is registered to be
 // automatcially called before each client Step().
-func NewActions(info agentInfo) *Actions {
+func NewActions(info client.AgentInfo) *Actions {
 	a := &Actions{info: info}
 	info.OnBeforeStep(a.Send)
 	return a
@@ -82,27 +77,19 @@ type getTagger interface {
 	GetTag() api.UnitTag
 }
 
-// soloTagser implements the tagser interface for a single unit. This is
-// done by wrapping the tag so that no additional allocations are required.
-type soloTagser api.UnitTag
-
-func (t soloTagser) Tags() []api.UnitTag {
-	return []api.UnitTag{api.UnitTag(t)}
+// UnitOrder orders a unit to use an ability.
+func (a *Actions) UnitOrder(u getTagger, ability api.AbilityID) {
+	a.unitsOrder([]api.UnitTag{u.GetTag()}, ability)
 }
 
-// UnitCommand orders a unit to use an ability.
-func (a *Actions) UnitCommand(u getTagger, ability api.AbilityID) {
-	a.UnitsCommand(soloTagser(u.GetTag()), ability)
+// UnitOrderTarget orders a unit to use an ability on a target unit.
+func (a *Actions) UnitOrderTarget(u getTagger, ability api.AbilityID, target getTagger) {
+	a.unitsOrderTarget([]api.UnitTag{u.GetTag()}, ability, target)
 }
 
-// UnitCommandOnTarget orders a unit to use an ability on a target unit.
-func (a *Actions) UnitCommandOnTarget(u getTagger, ability api.AbilityID, target getTagger) {
-	a.UnitsCommandOnTarget(soloTagser(u.GetTag()), ability, target)
-}
-
-// UnitCommandAtPos orders a unit to use an ability at a target location.
-func (a *Actions) UnitCommandAtPos(u getTagger, ability api.AbilityID, target *api.Point2D) {
-	a.UnitsCommandAtPos(soloTagser(u.GetTag()), ability, target)
+// UnitOrderPos orders a unit to use an ability at a target location.
+func (a *Actions) UnitOrderPos(u getTagger, ability api.AbilityID, target *api.Point2D) {
+	a.unitsOrderPos([]api.UnitTag{u.GetTag()}, ability, target)
 }
 
 // tagser provides access to a slice of unit tags to issue orders to.
@@ -110,27 +97,40 @@ type tagser interface {
 	Tags() []api.UnitTag
 }
 
-// UnitsCommand orders units to all use an ability.
-func (a *Actions) UnitsCommand(units tagser, ability api.AbilityID) {
-	unitTags := units.Tags()
+// UnitsOrder orders units to all use an ability.
+func (a *Actions) UnitsOrder(units tagser, ability api.AbilityID) {
+	a.unitsOrder(units.Tags(), ability)
+}
+
+// UnitsOrderTarget orders units to all use an ability on a target unit.
+func (a *Actions) UnitsOrderTarget(units tagser, ability api.AbilityID, target getTagger) {
+	a.unitsOrderTarget(units.Tags(), ability, target)
+}
+
+// UnitsOrderPos orders units to all use an ability at a target location.
+func (a *Actions) UnitsOrderPos(units tagser, ability api.AbilityID, target *api.Point2D) {
+	a.unitsOrderPos(units.Tags(), ability, target)
+}
+
+// unitsOrder orders units to all use an ability.
+func (a *Actions) unitsOrder(unitTags []api.UnitTag, ability api.AbilityID) {
 	if len(unitTags) == 0 {
 		return
 	}
 
-	a.unitCommand(&api.ActionRawUnitCommand{
+	a.unitOrder(&api.ActionRawUnitCommand{
 		AbilityId: ability,
 		UnitTags:  unitTags,
 	})
 }
 
-// UnitsCommandOnTarget orders units to all use an ability on a target unit.
-func (a *Actions) UnitsCommandOnTarget(units tagser, ability api.AbilityID, target getTagger) {
-	unitTags := units.Tags()
+// unitsOrderTarget orders units to all use an ability on a target unit.
+func (a *Actions) unitsOrderTarget(unitTags []api.UnitTag, ability api.AbilityID, target getTagger) {
 	if len(unitTags) == 0 {
 		return
 	}
 
-	a.unitCommand(&api.ActionRawUnitCommand{
+	a.unitOrder(&api.ActionRawUnitCommand{
 		AbilityId: ability,
 		UnitTags:  unitTags,
 		Target: &api.ActionRawUnitCommand_TargetUnitTag{
@@ -139,14 +139,13 @@ func (a *Actions) UnitsCommandOnTarget(units tagser, ability api.AbilityID, targ
 	})
 }
 
-// UnitsCommandAtPos orders units to all use an ability at a target location.
-func (a *Actions) UnitsCommandAtPos(units tagser, ability api.AbilityID, target *api.Point2D) {
-	unitTags := units.Tags()
+// unitsOrderPos orders units to all use an ability at a target location.
+func (a *Actions) unitsOrderPos(unitTags []api.UnitTag, ability api.AbilityID, target *api.Point2D) {
 	if len(unitTags) == 0 {
 		return
 	}
 
-	a.unitCommand(&api.ActionRawUnitCommand{
+	a.unitOrder(&api.ActionRawUnitCommand{
 		AbilityId: ability,
 		UnitTags:  unitTags,
 		Target: &api.ActionRawUnitCommand_TargetWorldSpacePos{
@@ -155,8 +154,8 @@ func (a *Actions) UnitsCommandAtPos(units tagser, ability api.AbilityID, target 
 	})
 }
 
-// unitCommand finishes wrapping an ActionRawUnitCommand and adds it to the command list.
-func (a *Actions) unitCommand(cmd *api.ActionRawUnitCommand) {
+// unitOrder finishes wrapping an ActionRawUnitCommand and adds it to the command list.
+func (a *Actions) unitOrder(cmd *api.ActionRawUnitCommand) {
 	a.actions = append(a.actions, &api.Action{
 		ActionRaw: &api.ActionRaw{
 			Action: &api.ActionRaw_UnitCommand{
@@ -164,4 +163,48 @@ func (a *Actions) unitCommand(cmd *api.ActionRawUnitCommand) {
 			},
 		},
 	})
+}
+
+// Convenience methods for giving orders directly to units:
+
+// Order ...
+func (units Units) Order(ability api.AbilityID) {
+	if len(units.raw) > 0 {
+		units.ctx.actions.unitsOrder(units.Tags(), ability)
+	}
+}
+
+// OrderTarget ...
+func (units Units) OrderTarget(ability api.AbilityID, target getTagger) {
+	if len(units.raw) > 0 {
+		units.ctx.actions.unitsOrderTarget(units.Tags(), ability, target)
+	}
+}
+
+// OrderPos ...
+func (units Units) OrderPos(ability api.AbilityID, target *api.Point2D) {
+	if len(units.raw) > 0 {
+		units.ctx.actions.unitsOrderPos(units.Tags(), ability, target)
+	}
+}
+
+// Order ...
+func (u Unit) Order(ability api.AbilityID) {
+	if !u.IsNil() {
+		u.ctx.actions.UnitOrder(u, ability)
+	}
+}
+
+// OrderTarget ...
+func (u Unit) OrderTarget(ability api.AbilityID, target getTagger) {
+	if !u.IsNil() {
+		u.ctx.actions.UnitOrderTarget(u, ability, target)
+	}
+}
+
+// OrderPos ...
+func (u Unit) OrderPos(ability api.AbilityID, target *api.Point2D) {
+	if !u.IsNil() {
+		u.ctx.actions.UnitOrderPos(u, ability, target)
+	}
 }
