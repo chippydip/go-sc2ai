@@ -135,6 +135,7 @@ func (c *Client) Init() error {
 		EffectId:   true,
 	})
 	c.observation, obsErr = c.connection.observation(api.RequestObservation{})
+	c.upgrades = map[api.UpgradeID]struct{}{}
 
 	return firstOrNil(infoErr, dataErr, obsErr)
 }
