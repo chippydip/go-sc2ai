@@ -4,6 +4,7 @@ import (
 	"github.com/chippydip/go-sc2ai/client"
 )
 
+// Bot ...
 type Bot struct {
 	client.AgentInfo
 
@@ -13,6 +14,7 @@ type Bot struct {
 	*Builder
 }
 
+// NewBot ...
 func NewBot(info client.AgentInfo) Bot {
 	bot := Bot{AgentInfo: info}
 

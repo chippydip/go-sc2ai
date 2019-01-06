@@ -13,6 +13,11 @@ type Units struct {
 	filter func(Unit) bool
 }
 
+// Init ...
+func (units *Units) Init(ctx *UnitContext, capacity int) {
+	*units = Units{ctx, make([]*api.Unit, 0, capacity), nil}
+}
+
 func (units Units) wrap(u *api.Unit) Unit {
 	return units.ctx.wrap(u)
 }
@@ -67,6 +72,14 @@ func (units *Units) Len() int {
 func (units *Units) Raw() []*api.Unit {
 	units.ensureOwns()
 	return units.raw
+}
+
+// Data returns the underlying UnitType data.
+func (units *Units) Data() []*api.UnitTypeData {
+	if units.ctx == nil {
+		return nil
+	}
+	return units.ctx.data
 }
 
 // Append adds the given unit to the slice.
