@@ -92,7 +92,7 @@ func (f filteredUnits) Choose(filter func(Unit) bool) filteredUnits {
 }
 
 func (f filteredUnits) All() Units {
-	var raw []*api.Unit
+	var raw []Unit
 
 	include, start, ai := false, 0, 8*allianceIndex(f.alliance)
 	for i, ok := range filterToMask(f.bits) {
@@ -109,13 +109,11 @@ func (f filteredUnits) All() Units {
 				continue
 			}
 
-			s := f.ctx.raw[start:end]
+			s := f.ctx.wrapped[start:end]
 			if f.filter != nil {
 				// TODO: Check ranges for bulk appends?
 				for _, u := range s {
-					data := f.ctx.data[u.UnitType]
-					wrapped := Unit{Unit: u, UnitTypeData: data}
-					if f.filter(wrapped) {
+					if f.filter(u) {
 						raw = append(raw, u)
 					}
 				}
@@ -254,7 +252,7 @@ type neutral map[api.UnitTypeID]Units
 func newNeutral(m neutral, start, length int) Units {
 	ctx := m[0].ctx
 	start, end := ctx.groups[start], ctx.groups[start+length]
-	return Units{ctx: ctx, raw: ctx.raw[start:end]}
+	return Units{ctx: ctx, raw: ctx.wrapped[start:end]}
 }
 
 func (m neutral) Minerals() Units  { return newNeutral(m, neutralMinerals, 1) }

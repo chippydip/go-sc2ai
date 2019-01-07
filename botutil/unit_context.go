@@ -31,10 +31,11 @@ const (
 
 // UnitContext stores shared state about units from an observation and provides filtered access to those units.
 type UnitContext struct {
-	raw   []*api.Unit
-	data  []*api.UnitTypeData
-	byTag map[api.UnitTag]*api.Unit
-	loop  uint32
+	raw     []*api.Unit
+	data    []*api.UnitTypeData
+	wrapped []Unit
+	byTag   map[api.UnitTag]*api.Unit
+	loop    uint32
 
 	groups [28]int
 
@@ -68,13 +69,6 @@ func NewUnitContext(info client.AgentInfo, actions *Actions) *UnitContext {
 	return u
 }
 
-func (ctx *UnitContext) wrap(u *api.Unit) Unit {
-	if u == nil {
-		return Unit{}
-	}
-	return Unit{ctx, u, ctx.data[u.UnitType]}
-}
-
 func (ctx *UnitContext) update() {
 	for k := range ctx.byTag {
 		delete(ctx.byTag, k)
@@ -103,6 +97,9 @@ func (ctx *UnitContext) update() {
 		setSortTag(u, ctx.data[u.UnitType])
 	}
 	sortUnits(&ctx.raw)
+
+	// Allocate a new array for wrapped unit objects
+	ctx.wrapped = make([]Unit, len(ctx.raw))
 
 	// Slice up the sorted result
 	(&grouper{}).group(ctx)
@@ -193,6 +190,9 @@ func (g *grouper) group(ctx *UnitContext) {
 
 		// Revert the unit type so it can be used for data lookup again
 		u.UnitType &= idMask
+
+		// Wrap the unit
+		ctx.wrapped[i] = Unit{ctx, u, ctx.data[u.UnitType]}
 	}
 	g.updateMap(ctx, len(ctx.raw))
 	g.updateGroups(ctx, len(ctx.raw), len(ctx.groups)-1)
