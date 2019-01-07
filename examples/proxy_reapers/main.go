@@ -97,8 +97,7 @@ func (bot *proxyReapers) OnGameStart() {
 	InitUnits(bot.info.Data().Units)
 	bot.parseUnits()
 	bot.initLocations()
-	temp := botutil.NewBotTemp(bot.info)
-	for _, uc := range search.CalculateExpansionLocations(&temp, false) {
+	for _, uc := range search.CalculateExpansionLocations(botutil.NewBotTemp(bot.info), false) {
 		bot.baseLocations = append(bot.baseLocations, uc.Center())
 	}
 	bot.findBuildingsPositions()

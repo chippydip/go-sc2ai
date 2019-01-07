@@ -44,18 +44,18 @@ type UnitContext struct {
 	Enemy   enemy
 	Neutral neutral
 
-	actions *Actions
+	bot *Bot
 }
 
 // NewUnitContext creates a new context and registers it to update after each step.
-func NewUnitContext(info client.AgentInfo, actions *Actions) *UnitContext {
+func NewUnitContext(info client.AgentInfo, bot *Bot) *UnitContext {
 	u := &UnitContext{
 		byTag:   map[api.UnitTag]*api.Unit{},
 		Self:    self{},
 		Ally:    ally{},
 		Enemy:   enemy{},
 		Neutral: neutral{},
-		actions: actions,
+		bot:     bot,
 	}
 	update := func() {
 		// Load the latest observation

@@ -15,19 +15,19 @@ type Bot struct {
 }
 
 // NewBot ...
-func NewBot(info client.AgentInfo) Bot {
-	bot := Bot{AgentInfo: info}
+func NewBot(info client.AgentInfo) *Bot {
+	bot := &Bot{AgentInfo: info}
 
 	bot.Player = NewPlayer(info)
 	bot.Actions = NewActions(info)
-	bot.UnitContext = NewUnitContext(info, bot.Actions)
+	bot.UnitContext = NewUnitContext(info, bot)
 	bot.Builder = NewBuilder(info, bot.Player, bot.UnitContext)
 
 	return bot
 }
 
 // NewBotTemp creates a new temporariy bot without registering for step updates.
-func NewBotTemp(info client.AgentInfo) Bot {
+func NewBotTemp(info client.AgentInfo) *Bot {
 	return NewBot(&tempAgentInfo{info})
 }
 

@@ -13,7 +13,7 @@ import (
 )
 
 type bot struct {
-	botutil.Bot
+	*botutil.Bot
 
 	myStartLocation    api.Point2D
 	myNaturalLocation  api.Point2D
@@ -44,7 +44,7 @@ func (bot *bot) init() {
 	bot.camera = bot.myStartLocation
 
 	// Find natural location
-	expansions := search.CalculateExpansionLocations(&bot.Bot, false)
+	expansions := search.CalculateExpansionLocations(bot.Bot, false)
 	query := make([]*api.RequestQueryPathing, len(expansions))
 	for i, exp := range expansions {
 		pos := exp.Center()

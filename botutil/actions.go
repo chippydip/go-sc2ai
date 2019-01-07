@@ -170,41 +170,41 @@ func (a *Actions) unitOrder(cmd *api.ActionRawUnitCommand) {
 // Order ...
 func (units Units) Order(ability api.AbilityID) {
 	if len(units.raw) > 0 {
-		units.ctx.actions.unitsOrder(units.Tags(), ability)
+		units.ctx.bot.unitsOrder(units.Tags(), ability)
 	}
 }
 
 // OrderTarget ...
 func (units Units) OrderTarget(ability api.AbilityID, target getTagger) {
 	if len(units.raw) > 0 {
-		units.ctx.actions.unitsOrderTarget(units.Tags(), ability, target)
+		units.ctx.bot.unitsOrderTarget(units.Tags(), ability, target)
 	}
 }
 
 // OrderPos ...
 func (units Units) OrderPos(ability api.AbilityID, target *api.Point2D) {
 	if len(units.raw) > 0 {
-		units.ctx.actions.unitsOrderPos(units.Tags(), ability, target)
+		units.ctx.bot.unitsOrderPos(units.Tags(), ability, target)
 	}
 }
 
 // Order ...
 func (u Unit) Order(ability api.AbilityID) {
 	if !u.IsNil() {
-		u.ctx.actions.UnitOrder(u, ability)
+		u.ctx.bot.UnitOrder(u, ability)
 	}
 }
 
 // OrderTarget ...
 func (u Unit) OrderTarget(ability api.AbilityID, target getTagger) {
 	if !u.IsNil() {
-		u.ctx.actions.UnitOrderTarget(u, ability, target)
+		u.ctx.bot.UnitOrderTarget(u, ability, target)
 	}
 }
 
 // OrderPos ...
 func (u Unit) OrderPos(ability api.AbilityID, target *api.Point2D) {
 	if !u.IsNil() {
-		u.ctx.actions.UnitOrderPos(u, ability, target)
+		u.ctx.bot.UnitOrderPos(u, ability, target)
 	}
 }
