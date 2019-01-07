@@ -169,6 +169,7 @@ const (
 	PortCity_Bridge_UnitW12Out                     api.UnitTypeID = 794
 	PortCity_Bridge_UnitW8                         api.UnitTypeID = 779
 	PortCity_Bridge_UnitW8Out                      api.UnitTypeID = 778
+	PreviewBunkerUpgraded                          api.UnitTypeID = 1943
 	PunisherGrenadesLMWeapon                       api.UnitTypeID = 270
 	Raven                                          api.UnitTypeID = 56
 	RavenRepairDrone                               api.UnitTypeID = 1913
@@ -179,6 +180,9 @@ const (
 	Reaper                                         api.UnitTypeID = 49
 	ReaperPlaceholder                              api.UnitTypeID = 152
 	Refinery                                       api.UnitTypeID = 20
+	RefineryRich                                   api.UnitTypeID = 1946
+	RenegadeLongboltMissileWeapon                  api.UnitTypeID = 1939
+	RenegadeMissileTurret                          api.UnitTypeID = 1941
 	SCV                                            api.UnitTypeID = 45
 	ScopeTest                                      api.UnitTypeID = 481
 	SeekerMissile                                  api.UnitTypeID = 841
@@ -216,10 +220,10 @@ const (
 	TornadoMissileDummyWeapon                      api.UnitTypeID = 581
 	TornadoMissileWeapon                           api.UnitTypeID = 580
 	TowerMine                                      api.UnitTypeID = 595
+	Viking                                         api.UnitTypeID = 1940
 	VikingAssault                                  api.UnitTypeID = 34
 	VikingFighter                                  api.UnitTypeID = 35
 	VikingFighterWeapon                            api.UnitTypeID = 271
-	VikingSkinPreview                              api.UnitTypeID = 1891
 	WarHound                                       api.UnitTypeID = 497
 	WarHoundWeapon                                 api.UnitTypeID = 575
 	WidowMine                                      api.UnitTypeID = 498

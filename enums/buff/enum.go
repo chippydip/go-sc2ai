@@ -170,4 +170,5 @@ const (
 	InfestorEnsnareMakePrecursorReheightSource          api.BuffID = 285
 	NexusShieldOvercharge                               api.BuffID = 286
 	ParasiticBombDelayTimedLife                         api.BuffID = 287
+	Transfusion                                         api.BuffID = 288
 )
