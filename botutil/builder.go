@@ -185,6 +185,9 @@ func (b *Builder) spend(cost unitCost) {
 
 // BuildUnitAt ...
 func (u Unit) BuildUnitAt(train api.AbilityID, pos api.Point2D) bool {
+	if u.IsNil() {
+		return false
+	}
 	b := u.ctx.bot
 
 	// Check if we can afford one
@@ -202,6 +205,9 @@ func (u Unit) BuildUnitAt(train api.AbilityID, pos api.Point2D) bool {
 
 // BuildUnitOn ...
 func (u Unit) BuildUnitOn(train api.AbilityID, target Unit) bool {
+	if u.IsNil() {
+		return false
+	}
 	b := u.ctx.bot
 
 	// Check if we can afford one

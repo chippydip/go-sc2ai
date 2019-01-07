@@ -70,14 +70,6 @@ func (units *Units) Raw() []Unit {
 	return units.raw
 }
 
-// Data returns the underlying UnitType data.
-func (units *Units) Data() []*api.UnitTypeData {
-	if units.ctx == nil {
-		return nil
-	}
-	return units.ctx.data
-}
-
 // Append adds the given unit to the slice.
 func (units *Units) Append(u Unit) {
 	units.ensureOwns()
