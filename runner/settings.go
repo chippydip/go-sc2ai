@@ -111,7 +111,12 @@ func getUserDirectory() (string, error) {
 		return value, nil
 
 	case "darwin":
-		panic("NYI")
+		user, err := user.Current()
+		if err != nil {
+			log.Print("Failed to get current user:", err)
+			return "", err
+		}
+		return filepath.Join(user.HomeDir, "Library", "Application Support", "Blizzard"), nil
 
 	default:
 		user, err := user.Current()
