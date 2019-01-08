@@ -54,6 +54,11 @@ func (c *UnitCluster) Center() api.Point2D {
 }
 
 // Units is the list of units in the cluster.
-func (c *UnitCluster) Units() botutil.Units {
-	return c.units
+func (c *UnitCluster) Units() *botutil.Units {
+	return &c.units
+}
+
+// Count returns the number of units in the cluster.
+func (c *UnitCluster) Count() int {
+	return c.units.Len()
 }

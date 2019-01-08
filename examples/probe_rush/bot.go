@@ -11,7 +11,7 @@ import (
 )
 
 type bot struct {
-	botutil.Bot
+	*botutil.Bot
 
 	enemyStartLocation api.Point2D
 	homeMineral        botutil.Unit

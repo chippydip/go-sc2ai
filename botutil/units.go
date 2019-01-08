@@ -9,21 +9,22 @@ import (
 // Units ...
 type Units struct {
 	ctx    *UnitContext
-	raw    []*api.Unit
+	raw    []Unit
 	filter func(Unit) bool
 }
 
-func (units Units) wrap(u *api.Unit) Unit {
-	return units.ctx.wrap(u)
+// Init ...
+func (units *Units) Init(ctx *UnitContext, capacity int) {
+	*units = Units{ctx, make([]Unit, 0, capacity), nil}
 }
 
 func (units *Units) applyFilter() {
 	if len(units.raw) == 0 {
 		units.raw = nil // make sure it's actually nil
 	} else if units.filter != nil {
-		raw := make([]*api.Unit, 0, len(units.raw))
+		raw := make([]Unit, 0, len(units.raw))
 		for _, u := range units.raw {
-			if units.filter(units.wrap(u)) {
+			if units.filter(u) {
 				raw = append(raw, u)
 			}
 		}
@@ -43,14 +44,14 @@ func (units *Units) ensureOwns() {
 	}
 
 	// Don't mess the the ctx's slice
-	if sliceID(units.raw) == sliceID(units.ctx.raw) {
-		tmp := make([]*api.Unit, len(units.raw), 2*len(units.raw))
+	if sliceID(units.raw) == sliceID(units.ctx.wrapped) {
+		tmp := make([]Unit, len(units.raw), 2*len(units.raw))
 		copy(tmp, units.raw)
 		units.raw = tmp
 	}
 }
 
-func sliceID(s []*api.Unit) **api.Unit {
+func sliceID(s []Unit) *Unit {
 	if cap(s) > 0 {
 		return &s[:cap(s)][cap(s)-1]
 	}
@@ -64,7 +65,7 @@ func (units *Units) Len() int {
 }
 
 // Raw returns the underlying slice of api Units.
-func (units *Units) Raw() []*api.Unit {
+func (units *Units) Raw() []Unit {
 	units.ensureOwns()
 	return units.raw
 }
@@ -73,7 +74,7 @@ func (units *Units) Raw() []*api.Unit {
 func (units *Units) Append(u Unit) {
 	units.ensureOwns()
 	units.ctx = u.ctx // in case unitx.ctx was nil
-	units.raw = append(units.raw, u.Unit)
+	units.raw = append(units.raw, u)
 }
 
 // Concat ...
@@ -94,7 +95,7 @@ func (units *Units) Concat(other *Units) {
 func (units *Units) Tags() []api.UnitTag {
 	tags := make([]api.UnitTag, 0, len(units.raw))
 	for _, u := range units.raw {
-		if units.filter == nil || units.filter(units.wrap(u)) {
+		if units.filter == nil || units.filter(u) {
 			tags = append(tags, u.Tag)
 		}
 	}
@@ -104,9 +105,8 @@ func (units *Units) Tags() []api.UnitTag {
 // Each ...
 func (units Units) Each(f func(Unit)) {
 	for _, u := range units.raw {
-		w := units.wrap(u)
-		if units.filter == nil || units.filter(w) {
-			f(w)
+		if units.filter == nil || units.filter(u) {
+			f(u)
 		}
 	}
 }
@@ -115,9 +115,8 @@ func (units Units) Each(f func(Unit)) {
 // Returns the last result of f (false on early return).
 func (units Units) EachWhile(f func(Unit) bool) bool {
 	for _, u := range units.raw {
-		w := units.wrap(u)
-		if units.filter == nil || units.filter(w) {
-			if !f(units.wrap(u)) {
+		if units.filter == nil || units.filter(u) {
+			if !f(u) {
 				return false
 			}
 		}
@@ -129,9 +128,8 @@ func (units Units) EachWhile(f func(Unit) bool) bool {
 // Returns the last result of f (true on early return).
 func (units Units) EachUntil(f func(Unit) bool) bool {
 	for _, u := range units.raw {
-		w := units.wrap(u)
-		if units.filter == nil || units.filter(w) {
-			if f(w) {
+		if units.filter == nil || units.filter(u) {
+			if f(u) {
 				return true
 			}
 		}
@@ -169,13 +167,12 @@ func (units Units) Drop(filter func(Unit) bool) Units {
 func (units Units) First() Unit {
 	if len(units.raw) > 0 {
 		if units.filter == nil {
-			return units.wrap(units.raw[0])
+			return units.raw[0]
 		}
 
 		for _, u := range units.raw {
-			w := units.wrap(u)
-			if units.filter(w) {
-				return w
+			if units.filter(u) {
+				return u
 			}
 		}
 	}
@@ -185,9 +182,9 @@ func (units Units) First() Unit {
 // ClosestTo returns the closest unit from the latest observation.
 func (units Units) ClosestTo(pos api.Point2D) Unit {
 	minDist := float32(math.Inf(1))
-	var closest *api.Unit
+	var closest Unit
 	for _, u := range units.raw {
-		if units.filter == nil || units.filter(units.wrap(u)) {
+		if units.filter == nil || units.filter(u) {
 			dist := pos.Distance2(u.Pos.ToPoint2D())
 			if dist < minDist {
 				closest = u
@@ -195,7 +192,7 @@ func (units Units) ClosestTo(pos api.Point2D) Unit {
 			}
 		}
 	}
-	return units.wrap(closest)
+	return closest
 }
 
 // Tagged ...

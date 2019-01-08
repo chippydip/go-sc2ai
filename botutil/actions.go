@@ -70,45 +70,33 @@ func (a *Actions) MoveCamera(pt api.Point2D) {
 	})
 }
 
-// getTagger is the part of api.Unit's api required to send commands.
-// An interface is used here so that custom unit types can also be used
-// here as long as they implement this method.
-type getTagger interface {
-	GetTag() api.UnitTag
-}
-
 // UnitOrder orders a unit to use an ability.
-func (a *Actions) UnitOrder(u getTagger, ability api.AbilityID) {
+func (a *Actions) UnitOrder(u Unit, ability api.AbilityID) {
 	a.unitsOrder([]api.UnitTag{u.GetTag()}, ability)
 }
 
 // UnitOrderTarget orders a unit to use an ability on a target unit.
-func (a *Actions) UnitOrderTarget(u getTagger, ability api.AbilityID, target getTagger) {
+func (a *Actions) UnitOrderTarget(u Unit, ability api.AbilityID, target Unit) {
 	a.unitsOrderTarget([]api.UnitTag{u.GetTag()}, ability, target)
 }
 
 // UnitOrderPos orders a unit to use an ability at a target location.
-func (a *Actions) UnitOrderPos(u getTagger, ability api.AbilityID, target *api.Point2D) {
+func (a *Actions) UnitOrderPos(u Unit, ability api.AbilityID, target *api.Point2D) {
 	a.unitsOrderPos([]api.UnitTag{u.GetTag()}, ability, target)
 }
 
-// tagser provides access to a slice of unit tags to issue orders to.
-type tagser interface {
-	Tags() []api.UnitTag
-}
-
 // UnitsOrder orders units to all use an ability.
-func (a *Actions) UnitsOrder(units tagser, ability api.AbilityID) {
+func (a *Actions) UnitsOrder(units Units, ability api.AbilityID) {
 	a.unitsOrder(units.Tags(), ability)
 }
 
 // UnitsOrderTarget orders units to all use an ability on a target unit.
-func (a *Actions) UnitsOrderTarget(units tagser, ability api.AbilityID, target getTagger) {
+func (a *Actions) UnitsOrderTarget(units Units, ability api.AbilityID, target Unit) {
 	a.unitsOrderTarget(units.Tags(), ability, target)
 }
 
 // UnitsOrderPos orders units to all use an ability at a target location.
-func (a *Actions) UnitsOrderPos(units tagser, ability api.AbilityID, target *api.Point2D) {
+func (a *Actions) UnitsOrderPos(units Units, ability api.AbilityID, target *api.Point2D) {
 	a.unitsOrderPos(units.Tags(), ability, target)
 }
 
@@ -125,7 +113,7 @@ func (a *Actions) unitsOrder(unitTags []api.UnitTag, ability api.AbilityID) {
 }
 
 // unitsOrderTarget orders units to all use an ability on a target unit.
-func (a *Actions) unitsOrderTarget(unitTags []api.UnitTag, ability api.AbilityID, target getTagger) {
+func (a *Actions) unitsOrderTarget(unitTags []api.UnitTag, ability api.AbilityID, target Unit) {
 	if len(unitTags) == 0 {
 		return
 	}
@@ -170,41 +158,41 @@ func (a *Actions) unitOrder(cmd *api.ActionRawUnitCommand) {
 // Order ...
 func (units Units) Order(ability api.AbilityID) {
 	if len(units.raw) > 0 {
-		units.ctx.actions.unitsOrder(units.Tags(), ability)
+		units.ctx.bot.unitsOrder(units.Tags(), ability)
 	}
 }
 
 // OrderTarget ...
-func (units Units) OrderTarget(ability api.AbilityID, target getTagger) {
+func (units Units) OrderTarget(ability api.AbilityID, target Unit) {
 	if len(units.raw) > 0 {
-		units.ctx.actions.unitsOrderTarget(units.Tags(), ability, target)
+		units.ctx.bot.unitsOrderTarget(units.Tags(), ability, target)
 	}
 }
 
 // OrderPos ...
 func (units Units) OrderPos(ability api.AbilityID, target *api.Point2D) {
 	if len(units.raw) > 0 {
-		units.ctx.actions.unitsOrderPos(units.Tags(), ability, target)
+		units.ctx.bot.unitsOrderPos(units.Tags(), ability, target)
 	}
 }
 
 // Order ...
 func (u Unit) Order(ability api.AbilityID) {
 	if !u.IsNil() {
-		u.ctx.actions.UnitOrder(u, ability)
+		u.ctx.bot.UnitOrder(u, ability)
 	}
 }
 
 // OrderTarget ...
-func (u Unit) OrderTarget(ability api.AbilityID, target getTagger) {
+func (u Unit) OrderTarget(ability api.AbilityID, target Unit) {
 	if !u.IsNil() {
-		u.ctx.actions.UnitOrderTarget(u, ability, target)
+		u.ctx.bot.UnitOrderTarget(u, ability, target)
 	}
 }
 
 // OrderPos ...
 func (u Unit) OrderPos(ability api.AbilityID, target *api.Point2D) {
 	if !u.IsNil() {
-		u.ctx.actions.UnitOrderPos(u, ability, target)
+		u.ctx.bot.UnitOrderPos(u, ability, target)
 	}
 }

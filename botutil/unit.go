@@ -14,6 +14,21 @@ func (u Unit) IsNil() bool {
 	return u.Unit == nil
 }
 
+// IsVisible checks if DisplayType is Visible.
+func (u Unit) IsVisible() bool {
+	return u.DisplayType == api.DisplayType_Visible
+}
+
+// IsSnapshot checks if DisplayType is Snapshot.
+func (u Unit) IsSnapshot() bool {
+	return u.DisplayType == api.DisplayType_Snapshot
+}
+
+// IsHidden checks if DisplayType is Hidden.
+func (u Unit) IsHidden() bool {
+	return u.DisplayType == api.DisplayType_Hidden
+}
+
 // HasAttribute checks if this unit has the specified attribute.
 func (u Unit) HasAttribute(attr api.Attribute) bool {
 	for _, a := range u.Attributes {

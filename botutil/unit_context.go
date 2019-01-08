@@ -31,9 +31,11 @@ const (
 
 // UnitContext stores shared state about units from an observation and provides filtered access to those units.
 type UnitContext struct {
-	raw  []*api.Unit
-	data []*api.UnitTypeData
-	loop uint32
+	raw     []*api.Unit
+	data    []*api.UnitTypeData
+	wrapped []Unit
+	byTag   map[api.UnitTag]*api.Unit
+	loop    uint32
 
 	groups [28]int
 
@@ -42,17 +44,18 @@ type UnitContext struct {
 	Enemy   enemy
 	Neutral neutral
 
-	actions *Actions
+	bot *Bot
 }
 
 // NewUnitContext creates a new context and registers it to update after each step.
-func NewUnitContext(info client.AgentInfo, actions *Actions) *UnitContext {
+func NewUnitContext(info client.AgentInfo, bot *Bot) *UnitContext {
 	u := &UnitContext{
+		byTag:   map[api.UnitTag]*api.Unit{},
 		Self:    self{},
 		Ally:    ally{},
 		Enemy:   enemy{},
 		Neutral: neutral{},
-		actions: actions,
+		bot:     bot,
 	}
 	update := func() {
 		// Load the latest observation
@@ -66,14 +69,11 @@ func NewUnitContext(info client.AgentInfo, actions *Actions) *UnitContext {
 	return u
 }
 
-func (ctx *UnitContext) wrap(u *api.Unit) Unit {
-	if u == nil {
-		return Unit{}
-	}
-	return Unit{ctx, u, ctx.data[u.UnitType]}
-}
-
 func (ctx *UnitContext) update() {
+	for k := range ctx.byTag {
+		delete(ctx.byTag, k)
+	}
+
 	// Reset maps without clearing to eliminate most allocs
 	ctx.clear(ctx.Self)
 	ctx.clear(ctx.Ally)
@@ -92,10 +92,14 @@ func (ctx *UnitContext) update() {
 	sortUnits(&ctx.raw)
 
 	// Sort the units in place so common queries can use direct slices and avoid allocation
-	for _, uu := range ctx.raw {
-		setSortTag(uu, ctx.data[uu.UnitType])
+	for _, u := range ctx.raw {
+		ctx.byTag[u.Tag] = u
+		setSortTag(u, ctx.data[u.UnitType])
 	}
 	sortUnits(&ctx.raw)
+
+	// Allocate a new array for wrapped unit objects
+	ctx.wrapped = make([]Unit, len(ctx.raw))
 
 	// Slice up the sorted result
 	(&grouper{}).group(ctx)
@@ -112,6 +116,7 @@ func (ctx *UnitContext) clear(m map[api.UnitTypeID]Units) {
 }
 
 // Use the high bits of a UnitTypeID to allow us to specify sort criteria and stuff sort in-place.
+// Top 5 bits are the alliance, next 3 are used for grouping, the remaining 24 hold the UnitTypeID.
 const (
 	idFlying    api.UnitTypeID = 1 << 26
 	idWeapons   api.UnitTypeID = 1 << 25
@@ -169,48 +174,51 @@ type grouper struct {
 	prevType  api.UnitTypeID
 }
 
-func (g *grouper) group(u *UnitContext) {
-	g.prevType = u.raw[0].UnitType
-	for i, uu := range u.raw {
-		if uu.UnitType != g.prevType {
-			g.updateMap(u, i)
+func (g *grouper) group(ctx *UnitContext) {
+	g.prevType = ctx.raw[0].UnitType
+	for i, u := range ctx.raw {
+		if u.UnitType != g.prevType {
+			g.updateMap(ctx, i)
 
-			grp := int(uu.UnitType >> 24)
+			grp := int(u.UnitType >> 24)
 			if grp != g.lastGroup {
-				g.updateGroups(u, i, grp)
+				g.updateGroups(ctx, i, grp)
 			}
 
-			g.prevType = uu.UnitType
+			g.prevType = u.UnitType
 		}
 
 		// Revert the unit type so it can be used for data lookup again
-		uu.UnitType &= idMask
+		u.UnitType &= idMask
+
+		// Wrap the unit
+		ctx.wrapped[i] = Unit{ctx, u, ctx.data[u.UnitType]}
 	}
-	g.updateMap(u, len(u.raw))
-	g.updateGroups(u, len(u.raw), len(u.groups)-1)
+	g.updateMap(ctx, len(ctx.raw))
+	g.updateGroups(ctx, len(ctx.raw), len(ctx.groups)-1)
 }
 
-func (g *grouper) updateMap(u *UnitContext, i int) {
-	m := u.alliance(g.prevType >> 27)
+func (g *grouper) updateMap(ctx *UnitContext, i int) {
+	m := ctx.alliance(g.prevType >> 27)
 	t := g.prevType & idMask
 	r := m[t].raw
-	n := u.raw[g.typeStart:i]
+	n := ctx.wrapped[g.typeStart:i]
 	if r == nil {
 		// Normal case
-		m[t] = Units{ctx: u, raw: n}
+		m[t] = Units{ctx: ctx, raw: n}
 	} else {
 		// Only happens if there are flying and ground units of the same type (locust?)
-		s := make([]*api.Unit, len(r)+len(n))
+		s := make([]Unit, len(r)+len(n))
 		copy(s, r)
 		copy(s[:len(r)], n)
-		m[t] = Units{ctx: u, raw: s}
+		m[t] = Units{ctx: ctx, raw: s}
 	}
 	g.typeStart = i
 }
 
-func (g *grouper) updateGroups(u *UnitContext, i int, grp int) {
+func (g *grouper) updateGroups(ctx *UnitContext, i int, grp int) {
 	for ii := g.lastGroup + 1; ii <= grp; ii++ {
-		u.groups[ii] = i // start index of group
+		ctx.groups[ii] = i // start index of group
 	}
 	g.lastGroup = grp
 }
@@ -243,4 +251,9 @@ func (ctx *UnitContext) alliance(index api.UnitTypeID) map[api.UnitTypeID]Units 
 	default:
 		return nil
 	}
+}
+
+// WasObserved returns true if a unit with the given tag was inlucded in the last observation.
+func (ctx *UnitContext) WasObserved(tag api.UnitTag) bool {
+	return ctx.byTag[tag] != nil
 }

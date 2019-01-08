@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/chippydip/go-sc2ai/api"
+	"github.com/chippydip/go-sc2ai/botutil"
 	"github.com/chippydip/go-sc2ai/client"
 	"github.com/chippydip/go-sc2ai/runner"
 	"github.com/chippydip/go-sc2ai/search"
@@ -96,7 +97,7 @@ func (bot *proxyReapers) OnGameStart() {
 	InitUnits(bot.info.Data().Units)
 	bot.parseUnits()
 	bot.initLocations()
-	for _, uc := range search.CalculateExpansionLocations(bot.info, false) {
+	for _, uc := range search.CalculateExpansionLocations(botutil.NewBotTemp(bot.info), false) {
 		bot.baseLocations = append(bot.baseLocations, uc.Center())
 	}
 	bot.findBuildingsPositions()
