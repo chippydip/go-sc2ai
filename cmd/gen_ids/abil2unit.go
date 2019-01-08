@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/chippydip/go-sc2ai/api"
@@ -157,8 +158,14 @@ func writeMapping(values map[string]string) {
 
 	fmt.Fprint(w, header)
 
-	for key, value := range values {
-		fmt.Fprintf(w, fmtString, maxLen+1, key+":", value)
+	keys := make([]string, 0, len(values))
+	for k := range values {
+		keys = append(keys, k)
+	}
+	sort.StringSlice(keys).Sort()
+
+	for _, key := range keys {
+		fmt.Fprintf(w, fmtString, maxLen+1, key+":", values[key])
 	}
 	fmt.Fprint(w, "}\n")
 	check(w.Flush())
