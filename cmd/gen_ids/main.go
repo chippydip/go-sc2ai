@@ -17,7 +17,7 @@ func main() {
 	runner.Set("map", runner.Random1v1Map())
 
 	agent := client.AgentFunc(generate)
-	runner.RunAgent(client.NewParticipant(api.Race_Random, agent))
+	runner.RunAgent(client.NewParticipant(api.Race_Random, agent, "NilBot"))
 }
 
 func generate(info client.AgentInfo) {

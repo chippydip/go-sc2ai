@@ -152,4 +152,6 @@ const (
 	CycloneRapidFireLaunchers          api.UpgradeID = 291
 	RavenEnhancedMunitions             api.UpgradeID = 292
 	DiggingClaws                       api.UpgradeID = 293
+	CarrierCarrierCapacity             api.UpgradeID = 294
+	CarrierLeashRangeUpgrade           api.UpgradeID = 295
 )

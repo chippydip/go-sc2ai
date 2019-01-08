@@ -248,7 +248,7 @@ const (
 	Neutral_OverlordGenerateCreepKeybind                  api.UnitTypeID = 378
 	Neutral_OverseerACGluescreenDummy                     api.UnitTypeID = 187
 	Neutral_OverseerZagaraACGluescreenDummy               api.UnitTypeID = 1844
-	Neutral_ParasiticBombRelayDummy                       api.UnitTypeID = 1922
+	Neutral_ParasiticBombRelayDummy                       api.UnitTypeID = 1942
 	Neutral_PathingBlocker1x1                             api.UnitTypeID = 389
 	Neutral_PathingBlocker2x2                             api.UnitTypeID = 390
 	Neutral_PathingBlockerRadius1                         api.UnitTypeID = 633
@@ -443,6 +443,15 @@ const (
 	Neutral_ThornLizard                                   api.UnitTypeID = 611
 	Neutral_TorrasqueACGluescreenDummy                    api.UnitTypeID = 186
 	Neutral_TrafficSignal                                 api.UnitTypeID = 361
+	Neutral_TychusFirebatACGluescreenDummy                api.UnitTypeID = 1923
+	Neutral_TychusGhostACGluescreenDummy                  api.UnitTypeID = 1929
+	Neutral_TychusHERCACGluescreenDummy                   api.UnitTypeID = 1928
+	Neutral_TychusMarauderACGluescreenDummy               api.UnitTypeID = 1926
+	Neutral_TychusMedicACGluescreenDummy                  api.UnitTypeID = 1925
+	Neutral_TychusReaperACGluescreenDummy                 api.UnitTypeID = 1922
+	Neutral_TychusSCVAutoTurretACGluescreenDummy          api.UnitTypeID = 1930
+	Neutral_TychusSpectreACGluescreenDummy                api.UnitTypeID = 1924
+	Neutral_TychusWarhoundACGluescreenDummy               api.UnitTypeID = 1927
 	Neutral_TyrannozorACGluescreenDummy                   api.UnitTypeID = 1875
 	Neutral_UltraliskACGluescreenDummy                    api.UnitTypeID = 185
 	Neutral_UnbuildableBricksDestructible                 api.UnitTypeID = 473
@@ -527,6 +536,14 @@ const (
 	Neutral_ZealotPurifierACGluescreenDummy               api.UnitTypeID = 233
 	Neutral_ZealotShakurasACGluescreenDummy               api.UnitTypeID = 224
 	Neutral_ZealotVorazunACGluescreenDummy                api.UnitTypeID = 223
+	Neutral_ZeratulDarkTemplarACGluescreenDummy           api.UnitTypeID = 1933
+	Neutral_ZeratulDisruptorACGluescreenDummy             api.UnitTypeID = 1936
+	Neutral_ZeratulImmortalACGluescreenDummy              api.UnitTypeID = 1934
+	Neutral_ZeratulObserverACGluescreenDummy              api.UnitTypeID = 1935
+	Neutral_ZeratulPhotonCannonACGluescreenDummy          api.UnitTypeID = 1938
+	Neutral_ZeratulSentryACGluescreenDummy                api.UnitTypeID = 1932
+	Neutral_ZeratulStalkerACGluescreenDummy               api.UnitTypeID = 1931
+	Neutral_ZeratulWarpPrismACGluescreenDummy             api.UnitTypeID = 1937
 	Neutral_ZerglingKerriganACGluescreenDummy             api.UnitTypeID = 178
 	Neutral_ZerglingZagaraACGluescreenDummy               api.UnitTypeID = 193
 	Neutral_ZerusDestructibleArch                         api.UnitTypeID = 658
@@ -539,6 +556,7 @@ const (
 	Protoss_ArbiterMPWeaponMissile                        api.UnitTypeID = 813
 	Protoss_Archon                                        api.UnitTypeID = 141
 	Protoss_Assimilator                                   api.UnitTypeID = 61
+	Protoss_AssimilatorRich                               api.UnitTypeID = 1944
 	Protoss_Carrier                                       api.UnitTypeID = 79
 	Protoss_Colossus                                      api.UnitTypeID = 4
 	Protoss_CorsairMP                                     api.UnitTypeID = 855
@@ -767,6 +785,7 @@ const (
 	Terran_PortCity_Bridge_UnitW12Out                     api.UnitTypeID = 794
 	Terran_PortCity_Bridge_UnitW8                         api.UnitTypeID = 779
 	Terran_PortCity_Bridge_UnitW8Out                      api.UnitTypeID = 778
+	Terran_PreviewBunkerUpgraded                          api.UnitTypeID = 1943
 	Terran_PunisherGrenadesLMWeapon                       api.UnitTypeID = 270
 	Terran_Raven                                          api.UnitTypeID = 56
 	Terran_RavenRepairDrone                               api.UnitTypeID = 1913
@@ -777,6 +796,9 @@ const (
 	Terran_Reaper                                         api.UnitTypeID = 49
 	Terran_ReaperPlaceholder                              api.UnitTypeID = 152
 	Terran_Refinery                                       api.UnitTypeID = 20
+	Terran_RefineryRich                                   api.UnitTypeID = 1946
+	Terran_RenegadeLongboltMissileWeapon                  api.UnitTypeID = 1939
+	Terran_RenegadeMissileTurret                          api.UnitTypeID = 1941
 	Terran_SCV                                            api.UnitTypeID = 45
 	Terran_ScopeTest                                      api.UnitTypeID = 481
 	Terran_SeekerMissile                                  api.UnitTypeID = 841
@@ -814,10 +836,10 @@ const (
 	Terran_TornadoMissileDummyWeapon                      api.UnitTypeID = 581
 	Terran_TornadoMissileWeapon                           api.UnitTypeID = 580
 	Terran_TowerMine                                      api.UnitTypeID = 595
+	Terran_Viking                                         api.UnitTypeID = 1940
 	Terran_VikingAssault                                  api.UnitTypeID = 34
 	Terran_VikingFighter                                  api.UnitTypeID = 35
 	Terran_VikingFighterWeapon                            api.UnitTypeID = 271
-	Terran_VikingSkinPreview                              api.UnitTypeID = 1891
 	Terran_WarHound                                       api.UnitTypeID = 497
 	Terran_WarHoundWeapon                                 api.UnitTypeID = 575
 	Terran_WidowMine                                      api.UnitTypeID = 498
@@ -888,6 +910,7 @@ const (
 	Zerg_Egg                                              api.UnitTypeID = 103
 	Zerg_EvolutionChamber                                 api.UnitTypeID = 90
 	Zerg_Extractor                                        api.UnitTypeID = 88
+	Zerg_ExtractorRich                                    api.UnitTypeID = 1945
 	Zerg_EyeStalkWeapon                                   api.UnitTypeID = 576
 	Zerg_FrenzyWeapon                                     api.UnitTypeID = 294
 	Zerg_FungalGrowthMissile                              api.UnitTypeID = 313
