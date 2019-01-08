@@ -167,7 +167,7 @@ func launchAndAttach(c *client.Client, clientIndex int) {
 		if pi.PID == 0 {
 			log.Print("Unable to start sc2 executable with path: ", processSettings.processPath)
 		} else {
-			log.Printf("Lanched SC2 (%v), PID: %v", processSettings.processPath, pi.PID)
+			log.Printf("Launched SC2 (%v), PID: %v", processSettings.processPath, pi.PID)
 		}
 
 		// Attach

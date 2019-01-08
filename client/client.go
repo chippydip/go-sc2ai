@@ -51,7 +51,7 @@ func (c *Client) Connect(address string, port int, timeout time.Duration) error 
 		return fmt.Errorf("Unable to connect to game")
 	}
 
-	fmt.Printf("Connected to %v:%v\n", address, port)
+	log.Printf("Connected to %v:%v", address, port)
 	return nil
 }
 
@@ -191,7 +191,7 @@ func (c *Client) Step(stepSize int) error {
 
 // SaveReplay(path string) error
 
-// Pint() error
+// Print() error
 
 // // General
 // WaitForResponse() (*GameResponse, error)
