@@ -64,6 +64,7 @@ var IsWorker = isUnitTypeInMap(map[api.UnitTypeID]struct{}{
 	unit.Zerg_DroneBurrowed: {},
 })
 
+// HasAttribute ...
 func HasAttribute(attribute api.Attribute) func(u Unit) bool {
 	return func(u Unit) bool {
 		for _, attr := range u.Attributes {
@@ -75,4 +76,5 @@ func HasAttribute(attribute api.Attribute) func(u Unit) bool {
 	}
 }
 
+// IsStructure ...
 var IsStructure = HasAttribute(api.Attribute_Structure)

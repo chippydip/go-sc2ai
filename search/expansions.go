@@ -9,25 +9,17 @@ import (
 // CalculateExpansionLocations groups resources into clusters and determines the best town hall location for each cluster.
 // The Center() point of each cluster is the optimal town hall location. If debug is true then the results will also
 // be visualized in-game (until new debug info is drawn).
-func CalculateExpansionLocations(info client.AgentInfo, debug bool) []UnitCluster {
-	units := botutil.NewUnits(info)
-
+func CalculateExpansionLocations(bot *botutil.Bot, debug bool) []UnitCluster {
 	// Start by finding resource clusters
-	resources := units.Choose(func(u botutil.Unit) bool {
-		return botutil.IsMineral(u) || botutil.IsGeyser(u)
-	})
-	clusters := Cluster(resources, 15)
+	clusters := Cluster(bot.Neutral.Resources(), 15)
 
 	// Add resource-restrictions to the placement grid
-	placement := info.GameInfo().StartRaw.PlacementGrid.Copy().Bytes()
-	resources.Each(func(r botutil.Unit) {
-		switch {
-		case botutil.IsMineral(r):
-			markUnbuildable(placement, int(r.Pos.X-0.5), int(r.Pos.Y), 2, 1)
-
-		case botutil.IsGeyser(r):
-			markUnbuildable(placement, int(r.Pos.X-1), int(r.Pos.Y-1), 3, 3)
-		}
+	placement := bot.GameInfo().StartRaw.PlacementGrid.Copy().Bytes()
+	bot.Neutral.Minerals().Each(func(u botutil.Unit) {
+		markUnbuildable(placement, int(u.Pos.X-0.5), int(u.Pos.Y), 2, 1)
+	})
+	bot.Neutral.Vespene().Each(func(u botutil.Unit) {
+		markUnbuildable(placement, int(u.Pos.X-1), int(u.Pos.Y-1), 3, 3)
 	})
 
 	// Mark locations which *can't* have an expansion centers
@@ -67,7 +59,7 @@ func CalculateExpansionLocations(info client.AgentInfo, debug bool) []UnitCluste
 	}
 
 	if debug {
-		debugPrint(clusters, placement, info)
+		debugPrint(clusters, placement, bot)
 	}
 
 	return clusters

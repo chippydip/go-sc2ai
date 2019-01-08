@@ -44,7 +44,7 @@ type UnitCluster struct {
 
 // Add adds a new unit to the cluster and updates the center of mass.
 func (c *UnitCluster) Add(u botutil.Unit) {
-	c.sum = c.sum.Add(api.Vec2D(u.Pos.ToPoint2D()))
+	c.sum = c.sum.Add(api.Vec2D(u.Pos2D()))
 	c.units.Append(u)
 }
 

@@ -5,13 +5,23 @@ import (
 	"github.com/chippydip/go-sc2ai/client"
 )
 
-type Player api.PlayerCommon
+// Player ...
+type Player struct {
+	api.PlayerCommon
+	api.PlayerInfo
+}
 
+// NewPlayer ...
 func NewPlayer(info client.AgentInfo) *Player {
 	p := &Player{}
+	for _, pi := range info.GameInfo().GetPlayerInfo() {
+		if pi.GetPlayerId() == info.PlayerID() {
+			p.PlayerInfo = *pi
+		}
+	}
 	update := func() {
 		if pc := info.Observation().GetObservation().GetPlayerCommon(); pc != nil {
-			*p = Player(*pc)
+			p.PlayerCommon = *pc
 		}
 	}
 	update()
@@ -19,6 +29,7 @@ func NewPlayer(info client.AgentInfo) *Player {
 	return p
 }
 
+// FoodLeft ...
 func (p *Player) FoodLeft() int {
 	return int(p.FoodCap) - int(p.FoodUsed)
 }

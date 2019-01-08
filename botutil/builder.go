@@ -9,33 +9,36 @@ import (
 	"github.com/chippydip/go-sc2ai/enums/unit"
 )
 
+// Builder provides operations to make building/morphing/training/warping units easier.
 type Builder struct {
-	player  *Player
-	units   *Units
-	actions *Actions
+	player *Player
+	units  *UnitContext
 }
 
-func NewBuilder(info client.AgentInfo, player *Player, units *Units, actions *Actions) *Builder {
-	b := &Builder{player, units, actions}
-	// TODO: Only if player is Zerg
-	if true {
-		update := func() {
-			n, data := 0, b.units.data
-			for _, u := range b.units.units {
-				// Count number of units that consume half a food
-				if u.Alliance == api.Alliance_Self && data[u.UnitType].FoodRequired == 0.5 {
-					n++
-				}
-			}
-			// The game rounds fractional food down, but should really round up since you
-			// this makes it seem like you can build units when you actually can't.
-			if n%2 != 0 {
-				b.player.FoodUsed++
-			}
-		}
-		update()
-		info.OnAfterStep(update)
+// NewBuilder creates a new Builder and registers it to fix FoodUsed rounding for zerg.
+func NewBuilder(info client.AgentInfo, player *Player, units *UnitContext) *Builder {
+	b := &Builder{player, units}
+
+	// This is only really an issue for zerg
+	if player.RaceActual != api.Race_Zerg {
+		return b
 	}
+
+	update := func() {
+		// Count number of units that consume half a food
+		n := b.units.Self.CountIf(func(u Unit) bool {
+			return u.FoodRequired == 0.5
+		})
+
+		// The game rounds fractional food down, but should really round up since
+		// this makes it seem like you can build units when you actually can't.
+		if n%2 != 0 {
+			b.player.FoodUsed++
+		}
+	}
+	update()
+	info.OnAfterStep(update)
+
 	return b
 }
 
@@ -54,31 +57,32 @@ func (b *Builder) BuildUnits(producer api.UnitTypeID, train api.AbilityID, count
 
 	cost := b.getProductionCost(producer, train)
 
-	// Loop until done
+	// Find all available producers
 	origCount := count
-	for i := 0; count > 0; {
+	b.units.Self[producer].EachUntil(func(u Unit) bool {
 		// Check if we can afford one more
 		if !b.canAfford(cost) {
-			break
+			return false
 		}
 
-		u := b.getNextProducer(&i, producer)
-		if u == nil {
-			break
+		if u.BuildProgress < 1 || (len(u.Orders) > 0 && u.IsStructure()) {
+			return false
 		}
 
 		// Produce the unit and adjust available resources
-		b.actions.UnitCommand(u, train)
+		u.Order(train)
 		b.spend(cost)
 		count--
-	}
+		return count == 0
+	})
 
 	return origCount - count
 }
 
 // TODO: BuildUnitsWithAddon
 
-// BuildUnitAt ...
+// BuildUnitAt commands an available producer to use the train ability to build/morph/train/warp a unit at the given location.
+// If the food, mineral, and vespene requirements are not met or no producer was found it does nothing and returns false.
 func (b *Builder) BuildUnitAt(producer api.UnitTypeID, train api.AbilityID, pos api.Point2D) bool {
 	// Check if we can afford one
 	cost := b.getProductionCost(producer, train)
@@ -86,16 +90,17 @@ func (b *Builder) BuildUnitAt(producer api.UnitTypeID, train api.AbilityID, pos 
 		return false
 	}
 
-	var i int
-	u := b.getNextProducer(&i, producer)
-	if u == nil {
-		return false
-	}
+	// Find the next available producer
+	return b.units.Self[producer].EachUntil(func(u Unit) bool {
+		if u.BuildProgress < 1 || (len(u.Orders) > 0 && u.IsStructure()) {
+			return false
+		}
 
-	// Produce the unit and adjust available resources
-	b.actions.UnitCommandAtPos(u, train, &pos)
-	b.spend(cost)
-	return true
+		// Produce the unit and adjust available resources
+		u.OrderPos(train, &pos)
+		b.spend(cost)
+		return true
+	})
 }
 
 func (b *Builder) getProductionCost(producerType api.UnitTypeID, train api.AbilityID) unitCost {
@@ -147,20 +152,4 @@ func (b *Builder) spend(cost unitCost) {
 	b.player.FoodUsed += cost.food
 	b.player.Minerals -= cost.minerals
 	b.player.Vespene -= cost.vespene
-}
-
-func (b *Builder) getNextProducer(i *int, producer api.UnitTypeID) *api.Unit {
-	// Find the next available producer
-	for ; *i < len(b.units.units); *i++ {
-		u := b.units.units[*i]
-		if u.Alliance != api.Alliance_Self {
-			continue
-		}
-		// TODO: Take reactors into accountfor len(u.Orders)? u.AddOnTag -> Unit -> isReactor
-		if u.UnitType == producer && u.BuildProgress == 1 && (len(u.Orders) == 0 || IsWorker(b.units.wrap(u))) {
-			*i++
-			return u
-		}
-	}
-	return nil
 }
