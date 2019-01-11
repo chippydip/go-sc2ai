@@ -9,9 +9,13 @@ import (
 
 // Actions provides convenience methods for queueing actions to be sent in a batch.
 type Actions struct {
-	info    client.AgentInfo
-	actions []*api.Action
+	info         client.AgentInfo
+	actions      []*api.Action
+	errorHandler ActionErrorHandler
 }
+
+// ActionErrorHandler is the handler function type for action errors.
+type ActionErrorHandler func(action *api.Action, result api.ActionResult)
 
 // NewActions creates a new Actions manager. It's Send() method is registered to be
 // automatcially called before each client Step().
@@ -21,6 +25,18 @@ func NewActions(info client.AgentInfo) *Actions {
 	return a
 }
 
+// OnActionError sets a handler function that will be called whenever an action errors.
+func (a *Actions) OnActionError(handler ActionErrorHandler) {
+	a.errorHandler = handler
+}
+
+// LogActionErrors registers an error handler that will log the error.
+func (a *Actions) LogActionErrors() {
+	a.OnActionError(func(a *api.Action, r api.ActionResult) {
+		log.Print("ActionError: ", r, a)
+	})
+}
+
 // Send is called automatically to submit queued actions before each Step(). It may also be
 // called manually at any point to send all queued actions immediately.
 func (a *Actions) Send() {
@@ -28,9 +44,11 @@ func (a *Actions) Send() {
 		return
 	}
 
-	for i, r := range a.info.SendActions(a.actions) {
-		if r != api.ActionResult_Success {
-			log.Print("ActionError: ", r, a.actions[i])
+	if a.errorHandler != nil {
+		for i, r := range a.info.SendActions(a.actions) {
+			if r != api.ActionResult_Success {
+				a.errorHandler(a.actions[i], r)
+			}
 		}
 	}
 	a.actions = nil

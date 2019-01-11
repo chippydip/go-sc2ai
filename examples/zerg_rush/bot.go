@@ -24,6 +24,7 @@ type bot struct {
 
 func runAgent(info client.AgentInfo) {
 	bot := bot{Bot: botutil.NewBot(info)}
+	bot.LogActionErrors()
 
 	bot.init()
 	for bot.IsInGame() {
