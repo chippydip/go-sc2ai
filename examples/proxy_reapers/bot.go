@@ -1,216 +1,289 @@
 package main
 
 import (
+	"log"
+
 	"github.com/chippydip/go-sc2ai/api"
+	"github.com/chippydip/go-sc2ai/botutil"
+	"github.com/chippydip/go-sc2ai/client"
 	"github.com/chippydip/go-sc2ai/enums/ability"
 	"github.com/chippydip/go-sc2ai/enums/terran"
 	"github.com/chippydip/go-sc2ai/enums/zerg"
+	"github.com/chippydip/go-sc2ai/search"
 )
 
-func (bot *proxyReapers) initLocations() {
-	// My CC is on start position
-	bot.myStartLocation = bot.units[terran.CommandCenter].First().Pos.ToPoint2D()
-	bot.enemyStartLocation = *bot.info.GameInfo().StartRaw.StartLocations[0]
+type bot struct {
+	*botutil.Bot
+
+	myStartLocation    api.Point2D
+	homeMineral        botutil.Unit
+	enemyStartLocation api.Point2D
+	baseLocations      []api.Point2D
+
+	positionsForSupplies []api.Point2D
+	positionsForBarracks api.Point2D
+	barracksQuery        botutil.Query
+
+	builder1 api.UnitTag
+	builder2 api.UnitTag
+	retreat  map[api.UnitTag]bool
 }
 
-func (bot *proxyReapers) findBuildingsPositions() {
-	homeMinerals := bot.mineralFields.Units().CloserThan(10, bot.myStartLocation)
+func runAgent(info client.AgentInfo) {
+	bot := bot{Bot: botutil.NewBot(info)}
+	bot.LogActionErrors()
+
+	bot.init()
+	for bot.IsInGame() {
+		bot.strategy()
+		bot.tactics()
+
+		if err := bot.Step(1); err != nil {
+			log.Print(err)
+			break
+		}
+	}
+}
+
+func (bot *bot) init() {
+	bot.initLocations()
+	for _, uc := range search.CalculateExpansionLocations(bot.Bot, false) {
+		bot.baseLocations = append(bot.baseLocations, uc.Center())
+	}
+	bot.findBuildingsPositions()
+	bot.retreat = map[api.UnitTag]bool{}
+
+	// Send a friendly hello
+	bot.Chat("(glhf)")
+}
+
+func (bot *bot) initLocations() {
+	// My CC is on start position
+	bot.myStartLocation = bot.Self[terran.CommandCenter].First().Pos2D()
+	bot.enemyStartLocation = *bot.GameInfo().StartRaw.StartLocations[0]
+}
+
+func (bot *bot) findBuildingsPositions() {
+	homeMinerals := bot.Neutral.Minerals().CloserThan(10, bot.myStartLocation)
 	if homeMinerals.Len() == 0 {
 		return // This should not happen
 	}
-	vec := SquareDirection(homeMinerals.Center().VecTo(bot.myStartLocation))
-	pos := bot.myStartLocation.Add(vec.Mul(3.5))
+
+	// Pick locations for supply depots
+	pos := bot.myStartLocation.Offset(homeMinerals.Center(), -6)
 	bot.positionsForSupplies = append(bot.positionsForSupplies, pos)
-	bot.positionsForSupplies = append(bot.positionsForSupplies, Neighbours4(pos, 2)...)
+	bot.positionsForSupplies = append(bot.positionsForSupplies, neighbours8(pos, 2)...)
 
+	// Determine proxy location
 	pos = bot.enemyStartLocation.Offset(bot.myStartLocation, 25)
-	pos = ClosestToP2D(bot.baseLocations, pos).Offset(bot.myStartLocation, 1)
+	pos = closestToPos(bot.baseLocations, pos).Offset(bot.myStartLocation, 1)
+	bot.positionsForBarracks = pos
 
-	pfb := []*api.RequestQueryBuildingPlacement{{
-		AbilityId: ability.Build_Barracks,
-		TargetPos: &pos}}
-	for _, np := range Neighbours8(pos, 4) {
-		if bot.isBuildable(np) {
-			npc := np // Because you can't just pass address, you need copy of value
-			pfb = append(pfb, &api.RequestQueryBuildingPlacement{
-				AbilityId: ability.Build_Barracks,
-				TargetPos: &npc})
-		}
-	}
-	resp := bot.info.Query(api.RequestQuery{
-		Placements:                 pfb,
-		IgnoreResourceRequirements: true})
+	// Build a re-usable query to check if we can build barracks
+	bot.barracksQuery = botutil.NewQuery(bot)
+	bot.barracksQuery.IgnoreResourceRequirements()
 
-	for key, result := range resp.Placements {
-		if result.Result == api.ActionResult_Success {
-			bot.positionsForBarracks = append(bot.positionsForBarracks, *pfb[key].TargetPos)
-		}
+	bot.barracksQuery.Placement(ability.Build_Barracks, pos)
+	for _, np := range neighbours8(pos, 4) {
+		bot.barracksQuery.Placement(ability.Build_Barracks, np)
 	}
 }
 
-func (bot *proxyReapers) getSCV() *Unit {
-	return bot.units[terran.SCV].FirstFiltered(func(unit *Unit) bool { return unit.IsGathering() })
+func (bot *bot) getSCV() botutil.Unit {
+	return bot.Self[terran.SCV].Choose(func(u botutil.Unit) bool { return u.IsGathering() }).First()
 }
 
-func (bot *proxyReapers) strategy() {
-	// Buildings
-	suppliesCount := bot.units.OfType(terran.SupplyDepot, terran.SupplyDepotLowered).Len()
-	if bot.CanBuy(ability.Build_SupplyDepot) && bot.orders[ability.Build_SupplyDepot] == 0 &&
-		suppliesCount < len(bot.positionsForSupplies) && bot.foodLeft < 6 {
-		pos := bot.positionsForSupplies[suppliesCount]
-		if scv := bot.getSCV(); scv != nil {
-			bot.unitCommandTargetPos(scv, ability.Build_SupplyDepot, pos, false)
+func (bot *bot) strategy() {
+	// Update the home mineral (in case the old one mined out)
+	bot.homeMineral = bot.Neutral.Minerals().CloserThan(10, bot.myStartLocation).First()
+
+	// Build supply depots as needed
+	depotCount := bot.Self.Count(terran.SupplyDepot) + bot.Self.Count(terran.SupplyDepotLowered)
+	if bot.FoodLeft() < 6 && bot.Self.CountInProduction(terran.SupplyDepot) == 0 && depotCount < len(bot.positionsForSupplies) {
+		pos := bot.positionsForSupplies[depotCount]
+		if scv := bot.getSCV(); !scv.IsNil() {
+			if !scv.BuildUnitAt(ability.Build_SupplyDepot, pos) {
+				return
+			}
 		}
 	}
-	raxPending := bot.units[terran.Barracks].Len()
-	if bot.CanBuy(ability.Build_Barracks) && raxPending < 3 && len(bot.positionsForBarracks) > raxPending {
-		pos := bot.positionsForBarracks[raxPending]
-		scv := bot.units[terran.SCV].ByTag(bot.builder2)
-		if raxPending == 0 || raxPending == 2 {
-			scv = bot.units[terran.SCV].ByTag(bot.builder1)
+
+	// Build barracks
+	barracksCount := bot.Self.Count(terran.Barracks)
+	if barracksCount < 4 {
+		var scv botutil.Unit
+		if barracksCount == 0 || barracksCount == 2 {
+			// Get the builder for barracks 0 and 2
+			scv = bot.UnitByTag(bot.builder1)
+			if scv.IsNil() && bot.builder1 != 0 {
+				scv = bot.getSCV()
+				if !scv.IsNil() {
+					bot.builder1 = scv.Tag
+				}
+			}
+		} else {
+			// Get the builder for barracks 1 and 3
+			scv = bot.UnitByTag(bot.builder2)
+			if scv.IsNil() && bot.builder2 != 0 {
+				scv = bot.getSCV()
+				if !scv.IsNil() {
+					bot.builder2 = scv.Tag
+				}
+			}
 		}
-		if scv == nil {
-			scv = bot.getSCV()
+		if !scv.IsNil() {
+			// Build the barracks
+			if scv.Pos2D().Distance2(bot.positionsForBarracks) > 25 {
+				// Move closer first to bust the fog
+				scv.OrderPos(ability.Move, &bot.positionsForBarracks)
+			} else {
+				// Query target build locations and use the first one that's available
+				results := bot.barracksQuery.Execute()
+				for i, result := range results.Placements() {
+					if result.Result == api.ActionResult_Success {
+						scv.BuildUnitAt(ability.Build_Barracks, *results.PlacementQuery(i).TargetPos)
+						break
+					}
+				}
+			}
 		}
-		if scv != nil {
-			bot.unitCommandTargetPos(scv, ability.Build_Barracks, pos, false)
-		}
-		return
 	}
-	if bot.CanBuy(ability.Build_Refinery) && (raxPending == 1 && bot.units[terran.Refinery].Len() == 0 ||
-		raxPending == 3 && bot.units[terran.Refinery].Len() == 1) {
+
+	// Build a refinery for every two barracks
+	refineryCount := bot.Self.Count(terran.Refinery)
+	if refineryCount < (barracksCount+1)/2 {
 		// Find first geyser that is close to my base, but it doesn't have Refinery on top of it
-		geyser := bot.vespeneGeysers.Units().CloserThan(10, bot.myStartLocation).FirstFiltered(func(unit *Unit) bool {
-			return bot.units[terran.Refinery].CloserThan(1, unit.Pos.ToPoint2D()).Len() == 0
-		})
-		if scv := bot.getSCV(); scv != nil && geyser != nil {
-			bot.unitCommandTargetTag(scv, ability.Build_Refinery, geyser.Tag, false)
+		if geyser := bot.Neutral.Vespene().CloserThan(10, bot.myStartLocation).Choose(func(u botutil.Unit) bool {
+			return bot.Self[terran.Refinery].CloserThan(1, u.Pos2D()).First().IsNil()
+		}).First(); !geyser.IsNil() {
+			if scv := bot.getSCV(); !scv.IsNil() && !scv.BuildUnitOn(ability.Build_Refinery, geyser) {
+				return
+			}
 		}
 	}
 
 	// Morph
-	cc := bot.units[terran.CommandCenter].
-		FirstFiltered(func(unit *Unit) bool { return unit.IsReady() && unit.IsIdle() })
 	// bot.CanBuy(ability.Morph_OrbitalCommand) requires 550 minerals?
-	if cc != nil && bot.orders[ability.Train_Reaper] >= 2 && bot.minerals >= 150 {
-		bot.unitCommand(cc, ability.Morph_OrbitalCommand)
+	if bot.Self.CountInProduction(terran.Reaper) >= 2 && bot.Minerals > 150 {
+		if cc := bot.Self[terran.CommandCenter].Choose(func(u botutil.Unit) bool {
+			return u.IsFinished() && u.IsIdle()
+		}).First(); !cc.IsNil() {
+			cc.Order(ability.Morph_OrbitalCommand)
+		}
 	}
-	if supply := bot.units[terran.SupplyDepot].First(); supply != nil {
-		bot.unitCommand(supply, ability.Morph_SupplyDepot_Lower)
+	if supply := bot.Self[terran.SupplyDepot].First(); !supply.IsNil() && supply.IsFinished() {
+		supply.Order(ability.Morph_SupplyDepot_Lower)
 	}
 
 	// Cast
-	cc = bot.units[terran.OrbitalCommand].FirstFiltered(func(unit *Unit) bool { return unit.Energy >= 50 })
-	if cc != nil {
-		if homeMineral := bot.mineralFields.Units().CloserThan(10, bot.myStartLocation).First(); homeMineral != nil {
-			bot.unitCommandTargetTag(cc, ability.Effect_CalldownMULE, homeMineral.Tag, false)
+	if cc := bot.Self[terran.OrbitalCommand].HasEnergy(50).First(); !cc.IsNil() {
+		if !bot.homeMineral.IsNil() {
+			cc.OrderTarget(ability.Effect_CalldownMULE, bot.homeMineral)
 		}
 	}
 
 	// Units
-	ccs := bot.units.OfType(terran.CommandCenter, terran.OrbitalCommand, terran.PlanetaryFortress)
-	cc = ccs.FirstFiltered(func(unit *Unit) bool { return unit.IsReady() && unit.IsIdle() })
-	if cc != nil && bot.units[terran.SCV].Len() < 20 && bot.CanBuy(ability.Train_SCV) {
-		bot.unitCommand(cc, ability.Train_SCV)
-		return
-	}
-	if rax := bot.units[terran.Barracks].
-		FirstFiltered(func(unit *Unit) bool { return unit.IsReady() && unit.IsIdle() }); rax != nil && bot.CanBuy(ability.Train_Reaper) {
-		bot.unitCommand(rax, ability.Train_Reaper)
-	}
-}
-
-func (bot *proxyReapers) tactics() {
-	step := bot.info.Observation().Observation.GameLoop
-	// If there is idle scv, order it to gather minerals
-	if scv := bot.units[terran.SCV].FirstFiltered(func(unit *Unit) bool { return unit.IsIdle() }); scv != nil {
-		if homeMineral := bot.mineralFields.Units().CloserThan(10, bot.myStartLocation).First(); homeMineral != nil {
-			bot.unitCommandTargetTag(scv, ability.Harvest_Gather_SCV, homeMineral.Tag, false)
+	if bot.Self.CountAll(terran.SCV) < 18 {
+		if !bot.BuildUnit(terran.OrbitalCommand, ability.Train_SCV) &&
+			!bot.BuildUnit(terran.CommandCenter, ability.Train_SCV) &&
+			!bot.BuildUnit(terran.PlanetaryFortress, ability.Train_SCV) {
+			// do nothing
 		}
 	}
+	bot.BuildUnits(terran.Barracks, ability.Train_Reaper, 10)
+}
+
+func (bot *bot) tactics() {
+	step := bot.GameLoop()
+
+	// If there is idle scv, order it to gather minerals
+	if !bot.homeMineral.IsNil() {
+		idleSCVs := bot.Self[terran.SCV].Choose(func(u botutil.Unit) bool { return u.IsIdle() })
+		bot.UnitsOrderTarget(idleSCVs, ability.Harvest_Gather, bot.homeMineral)
+	}
+
 	// Don't issue orders too often, or game won't be able to react
 	if step%6 == 0 {
 		// If there is ready unsaturated refinery and an scv gathering, send it there
-		refinery := bot.units[terran.Refinery].
-			FirstFiltered(func(unit *Unit) bool { return unit.IsReady() && unit.AssignedHarvesters < 3 })
-		if refinery != nil {
-			if scv := bot.getSCV(); scv != nil {
-				bot.unitCommandTargetTag(scv, ability.Harvest_Gather_SCV, refinery.Tag, false)
+		if refinery := bot.Self[terran.Refinery].Choose(func(u botutil.Unit) bool {
+			return u.IsFinished() && u.AssignedHarvesters < 3
+		}).First(); !refinery.IsNil() {
+			if scv := bot.getSCV(); !scv.IsNil() {
+				scv.OrderTarget(ability.Harvest_Gather, refinery)
 			}
 		}
 	}
 
 	if step == 224 { // 10 sec
-		scv := bot.getSCV()
-		pos := bot.positionsForBarracks[0]
-		bot.unitCommandTargetPos(scv, ability.Move, pos, false)
-		bot.builder1 = scv.Tag
+		if scv := bot.getSCV(); !scv.IsNil() {
+			scv.OrderPos(ability.Move, &bot.positionsForBarracks)
+			bot.builder1 = scv.Tag
+		}
 	}
 	if step == 672 { // 30 sec
-		scv := bot.getSCV()
-		pos := bot.positionsForBarracks[1]
-		bot.unitCommandTargetPos(scv, ability.Move, pos, false)
-		bot.builder2 = scv.Tag
-	}
-
-	bot.okTargets = nil
-	bot.goodTargets = nil
-	for _, units := range bot.enemyUnits {
-		for _, unit := range units {
-			if !unit.IsFlying && unit.IsNot(zerg.Larva, zerg.Egg) {
-				bot.okTargets.Add(unit)
-				if !unit.IsStructure() {
-					bot.goodTargets.Add(unit)
-				}
-			}
+		if scv := bot.getSCV(); !scv.IsNil() {
+			scv.OrderPos(ability.Move, &bot.positionsForBarracks)
+			bot.builder2 = scv.Tag
 		}
 	}
 
-	reapers := bot.units[terran.Reaper]
-	if len(bot.okTargets) == 0 {
-		bot.unitsCommandTargetPos(reapers, ability.Attack, bot.enemyStartLocation)
-	} else {
-		for _, reaper := range reapers {
-			// retreat
-			if bot.retreat[reaper.Tag] && reaper.Health > 50 {
-				delete(bot.retreat, reaper.Tag)
-			}
-			if reaper.Health < 21 || bot.retreat[reaper.Tag] {
-				bot.retreat[reaper.Tag] = true
-				bot.unitCommandTargetPos(reaper, ability.Move, bot.positionsForBarracks[0], false)
-				continue
-			}
+	// Attack!
+	reapers := bot.Self[terran.Reaper]
+	if reapers.Len() == 0 {
+		return
+	}
 
-			// Keep range
-			// Weapon is recharging
-			if reaper.WeaponCooldown > 1 {
-				// There is an enemy
-				if closestEnemy := bot.goodTargets.ClosestTo(reaper.Pos.ToPoint2D()); closestEnemy != nil {
-					// And it is closer than shooting distance - 0.5
-					if reaper.InRange(closestEnemy, -0.5) {
-						// Retreat a little
-						bot.unitCommandTargetPos(reaper, ability.Move, bot.positionsForBarracks[0], false)
-						continue
-					}
-				}
-			}
+	targets := bot.getTargets()
+	if targets.Len() == 0 {
+		bot.UnitsOrderPos(reapers, ability.Attack, &bot.enemyStartLocation)
+		return
+	}
 
-			// Attack
-			if len(bot.goodTargets) > 0 {
-				target := bot.goodTargets.ClosestTo(reaper.Pos.ToPoint2D())
-				// Snapshots couldn't be targeted using tags
-				if reaper.Pos.ToPoint2D().Distance(target.Pos.ToPoint2D()) > 4 &&
-					target.DisplayType != api.DisplayType_Snapshot {
-					// If target is far, attack it as unit, ling will run ignoring everything else
-					bot.unitCommandTargetTag(reaper, ability.Attack, target.Tag, false)
-				} else {
-					// Attack as position, ling will choose best target around
-					bot.unitCommandTargetPos(reaper, ability.Attack, target.Pos.ToPoint2D(), false)
-				}
-			} else {
-				target := bot.okTargets.ClosestTo(reaper.Pos.ToPoint2D())
-				bot.unitCommandTargetPos(reaper, ability.Attack, target.Pos.ToPoint2D(), false)
+	reapers.Each(func(reaper botutil.Unit) {
+		// retreat
+		if bot.retreat[reaper.Tag] && reaper.Health > 50 {
+			delete(bot.retreat, reaper.Tag)
+		}
+		if reaper.Health < 21 || bot.retreat[reaper.Tag] {
+			bot.retreat[reaper.Tag] = true
+			reaper.OrderPos(ability.Move, &bot.positionsForBarracks)
+			return
+		}
+
+		target := targets.ClosestTo(reaper.Pos2D())
+
+		// Keep range
+		// Weapon is recharging
+		if reaper.WeaponCooldown > 1 {
+			// Enemy is closer than shooting distance - 0.5
+			if reaper.InRange(target, -0.5) {
+				// Retreat a little
+				reaper.OrderPos(ability.Move, &bot.positionsForBarracks)
+				return
 			}
 		}
+
+		// Attack
+		if reaper.Pos2D().Distance2(target.Pos2D()) > 4*4 {
+			// If target is far, attack it as unit, ling will run ignoring everything else
+			reaper.OrderTarget(ability.Attack, target)
+		} else if target.UnitType == zerg.ChangelingMarine || target.UnitType == zerg.ChangelingMarineShield {
+			// Must specificially attack changelings, attack move is not enough
+			reaper.OrderTarget(ability.Attack, target)
+		} else {
+			// Attack as position, ling will choose best target around
+			pos := target.Pos2D()
+			reaper.OrderPos(ability.Attack, &pos)
+		}
+	})
+}
+
+func (bot *bot) getTargets() botutil.Units {
+	// Prioritize things that can fight back
+	if targets := bot.Enemy.Ground().CanAttack().All(); targets.Len() > 0 {
+		return targets
 	}
+
+	// Otherwise just kill all the buildings
+	return bot.Enemy.Ground().Structures().All()
 }

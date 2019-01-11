@@ -26,15 +26,7 @@ func NewBot(info client.AgentInfo) *Bot {
 	return bot
 }
 
-// NewBotTemp creates a new temporariy bot without registering for step updates.
-func NewBotTemp(info client.AgentInfo) *Bot {
-	return NewBot(&tempAgentInfo{info})
+// GameLoop ...
+func (bot *Bot) GameLoop() uint32 {
+	return bot.Observation().GetObservation().GetGameLoop()
 }
-
-// tempAgentInfo is a wrapper that disables event registration.
-type tempAgentInfo struct {
-	client.AgentInfo
-}
-
-func (info *tempAgentInfo) OnBeforeStep(func()) {}
-func (info *tempAgentInfo) OnAfterStep(func())  {}
