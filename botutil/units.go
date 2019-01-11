@@ -195,6 +195,27 @@ func (units Units) ClosestTo(pos api.Point2D) Unit {
 	return closest
 }
 
+// CloserThan returns all units less than or equal to dist from pos.
+func (units Units) CloserThan(dist float32, pos api.Point2D) Units {
+	dist2 := dist * dist
+	return units.Choose(func(u Unit) bool {
+		return u.Pos2D().Distance2(pos) <= dist2
+	})
+}
+
+// Center returns the average location of the units.
+func (units Units) Center() api.Point2D {
+	sum, n := api.Vec2D{}, 0
+	units.Each(func(u Unit) {
+		sum = sum.Add(api.Vec2D(u.Pos2D()))
+		n++
+	})
+	if n == 0 {
+		return api.Point2D{}
+	}
+	return api.Point2D(sum.Div(float32(n)))
+}
+
 // Tagged ...
 func (units Units) Tagged(m map[api.UnitTag]bool) Units {
 	return units.Choose(func(u Unit) bool {

@@ -34,7 +34,7 @@ type UnitContext struct {
 	raw     []*api.Unit
 	data    []*api.UnitTypeData
 	wrapped []Unit
-	byTag   map[api.UnitTag]*api.Unit
+	byTag   map[api.UnitTag]*Unit
 	loop    uint32
 
 	groups [28]int
@@ -50,7 +50,7 @@ type UnitContext struct {
 // NewUnitContext creates a new context and registers it to update after each step.
 func NewUnitContext(info client.AgentInfo, bot *Bot) *UnitContext {
 	u := &UnitContext{
-		byTag:   map[api.UnitTag]*api.Unit{},
+		byTag:   map[api.UnitTag]*Unit{},
 		Self:    self{},
 		Ally:    ally{},
 		Enemy:   enemy{},
@@ -93,7 +93,6 @@ func (ctx *UnitContext) update() {
 
 	// Sort the units in place so common queries can use direct slices and avoid allocation
 	for _, u := range ctx.raw {
-		ctx.byTag[u.Tag] = u
 		setSortTag(u, ctx.data[u.UnitType])
 	}
 	sortUnits(&ctx.raw)
@@ -193,6 +192,7 @@ func (g *grouper) group(ctx *UnitContext) {
 
 		// Wrap the unit
 		ctx.wrapped[i] = Unit{ctx, u, ctx.data[u.UnitType]}
+		ctx.byTag[u.Tag] = &ctx.wrapped[i]
 	}
 	g.updateMap(ctx, len(ctx.raw))
 	g.updateGroups(ctx, len(ctx.raw), len(ctx.groups)-1)
@@ -256,4 +256,12 @@ func (ctx *UnitContext) alliance(index api.UnitTypeID) map[api.UnitTypeID]Units 
 // WasObserved returns true if a unit with the given tag was inlucded in the last observation.
 func (ctx *UnitContext) WasObserved(tag api.UnitTag) bool {
 	return ctx.byTag[tag] != nil
+}
+
+// UnitByTag returns a the unit with the given tag if it was in included in the last observation.
+func (ctx *UnitContext) UnitByTag(tag api.UnitTag) Unit {
+	if ptr := ctx.byTag[tag]; ptr != nil {
+		return *ptr
+	}
+	return Unit{}
 }
