@@ -240,7 +240,7 @@ func (units Units) HasEnergy(energy float32) Units {
 // IsBuilt ...
 func (units Units) IsBuilt() Units {
 	return units.Choose(func(u Unit) bool {
-		return u.BuildProgress == 1
+		return u.IsBuilt()
 	})
 }
 

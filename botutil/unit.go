@@ -77,8 +77,8 @@ func (u Unit) Pos2D() api.Point2D {
 	return u.Pos.ToPoint2D()
 }
 
-// IsFinished returns true if the unit is done building.
-func (u Unit) IsFinished() bool {
+// IsBuilt returns true if the unit is done building.
+func (u Unit) IsBuilt() bool {
 	return u.BuildProgress == 1
 }
 

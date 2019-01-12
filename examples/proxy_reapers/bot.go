@@ -166,12 +166,12 @@ func (bot *bot) strategy() {
 	// bot.CanBuy(ability.Morph_OrbitalCommand) requires 550 minerals?
 	if bot.Self.CountInProduction(terran.Reaper) >= 2 && bot.Minerals > 150 {
 		if cc := bot.Self[terran.CommandCenter].Choose(func(u botutil.Unit) bool {
-			return u.IsFinished() && u.IsIdle()
+			return u.IsBuilt() && u.IsIdle()
 		}).First(); !cc.IsNil() {
 			cc.Order(ability.Morph_OrbitalCommand)
 		}
 	}
-	if supply := bot.Self[terran.SupplyDepot].First(); !supply.IsNil() && supply.IsFinished() {
+	if supply := bot.Self[terran.SupplyDepot].First(); !supply.IsNil() && supply.IsBuilt() {
 		supply.Order(ability.Morph_SupplyDepot_Lower)
 	}
 
@@ -206,7 +206,7 @@ func (bot *bot) tactics() {
 	if step%6 == 0 {
 		// If there is ready unsaturated refinery and an scv gathering, send it there
 		if refinery := bot.Self[terran.Refinery].Choose(func(u botutil.Unit) bool {
-			return u.IsFinished() && u.AssignedHarvesters < 3
+			return u.IsBuilt() && u.AssignedHarvesters < 3
 		}).First(); !refinery.IsNil() {
 			if scv := bot.getSCV(); !scv.IsNil() {
 				scv.OrderTarget(ability.Harvest_Gather, refinery)
