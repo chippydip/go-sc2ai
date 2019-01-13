@@ -39,26 +39,26 @@ func Cluster(units botutil.Units, distance float32) []UnitCluster {
 // UnitCluster is a cluster of units and the associated center of mass.
 type UnitCluster struct {
 	sum   api.Vec2D
-	units botutil.Units
+	units []botutil.Unit
 }
 
 // Add adds a new unit to the cluster and updates the center of mass.
 func (c *UnitCluster) Add(u botutil.Unit) {
 	c.sum = c.sum.Add(api.Vec2D(u.Pos2D()))
-	c.units.Append(u)
+	c.units = append(c.units, u)
 }
 
 // Center is the center of mass of the cluster.
 func (c *UnitCluster) Center() api.Point2D {
-	return api.Point2D(c.sum.Div(float32(c.units.Len())))
+	return api.Point2D(c.sum.Div(float32(len(c.units))))
 }
 
 // Units is the list of units in the cluster.
-func (c *UnitCluster) Units() *botutil.Units {
-	return &c.units
+func (c *UnitCluster) Units() []botutil.Unit {
+	return c.units
 }
 
 // Count returns the number of units in the cluster.
 func (c *UnitCluster) Count() int {
-	return c.units.Len()
+	return len(c.units)
 }

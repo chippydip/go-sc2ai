@@ -3,6 +3,7 @@ package botutil
 import (
 	"github.com/chippydip/go-sc2ai/api"
 	"github.com/chippydip/go-sc2ai/enums/ability"
+	"github.com/chippydip/go-sc2ai/enums/unit"
 )
 
 // Unit combines the api Unit with it's UnitTypeData and adds some additional convenience methods.
@@ -42,31 +43,6 @@ func (u Unit) HasAttribute(attr api.Attribute) bool {
 	return false
 }
 
-// IsSelf checks if this is our unit.
-func (u Unit) IsSelf() bool {
-	return u.Alliance == api.Alliance_Self
-}
-
-// IsEnemy checks if this is an enemy unit.
-func (u Unit) IsEnemy() bool {
-	return u.Alliance == api.Alliance_Enemy
-}
-
-// IsType checks if the unit is the specified type.
-func (u Unit) IsType(unitType api.UnitTypeID) bool {
-	return u.UnitType == unitType
-}
-
-// IsAnyType checks if the unit is one of the given types.
-func (u Unit) IsAnyType(types ...api.UnitTypeID) bool {
-	for _, unitType := range types {
-		if u.UnitType == unitType {
-			return true
-		}
-	}
-	return false
-}
-
 // IsStructure checks if the unit is a building (has the Structure attribute).
 func (u Unit) IsStructure() bool {
 	return u.HasAttribute(api.Attribute_Structure)
@@ -87,18 +63,49 @@ func (u Unit) IsIdle() bool {
 	return len(u.Orders) == 0
 }
 
-// TODO: Generate command alias maps so this can be more general?
-var isHarvestGather = map[api.AbilityID]bool{
-	ability.Harvest_Gather:       true,
-	ability.Harvest_Gather_Drone: true,
-	ability.Harvest_Gather_Mule:  true,
-	ability.Harvest_Gather_Probe: true,
-	ability.Harvest_Gather_SCV:   true,
+// IsTownHall return true if the unit is a Nexus/CC/OC/PF/Hatch/Lair/Hive.
+func (u Unit) IsTownHall() bool {
+	switch u.UnitType {
+	case unit.Protoss_Nexus,
+		unit.Terran_CommandCenter,
+		unit.Terran_OrbitalCommand,
+		unit.Terran_PlanetaryFortress,
+		unit.Zerg_Hatchery,
+		unit.Zerg_Lair:
+		return true
+	}
+	return false
+}
+
+// IsHarvester returns true if the unit is a SCV/Probe/Drone.
+func (u Unit) IsHarvester() bool {
+	switch u.UnitType {
+	case unit.Protoss_Probe,
+		unit.Terran_SCV,
+		unit.Zerg_Drone:
+		return true
+	}
+	return false
 }
 
 // IsGathering returns true if the unit is currently gathering.
 func (u Unit) IsGathering() bool {
-	return !u.IsIdle() && isHarvestGather[u.Orders[0].AbilityId]
+	return !u.IsIdle() && ability.Remap(u.Orders[0].AbilityId) == ability.Harvest_Gather
+}
+
+// HasBuff ...
+func (u Unit) HasBuff(buffID api.BuffID) bool {
+	for _, b := range u.BuffIds {
+		if b == buffID {
+			return true
+		}
+	}
+	return false
+}
+
+// HasEnergy ...
+func (u Unit) HasEnergy(energy float32) bool {
+	return u.Energy >= energy
 }
 
 // WeaponRange returns the maximum range to attack the target from. If

@@ -55,7 +55,7 @@ func CalculateExpansionLocations(bot *botutil.Bot, debug bool) []UnitCluster {
 		}
 
 		// Update the Center to be the detected location rather than the actual CoM (just don't add new units)
-		clusters[i].sum = api.Vec2D{X: float32(xBest) + 0.5, Y: float32(yBest) + 0.5}.Mul(float32(cluster.units.Len()))
+		clusters[i].sum = api.Vec2D{X: float32(xBest) + 0.5, Y: float32(yBest) + 0.5}.Mul(float32(len(cluster.units)))
 	}
 
 	if debug {

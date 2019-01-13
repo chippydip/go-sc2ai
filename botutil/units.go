@@ -13,16 +13,11 @@ type Units struct {
 	filter func(Unit) bool
 }
 
-// Init ...
-func (units *Units) Init(ctx *UnitContext, capacity int) {
-	*units = Units{ctx, make([]Unit, 0, capacity), nil}
-}
-
-func (units *Units) applyFilter() {
+func (units *Units) applyFilter(extra int) {
 	if len(units.raw) == 0 {
 		units.raw = nil // make sure it's actually nil
 	} else if units.filter != nil {
-		raw := make([]Unit, 0, len(units.raw))
+		raw := make([]Unit, 0, len(units.raw)+extra)
 		for _, u := range units.raw {
 			if units.filter(u) {
 				raw = append(raw, u)
@@ -36,8 +31,8 @@ func (units *Units) applyFilter() {
 	units.filter = nil
 }
 
-func (units *Units) ensureOwns() {
-	units.applyFilter()
+func (units *Units) ensureOwns(extra int) {
+	units.applyFilter(extra)
 
 	if len(units.raw) == 0 {
 		return // we may not even have a ctx to compare to
@@ -45,7 +40,7 @@ func (units *Units) ensureOwns() {
 
 	// Don't mess the the ctx's slice
 	if sliceID(units.raw) == sliceID(units.ctx.wrapped) {
-		tmp := make([]Unit, len(units.raw), 2*len(units.raw))
+		tmp := make([]Unit, len(units.raw), len(units.raw)+extra)
 		copy(tmp, units.raw)
 		units.raw = tmp
 	}
@@ -58,32 +53,44 @@ func sliceID(s []Unit) *Unit {
 	return nil
 }
 
+// Cache applies any filtering and returns a struct that owns the underlying Unit slice.
+func (units Units) Cache() Units {
+	units.ensureOwns(0)
+	return units
+}
+
 // Len returns the length of the underlying slice of units.
-func (units *Units) Len() int {
-	units.applyFilter()
-	return len(units.raw)
+func (units Units) Len() int {
+	if units.filter == nil {
+		return len(units.raw)
+	}
+
+	n := 0
+	for _, u := range units.raw {
+		if units.filter(u) {
+			n++
+		}
+	}
+	return n
 }
 
-// Raw returns the underlying slice of api Units.
-func (units *Units) Raw() []Unit {
-	units.ensureOwns()
-	return units.raw
+// Slice copies the units into a regular slice and returns it.
+func (units Units) Slice() []Unit {
+	return units.Cache().raw
 }
 
-// Append adds the given unit to the slice.
-func (units *Units) Append(u Unit) {
-	units.ensureOwns()
+func (units *Units) append(u Unit) {
+	units.ensureOwns(1)
 	units.ctx = u.ctx // in case unitx.ctx was nil
 	units.raw = append(units.raw, u)
 }
 
-// Concat ...
-func (units *Units) Concat(other *Units) {
+func (units *Units) concat(other *Units) {
 	if len(units.raw) == 0 {
 		*units = *other
 	} else if len(other.raw) > 0 {
-		units.ensureOwns()
-		other.applyFilter()
+		units.ensureOwns(len(other.raw))
+		other.applyFilter(len(other.raw))
 		if len(other.raw) > 0 {
 			units.ctx = other.ctx // in case units.ctx was nil
 			units.raw = append(units.raw, other.raw...)
@@ -91,8 +98,8 @@ func (units *Units) Concat(other *Units) {
 	}
 }
 
-// Tags ...
-func (units *Units) Tags() []api.UnitTag {
+// Tags returns the UnitTags for each unit.
+func (units Units) Tags() []api.UnitTag {
 	tags := make([]api.UnitTag, 0, len(units.raw))
 	for _, u := range units.raw {
 		if units.filter == nil || units.filter(u) {
@@ -102,7 +109,7 @@ func (units *Units) Tags() []api.UnitTag {
 	return tags
 }
 
-// Each ...
+// Each calls f on every unit.
 func (units Units) Each(f func(Unit)) {
 	for _, u := range units.raw {
 		if units.filter == nil || units.filter(u) {
@@ -165,15 +172,9 @@ func (units Units) Drop(filter func(Unit) bool) Units {
 
 // First returns the first unit in the list or a Unit.IsNil() if the list is empty.
 func (units Units) First() Unit {
-	if len(units.raw) > 0 {
-		if units.filter == nil {
-			return units.raw[0]
-		}
-
-		for _, u := range units.raw {
-			if units.filter(u) {
-				return u
-			}
+	for _, u := range units.raw {
+		if units.filter == nil || units.filter(u) {
+			return u
 		}
 	}
 	return Unit{}
@@ -239,8 +240,23 @@ func (units Units) HasEnergy(energy float32) Units {
 
 // IsBuilt ...
 func (units Units) IsBuilt() Units {
+	return units.Choose(Unit.IsBuilt)
+}
+
+// IsIdle ...
+func (units Units) IsIdle() Units {
+	return units.Choose(Unit.IsIdle)
+}
+
+// HasBuff ...
+func (units Units) HasBuff(buffID api.BuffID) Units {
 	return units.Choose(func(u Unit) bool {
-		return u.IsBuilt()
+		for _, b := range u.BuffIds {
+			if b == buffID {
+				return true
+			}
+		}
+		return false
 	})
 }
 
@@ -254,4 +270,14 @@ func (units Units) NoBuff(buffID api.BuffID) Units {
 		}
 		return true
 	})
+}
+
+// IsTownHall ...
+func (units Units) IsTownHall() Units {
+	return units.Choose(Unit.IsTownHall)
+}
+
+// IsHarvester ...
+func (units Units) IsHarvester() Units {
+	return units.Choose(Unit.IsHarvester)
 }

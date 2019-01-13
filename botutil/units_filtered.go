@@ -192,7 +192,7 @@ func (m self) TechAlias(unitType api.UnitTypeID) Units {
 	units, aliases := m[unitType], m[0].ctx.data[unitType].TechAlias
 	for _, alias := range aliases {
 		other := m[alias]
-		units.Concat(&other)
+		units.concat(&other)
 	}
 	return units
 }
