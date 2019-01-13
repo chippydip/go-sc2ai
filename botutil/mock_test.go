@@ -4,6 +4,10 @@ import "github.com/chippydip/go-sc2ai/api"
 
 type mockAgentInfo struct{}
 
+func (a *mockAgentInfo) IsRealtime() bool {
+	return false
+}
+
 func (a *mockAgentInfo) PlayerID() api.PlayerID {
 	panic("Not Implemented")
 }
