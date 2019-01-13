@@ -1,6 +1,8 @@
 package botutil
 
-import "github.com/chippydip/go-sc2ai/api"
+import (
+	"github.com/chippydip/go-sc2ai/api"
+)
 
 const (
 	filterFlying byte = 1 << iota
@@ -93,6 +95,7 @@ func (f filteredUnits) Choose(filter func(Unit) bool) filteredUnits {
 
 func (f filteredUnits) All() Units {
 	var raw []Unit
+	var owned bool
 
 	include, start, ai := false, 0, 8*allianceIndex(f.alliance)
 	for i, ok := range filterToMask(f.bits) {
@@ -118,6 +121,12 @@ func (f filteredUnits) All() Units {
 					}
 				}
 			} else if raw != nil {
+				if !owned {
+					tmp := make([]Unit, len(raw), len(raw)+len(s))
+					copy(tmp, raw)
+					raw = tmp
+					owned = true
+				}
 				raw = append(raw, s...)
 			} else {
 				raw = s
