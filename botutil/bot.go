@@ -7,6 +7,7 @@ import (
 // Bot ...
 type Bot struct {
 	client.AgentInfo
+	GameLoop uint32
 
 	*Player
 	*UnitContext
@@ -23,10 +24,11 @@ func NewBot(info client.AgentInfo) *Bot {
 	bot.UnitContext = NewUnitContext(info, bot)
 	bot.Builder = NewBuilder(info, bot.Player, bot.UnitContext)
 
-	return bot
-}
+	update := func() {
+		bot.GameLoop = bot.Observation().GetObservation().GetGameLoop()
+	}
+	update()
+	bot.OnAfterStep(update)
 
-// GameLoop ...
-func (bot *Bot) GameLoop() uint32 {
-	return bot.Observation().GetObservation().GetGameLoop()
+	return bot
 }

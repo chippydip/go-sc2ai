@@ -194,8 +194,6 @@ func (bot *bot) strategy() {
 }
 
 func (bot *bot) tactics() {
-	step := bot.GameLoop()
-
 	// If there is idle scv, order it to gather minerals
 	if !bot.homeMineral.IsNil() {
 		idleSCVs := bot.Self[terran.SCV].Choose(func(u botutil.Unit) bool { return u.IsIdle() })
@@ -203,7 +201,7 @@ func (bot *bot) tactics() {
 	}
 
 	// Don't issue orders too often, or game won't be able to react
-	if step%6 == 0 {
+	if bot.GameLoop%6 == 0 {
 		// If there is ready unsaturated refinery and an scv gathering, send it there
 		if refinery := bot.Self[terran.Refinery].Choose(func(u botutil.Unit) bool {
 			return u.IsBuilt() && u.AssignedHarvesters < 3
@@ -214,13 +212,13 @@ func (bot *bot) tactics() {
 		}
 	}
 
-	if step == 224 { // 10 sec
+	if bot.GameLoop == 224 { // 10 sec
 		if scv := bot.getSCV(); !scv.IsNil() {
 			scv.OrderPos(ability.Move, &bot.positionsForBarracks)
 			bot.builder1 = scv.Tag
 		}
 	}
-	if step == 672 { // 30 sec
+	if bot.GameLoop == 672 { // 30 sec
 		if scv := bot.getSCV(); !scv.IsNil() {
 			scv.OrderPos(ability.Move, &bot.positionsForBarracks)
 			bot.builder2 = scv.Tag
