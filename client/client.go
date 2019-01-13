@@ -11,7 +11,8 @@ import (
 // Client ...
 type Client struct {
 	connection
-	Agent Agent
+	Agent    Agent
+	realtime bool
 
 	playerID    api.PlayerID
 	gameInfo    *api.ResponseGameInfo
@@ -81,6 +82,7 @@ func (c *Client) CreateGame(mapPath string, players []*api.PlayerSetup, realtime
 	if err != nil {
 		return err
 	}
+	c.realtime = realtime
 
 	if r.Error != api.ResponseCreateGame_nil {
 		return fmt.Errorf("%v: %v", r.Error, r.GetErrorDetails())
@@ -150,7 +152,7 @@ func (c *Client) Step(stepSize int) error {
 	}
 
 	// Step the simulation forward if this isn't in realtime mode
-	if stepSize > 0 {
+	if !c.realtime && stepSize > 0 {
 		if _, err := c.connection.step(api.RequestStep{
 			Count: uint32(stepSize),
 		}); err != nil {
@@ -159,8 +161,14 @@ func (c *Client) Step(stepSize int) error {
 	}
 
 	// Get an updated observation
-	if c.observation, err = c.connection.observation(api.RequestObservation{}); err != nil {
-		return err
+	step := c.observation.GetObservation().GetGameLoop() + uint32(stepSize)
+	for {
+		if c.observation, err = c.connection.observation(api.RequestObservation{}); err != nil {
+			return err
+		}
+		if c.observation.GetObservation().GetGameLoop() >= step {
+			break
+		}
 	}
 
 	// Check for new upgrades

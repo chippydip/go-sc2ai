@@ -21,6 +21,8 @@ func (f AgentFunc) RunAgent(info AgentInfo) {
 
 // AgentInfo ...
 type AgentInfo interface {
+	IsRealtime() bool
+
 	PlayerID() api.PlayerID
 	GameInfo() *api.ResponseGameInfo
 	Data() *api.ResponseData
@@ -38,6 +40,11 @@ type AgentInfo interface {
 
 	OnBeforeStep(func())
 	OnAfterStep(func())
+}
+
+// IsRealtime returns true if the bot was launched in realtime mode.
+func (c *Client) IsRealtime() bool {
+	return c.realtime
 }
 
 // PlayerID ...
