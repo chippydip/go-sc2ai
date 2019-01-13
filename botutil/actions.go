@@ -44,8 +44,9 @@ func (a *Actions) Send() {
 		return
 	}
 
+	results := a.info.SendActions(a.actions)
 	if a.errorHandler != nil {
-		for i, r := range a.info.SendActions(a.actions) {
+		for i, r := range results {
 			if r != api.ActionResult_Success {
 				a.errorHandler(a.actions[i], r)
 			}
