@@ -52,6 +52,8 @@ func dumpAbilities(abilities []*api.AbilityData, units []*api.UnitTypeData) {
 	// Generate the values
 	names := []string{}
 	values := map[string]uint32{}
+	namesMap := map[uint32]string{}
+	idRemaps := map[uint32]uint32{}
 	for _, ability := range abilities {
 		n := byName[ability.FriendlyName]
 		if n == 0 {
@@ -68,6 +70,12 @@ func dumpAbilities(abilities []*api.AbilityData, units []*api.UnitTypeData) {
 
 				names = append(names, name)
 				values[name] = uint32(ability.AbilityId)
+				namesMap[uint32(ability.AbilityId)] = name
+
+				if ability.RemapsToAbilityId != 0 {
+					idRemaps[uint32(ability.AbilityId)] = uint32(ability.RemapsToAbilityId)
+				}
+
 			}
 		}
 	}
@@ -79,6 +87,9 @@ func dumpAbilities(abilities []*api.AbilityData, units []*api.UnitTypeData) {
 
 	// Map to built units
 	mapAbilityToProducedUnit(names, units)
+
+	// Remap abilities to generic versions
+	remapAbilities(idRemaps, namesMap)
 }
 
 func dumpBuffs(buffs []*api.BuffData) {
