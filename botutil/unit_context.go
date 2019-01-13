@@ -150,16 +150,16 @@ func setSortTag(u *api.Unit, d *api.UnitTypeData) {
 		}
 
 		if len(d.Weapons) > 0 {
-			grp = idWeapons - grp // invert unit/structure order for attackers
+			grp = idWeapons - 1 - grp // invert unit/structure order for attackers
 			grp |= idWeapons
 		}
 
 		if u.IsFlying {
-			grp = idFlying - grp // invert order for flying units
+			grp = idFlying - 1 - grp // invert order for flying units
 			grp |= idFlying
 		}
 
-		id |= grp
+		id |= grp & idGroupMask
 	}
 
 	u.UnitType = id
