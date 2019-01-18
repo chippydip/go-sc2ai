@@ -189,10 +189,16 @@ func (m self) Choose(filter func(Unit) bool) filteredUnits {
 }
 
 func (m self) TechAlias(unitType api.UnitTypeID) Units {
-	units, aliases := m[unitType], m[0].ctx.data[unitType].TechAlias
-	for _, alias := range aliases {
-		other := m[alias]
-		units.concat(&other)
+	units := m[unitType]
+	// TODO: Pre-compute this
+	for _, data := range m[0].ctx.data {
+		for _, alias := range data.TechAlias {
+			if alias == unitType {
+				other := m[data.UnitId]
+				units.concat(&other)
+				break
+			}
+		}
 	}
 	return units
 }
