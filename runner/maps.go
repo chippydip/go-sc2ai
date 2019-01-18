@@ -16,13 +16,13 @@ var maps2018s3 = []string{
 }
 
 var maps2018s4 = []string{
+	"AutomatonLE",
 	"BlueshiftLE",
 	"CeruleanFallLE",
-	"ParaSiteLE",
-	"AutomatonLE",
-	"KairosJunctionLE",
-	"PortAleksanderLE",
 	"DarknessSanctuaryLE",
+	"KairosJunctionLE",
+	"ParaSiteLE",
+	"PortAleksanderLE",
 }
 
 // TODO: check for current ladder pool maps, download if missing?
