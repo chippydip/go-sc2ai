@@ -9,6 +9,8 @@ import (
 type Player struct {
 	api.PlayerCommon
 	api.PlayerInfo
+
+	OpponentRace api.Race
 }
 
 // NewPlayer ...
@@ -17,6 +19,12 @@ func NewPlayer(info client.AgentInfo) *Player {
 	for _, pi := range info.GameInfo().GetPlayerInfo() {
 		if pi.GetPlayerId() == info.PlayerID() {
 			p.PlayerInfo = *pi
+		} else {
+			if p.OpponentRace == api.Race_NoRace {
+				p.OpponentRace = pi.GetRaceRequested()
+			} else if p.OpponentRace != pi.GetRaceRequested() {
+				p.OpponentRace = api.Race_Random
+			}
 		}
 	}
 	update := func() {
