@@ -28,6 +28,7 @@ type AgentInfo interface {
 	Data() *api.ResponseData
 	Observation() *api.ResponseObservation
 	Upgrades() []api.UpgradeID
+	HasUpgrade(upgrade api.UpgradeID) bool
 
 	IsInGame() bool
 	Step(stepSize int) error
@@ -70,6 +71,12 @@ func (c *Client) Observation() *api.ResponseObservation {
 // Upgrades ...
 func (c *Client) Upgrades() []api.UpgradeID {
 	return c.newUpgrades
+}
+
+// HasUpgrade ...
+func (c *Client) HasUpgrade(upgrade api.UpgradeID) bool {
+	_, ok := c.upgrades[upgrade]
+	return ok
 }
 
 // Query ...
