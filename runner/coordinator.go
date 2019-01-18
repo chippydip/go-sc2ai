@@ -300,8 +300,10 @@ func runAgent(c *client.Client) {
 }
 
 func cleanup(c *client.Client) {
-	// Leave the game
-	c.RequestLeaveGame()
+	if gamePort == 0 {
+		// Leave the game (but only in non-ladder games)
+		c.RequestLeaveGame()
+	}
 
 	// Print the winner
 	for _, player := range c.Observation().GetPlayerResult() {
