@@ -6,7 +6,7 @@ import "github.com/chippydip/go-sc2ai/api"
 const (
 	Invalid                                             api.BuffID = 0
 	Radar25                                             api.BuffID = 1
-	tauntb                                              api.BuffID = 2
+	Tauntb                                              api.BuffID = 2
 	DisableAbils                                        api.BuffID = 3
 	TransientMorph                                      api.BuffID = 4
 	GravitonBeam                                        api.BuffID = 5

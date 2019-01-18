@@ -64,7 +64,7 @@ func dumpAbilities(abilities []*api.AbilityData, units []*api.UnitTypeData) {
 			if ability.Hotkey != "" || remaps[ability.AbilityId] {
 				name := ability.FriendlyName
 				if n > 1 {
-					name = fmt.Sprintf("%v %v", name, ability.AbilityId)
+					name = fmt.Sprintf("%v %v", name, uint32(ability.AbilityId))
 				}
 				name = makeID(name)
 
@@ -177,6 +177,9 @@ func makeID(id string) string {
 	for _, c := range id {
 		if !unicode.IsLetter(c) {
 			return "A_" + id
+		}
+		if unicode.IsLower(c) {
+			return string(unicode.ToUpper(c)) + id[1:]
 		}
 		break
 	}

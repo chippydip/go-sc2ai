@@ -66,12 +66,12 @@ const (
 	ZergMissileWeaponsLevel1           api.UpgradeID = 59
 	ZergMissileWeaponsLevel2           api.UpgradeID = 60
 	ZergMissileWeaponsLevel3           api.UpgradeID = 61
-	overlordspeed                      api.UpgradeID = 62
-	overlordtransport                  api.UpgradeID = 63
+	Overlordspeed                      api.UpgradeID = 62
+	Overlordtransport                  api.UpgradeID = 63
 	Burrow                             api.UpgradeID = 64
-	zerglingattackspeed                api.UpgradeID = 65
-	zerglingmovementspeed              api.UpgradeID = 66
-	hydraliskspeed                     api.UpgradeID = 67
+	Zerglingattackspeed                api.UpgradeID = 65
+	Zerglingmovementspeed              api.UpgradeID = 66
+	Hydraliskspeed                     api.UpgradeID = 67
 	ZergFlyerWeaponsLevel1             api.UpgradeID = 68
 	ZergFlyerWeaponsLevel2             api.UpgradeID = 69
 	ZergFlyerWeaponsLevel3             api.UpgradeID = 70
@@ -89,7 +89,7 @@ const (
 	ProtossAirArmorsLevel2             api.UpgradeID = 82
 	ProtossAirArmorsLevel3             api.UpgradeID = 83
 	WarpGateResearch                   api.UpgradeID = 84
-	haltech                            api.UpgradeID = 85
+	Haltech                            api.UpgradeID = 85
 	Charge                             api.UpgradeID = 86
 	BlinkTech                          api.UpgradeID = 87
 	AnabolicSynthesis                  api.UpgradeID = 88
