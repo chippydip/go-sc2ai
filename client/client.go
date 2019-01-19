@@ -117,6 +117,39 @@ func (c *Client) RequestJoinGame(setup *api.PlayerSetup, options *api.InterfaceO
 	return nil
 }
 
+// RequestReplayInfo ...
+func (c *Client) RequestReplayInfo(path string) (*api.ResponseReplayInfo, error) {
+	r, err := c.connection.replayInfo(api.RequestReplayInfo{
+		Replay: &api.RequestReplayInfo_ReplayPath{
+			ReplayPath: path,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	if r.Error != api.ResponseReplayInfo_nil {
+		return nil, fmt.Errorf("%v: %v", r.Error.String(), r.GetErrorDetails())
+	}
+	return r, nil
+}
+
+// Proto ...
+func (c *Client) Proto() api.ResponsePing {
+	return c.connection.ResponsePing
+}
+
+// RequestStartReplay ...
+func (c *Client) RequestStartReplay(request api.RequestStartReplay) error {
+	r, err := c.connection.startReplay(request)
+	if err != nil {
+		return err
+	}
+	if r.Error != api.ResponseStartReplay_nil {
+		return fmt.Errorf("%v: %v", r.Error.String(), r.GetErrorDetails())
+	}
+	return nil
+}
+
 // RequestLeaveGame ...
 func (c *Client) RequestLeaveGame() error {
 	_, err := c.connection.leaveGame(api.RequestLeaveGame{})
