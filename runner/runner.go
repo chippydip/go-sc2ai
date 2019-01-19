@@ -57,6 +57,15 @@ func RunAgent(agent client.PlayerSetup) {
 		log.Print(" Successfully joined game")
 	} else {
 		LaunchStarcraft()
+
+		if len(replaySettings.files) > 0 {
+			for _, file := range replaySettings.files {
+				StartReplay(file)
+				Run()
+			}
+			return
+		}
+
 		StartGame(gameSettings.mapName)
 	}
 

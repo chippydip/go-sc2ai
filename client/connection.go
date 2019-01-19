@@ -13,6 +13,8 @@ import (
 )
 
 type connection struct {
+	api.ResponsePing
+
 	Status api.Status
 
 	requests chan<- request
@@ -64,8 +66,12 @@ func (c *connection) Connect(address string, port int) error {
 		}
 	}()
 
-	_, err = c.ping(api.RequestPing{})
-	return err
+	r, err := c.ping(api.RequestPing{})
+	if err != nil || r == nil {
+		return err
+	}
+	c.ResponsePing = *r
+	return nil
 }
 
 func (r request) process(ws *websocket.Conn) {

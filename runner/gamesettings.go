@@ -8,13 +8,14 @@ import (
 var processSettings = struct {
 	realtime          bool
 	processPath       string
+	baseBuild         uint32
 	dataVersion       string
 	netAddress        string
 	timeoutMS         int
 	portStart         int
 	extraCommandLines []string
 	processInfo       []client.ProcessInfo
-}{false, "", "", "127.0.0.1", 120000, 8168, nil, nil}
+}{false, "", 0, "", "127.0.0.1", 120000, 8168, nil, nil}
 
 var renderSettings = struct {
 }{}
@@ -31,4 +32,7 @@ var gameSettings = struct {
 }{}
 
 var replaySettings = struct {
+	dir      string
+	files    []string
+	playerID uint32
 }{}

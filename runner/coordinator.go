@@ -1,6 +1,9 @@
 package runner
 
 import (
+	"errors"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -52,6 +55,17 @@ func LaunchStarcraft() {
 	SetupPorts(len(clients), portStart, true)
 	started = true
 	lastPort = portStart
+}
+
+func reLaunchStarcraft() {
+	for _, pi := range processSettings.processInfo {
+		if proc, err := os.FindProcess(pi.PID); err == nil && proc != nil {
+			proc.Kill()
+		}
+	}
+	processSettings.processInfo = nil
+
+	LaunchStarcraft()
 }
 
 // StartGame ...
@@ -162,12 +176,28 @@ func launchAndAttach(c *client.Client, clientIndex int) {
 
 		// TODO: window size and position
 
-		pi.Path = processSettings.processPath
-		pi.PID = startProcess(processSettings.processPath, args)
+		path := processSettings.processPath
+		if processSettings.baseBuild != 0 {
+			// Get the exe name and then back out to the Versions directory
+			dir, exe := filepath.Split(path)
+			dir = filepath.Dir(path) // remove trailing slash
+			for dir != "." && filepath.Base(dir) != "Versions" {
+				dir = filepath.Dir(dir)
+			}
+
+			// Get the path of the correct version and make sure the exe exists
+			path = filepath.Join(dir, fmt.Sprintf("Base%v", processSettings.baseBuild), exe)
+			if _, err := os.Stat(path); err != nil {
+				log.Fatalf("Base version not found: %v", err)
+			}
+		}
+
+		pi.Path = path
+		pi.PID = startProcess(path, args)
 		if pi.PID == 0 {
-			log.Print("Unable to start sc2 executable with path: ", processSettings.processPath)
+			log.Print("Unable to start sc2 executable with path: ", path)
 		} else {
-			log.Printf("Launched SC2 (%v), PID: %v", processSettings.processPath, pi.PID)
+			log.Printf("Launched SC2 (%v), PID: %v", path, pi.PID)
 		}
 
 		// Attach
@@ -311,4 +341,78 @@ func cleanup(c *client.Client) {
 			log.Print(player.GetResult())
 		}
 	}
+}
+
+// StartReplay ...
+func StartReplay(path string) {
+	// Get info about the replay
+	info, err := clients[0].RequestReplayInfo(path)
+	if err != nil {
+		log.Fatalf("Unable to get replay info: %v", err)
+	}
+
+	// Check if we need to re-launch the game
+	current := clients[0].Proto()
+	if info.GetBaseBuild() != current.GetBaseBuild() || info.GetDataVersion() != current.GetDataVersion() {
+		log.Printf("Version mis-match, relaunching client")
+		processSettings.baseBuild = info.GetBaseBuild()
+		processSettings.dataVersion = info.GetDataVersion()
+
+		reLaunchStarcraft()
+
+		current = clients[0].Proto()
+		if info.GetBaseBuild() != current.GetBaseBuild() {
+			log.Fatalf("Failed to launch correct base build: %v %v", current.GetBaseBuild(), info.GetBaseBuild())
+		}
+		if info.GetDataVersion() != current.GetDataVersion() {
+			log.Fatalf("Failed to launch correct data version: %v %v", current.GetDataVersion(), info.GetDataVersion())
+		}
+	}
+
+	log.Printf("Launching replay: %v", path)
+	err = clients[0].RequestStartReplay(api.RequestStartReplay{
+		Replay: &api.RequestStartReplay_ReplayPath{
+			ReplayPath: path,
+		},
+		ObservedPlayerId: 1, // TODO?
+		Options:          interfaceOptions,
+		Realtime:         processSettings.realtime,
+	})
+	if err != nil {
+		log.Fatalf("Unable to start replay: %v", err)
+	}
+}
+
+// SetReplayPath ...
+func SetReplayPath(path string) error {
+	replaySettings.files = nil
+
+	if filepath.Ext(path) == ".SC2Replay" {
+		replaySettings.files = []string{path}
+		return nil
+	}
+
+	replaySettings.dir = path
+
+	// Gather and append all files from the directory.
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		return err
+	}
+	for _, file := range files {
+		if !file.IsDir() && filepath.Ext(file.Name()) == ".SC2Replay" {
+			replaySettings.files = append(replaySettings.files, filepath.Join(path, file.Name()))
+		}
+	}
+	return nil
+}
+
+// LoadReplayList ...
+func LoadReplayList(path string) error {
+	return errors.New("NYI")
+}
+
+// SaveReplayList ...
+func SaveReplayList(path string) error {
+	return errors.New("NYI")
 }
