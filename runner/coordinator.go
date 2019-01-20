@@ -374,7 +374,7 @@ func StartReplay(path string) {
 		Replay: &api.RequestStartReplay_ReplayPath{
 			ReplayPath: path,
 		},
-		ObservedPlayerId: 1, // TODO?
+		ObservedPlayerId: replaySettings.player,
 		Options:          interfaceOptions,
 		Realtime:         processSettings.realtime,
 	})
@@ -405,6 +405,11 @@ func SetReplayPath(path string) error {
 		}
 	}
 	return nil
+}
+
+// SetReplayPlayerID ...
+func SetReplayPlayerID(player api.PlayerID) {
+	replaySettings.player = player
 }
 
 // LoadReplayList ...

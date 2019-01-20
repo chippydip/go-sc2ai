@@ -32,7 +32,7 @@ var gameSettings = struct {
 }{}
 
 var replaySettings = struct {
-	dir      string
-	files    []string
-	playerID uint32
-}{}
+	dir    string
+	files  []string
+	player api.PlayerID
+}{"", nil, 1}
