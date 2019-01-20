@@ -25,6 +25,7 @@ type AgentInfo interface {
 
 	PlayerID() api.PlayerID
 	GameInfo() *api.ResponseGameInfo
+	ReplayInfo() *api.ResponseReplayInfo
 	Data() *api.ResponseData
 	Observation() *api.ResponseObservation
 	Upgrades() []api.UpgradeID
@@ -56,6 +57,11 @@ func (c *Client) PlayerID() api.PlayerID {
 // GameInfo ...
 func (c *Client) GameInfo() *api.ResponseGameInfo {
 	return c.gameInfo
+}
+
+// ReplayInfo ...
+func (c *Client) ReplayInfo() *api.ResponseReplayInfo {
+	return c.replayInfo
 }
 
 // Data ...

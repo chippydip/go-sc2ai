@@ -16,6 +16,7 @@ type Client struct {
 
 	playerID    api.PlayerID
 	gameInfo    *api.ResponseGameInfo
+	replayInfo  *api.ResponseReplayInfo
 	data        *api.ResponseData
 	observation *api.ResponseObservation
 	upgrades    map[api.UpgradeID]struct{}
@@ -140,12 +141,19 @@ func (c *Client) Proto() api.ResponsePing {
 
 // RequestStartReplay ...
 func (c *Client) RequestStartReplay(request api.RequestStartReplay) error {
+	c.replayInfo = nil
+
 	r, err := c.connection.startReplay(request)
 	if err != nil {
 		return err
 	}
 	if r.Error != api.ResponseStartReplay_nil {
 		return fmt.Errorf("%v: %v", r.Error.String(), r.GetErrorDetails())
+	}
+
+	c.replayInfo, err = c.RequestReplayInfo(request.GetReplayPath())
+	if err != nil {
+		log.Print(err)
 	}
 	return nil
 }
@@ -171,6 +179,16 @@ func (c *Client) Init() error {
 	})
 	c.observation, obsErr = c.connection.observation(api.RequestObservation{})
 	c.upgrades = map[api.UpgradeID]struct{}{}
+
+	// This info isn't provided for replays, so try to normalize things
+	if c.replayInfo != nil {
+		c.gameInfo.MapName = c.replayInfo.MapName
+		c.gameInfo.LocalMapPath = c.replayInfo.LocalMapPath
+		c.gameInfo.PlayerInfo = make([]*api.PlayerInfo, len(c.replayInfo.PlayerInfo))
+		for i, pie := range c.replayInfo.PlayerInfo {
+			c.gameInfo.PlayerInfo[i] = pie.PlayerInfo
+		}
+	}
 
 	return firstOrNil(infoErr, dataErr, obsErr)
 }

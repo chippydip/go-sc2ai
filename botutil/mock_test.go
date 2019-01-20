@@ -14,6 +14,9 @@ func (a *mockAgentInfo) PlayerID() api.PlayerID {
 func (a *mockAgentInfo) GameInfo() *api.ResponseGameInfo {
 	panic("Not Implemented")
 }
+func (a *mockAgentInfo) ReplayInfo() *api.ResponseReplayInfo {
+	panic("Not Implemented")
+}
 func (a *mockAgentInfo) Data() *api.ResponseData {
 	panic("Not Implemented")
 }
@@ -22,6 +25,9 @@ func (a *mockAgentInfo) Observation() *api.ResponseObservation {
 }
 func (a *mockAgentInfo) Upgrades() []api.UpgradeID {
 	return nil
+}
+func (a *mockAgentInfo) HasUpgrade(upgrade api.UpgradeID) bool {
+	return false
 }
 
 func (a *mockAgentInfo) IsInGame() bool {
