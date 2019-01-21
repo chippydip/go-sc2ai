@@ -139,7 +139,7 @@ func (bot *bot) tactics() {
 
 	targets := bot.getTargets()
 	if targets.Len() == 0 {
-		lings.OrderPos(ability.Attack, &bot.enemyStartLocation)
+		lings.OrderPos(ability.Attack, bot.enemyStartLocation)
 		return
 	}
 
@@ -153,8 +153,7 @@ func (bot *bot) tactics() {
 			ling.OrderTarget(ability.Attack, target)
 		} else {
 			// Attack as position, ling will choose best target around
-			pos := target.Pos2D()
-			ling.OrderPos(ability.Attack, &pos)
+			ling.OrderPos(ability.Attack, target.Pos2D())
 		}
 	})
 }

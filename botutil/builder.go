@@ -97,7 +97,7 @@ func (b *Builder) BuildUnitAt(producer api.UnitTypeID, train api.AbilityID, pos 
 	}
 
 	// Produce the unit and adjust available resources
-	u.OrderPos(train, &pos)
+	u.OrderPos(train, pos)
 	b.spend(cost)
 	return true
 }
@@ -197,7 +197,7 @@ func (u Unit) BuildUnitAt(train api.AbilityID, pos api.Point2D) bool {
 	}
 
 	// Produce the unit and adjust available resources
-	u.OrderPos(train, &pos)
+	u.OrderPos(train, pos)
 	b.spend(cost)
 	return true
 

@@ -69,7 +69,7 @@ func (bot *bot) update() {
 
 	if targets.Len() == 0 {
 		// Attack enemy base position
-		probes.OrderPos(ability.Attack, &bot.enemyStartLocation)
+		probes.OrderPos(ability.Attack, bot.enemyStartLocation)
 		return
 	}
 
@@ -80,8 +80,7 @@ func (bot *bot) update() {
 		} else {
 			// Attack the location of the closest unit
 			target := targets.ClosestTo(probe.Pos2D())
-			pos := target.Pos2D()
-			probe.OrderPos(ability.Attack, &pos)
+			probe.OrderPos(ability.Attack, target.Pos2D())
 		}
 	})
 }

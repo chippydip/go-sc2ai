@@ -135,7 +135,7 @@ func (bot *bot) strategy() {
 			// Build the barracks
 			if scv.Pos2D().Distance2(bot.positionsForBarracks) > 25 {
 				// Move closer first to bust the fog
-				scv.OrderPos(ability.Move, &bot.positionsForBarracks)
+				scv.OrderPos(ability.Move, bot.positionsForBarracks)
 			} else {
 				// Query target build locations and use the first one that's available
 				results := bot.barracksQuery.Execute()
@@ -214,13 +214,13 @@ func (bot *bot) tactics() {
 
 	if bot.GameLoop == 224 { // 10 sec
 		if scv := bot.getSCV(); !scv.IsNil() {
-			scv.OrderPos(ability.Move, &bot.positionsForBarracks)
+			scv.OrderPos(ability.Move, bot.positionsForBarracks)
 			bot.builder1 = scv.Tag
 		}
 	}
 	if bot.GameLoop == 672 { // 30 sec
 		if scv := bot.getSCV(); !scv.IsNil() {
-			scv.OrderPos(ability.Move, &bot.positionsForBarracks)
+			scv.OrderPos(ability.Move, bot.positionsForBarracks)
 			bot.builder2 = scv.Tag
 		}
 	}
@@ -233,7 +233,7 @@ func (bot *bot) tactics() {
 
 	targets := bot.getTargets()
 	if targets.Len() == 0 {
-		bot.UnitsOrderPos(reapers, ability.Attack, &bot.enemyStartLocation)
+		bot.UnitsOrderPos(reapers, ability.Attack, bot.enemyStartLocation)
 		return
 	}
 
@@ -244,7 +244,7 @@ func (bot *bot) tactics() {
 		}
 		if reaper.Health < 21 || bot.retreat[reaper.Tag] {
 			bot.retreat[reaper.Tag] = true
-			reaper.OrderPos(ability.Move, &bot.positionsForBarracks)
+			reaper.OrderPos(ability.Move, bot.positionsForBarracks)
 			return
 		}
 
@@ -256,7 +256,7 @@ func (bot *bot) tactics() {
 			// Enemy is closer than shooting distance - 0.5
 			if reaper.InRange(target, -0.5) {
 				// Retreat a little
-				reaper.OrderPos(ability.Move, &bot.positionsForBarracks)
+				reaper.OrderPos(ability.Move, bot.positionsForBarracks)
 				return
 			}
 		}
@@ -270,8 +270,7 @@ func (bot *bot) tactics() {
 			reaper.OrderTarget(ability.Attack, target)
 		} else {
 			// Attack as position, ling will choose best target around
-			pos := target.Pos2D()
-			reaper.OrderPos(ability.Attack, &pos)
+			reaper.OrderPos(ability.Attack, target.Pos2D())
 		}
 	})
 }

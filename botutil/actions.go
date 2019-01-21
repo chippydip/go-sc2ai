@@ -100,7 +100,7 @@ func (a *Actions) UnitOrderTarget(u Unit, ability api.AbilityID, target Unit) {
 }
 
 // UnitOrderPos orders a unit to use an ability at a target location.
-func (a *Actions) UnitOrderPos(u Unit, ability api.AbilityID, target *api.Point2D) {
+func (a *Actions) UnitOrderPos(u Unit, ability api.AbilityID, target api.Point2D) {
 	a.unitsOrderPos([]api.UnitTag{u.GetTag()}, ability, target)
 }
 
@@ -115,7 +115,7 @@ func (a *Actions) UnitsOrderTarget(units Units, ability api.AbilityID, target Un
 }
 
 // UnitsOrderPos orders units to all use an ability at a target location.
-func (a *Actions) UnitsOrderPos(units Units, ability api.AbilityID, target *api.Point2D) {
+func (a *Actions) UnitsOrderPos(units Units, ability api.AbilityID, target api.Point2D) {
 	a.unitsOrderPos(units.Tags(), ability, target)
 }
 
@@ -147,7 +147,7 @@ func (a *Actions) unitsOrderTarget(unitTags []api.UnitTag, ability api.AbilityID
 }
 
 // unitsOrderPos orders units to all use an ability at a target location.
-func (a *Actions) unitsOrderPos(unitTags []api.UnitTag, ability api.AbilityID, target *api.Point2D) {
+func (a *Actions) unitsOrderPos(unitTags []api.UnitTag, ability api.AbilityID, target api.Point2D) {
 	if len(unitTags) == 0 {
 		return
 	}
@@ -156,7 +156,7 @@ func (a *Actions) unitsOrderPos(unitTags []api.UnitTag, ability api.AbilityID, t
 		AbilityId: ability,
 		UnitTags:  unitTags,
 		Target: &api.ActionRawUnitCommand_TargetWorldSpacePos{
-			TargetWorldSpacePos: target,
+			TargetWorldSpacePos: &target,
 		},
 	})
 }
@@ -189,7 +189,7 @@ func (units Units) OrderTarget(ability api.AbilityID, target Unit) {
 }
 
 // OrderPos ...
-func (units Units) OrderPos(ability api.AbilityID, target *api.Point2D) {
+func (units Units) OrderPos(ability api.AbilityID, target api.Point2D) {
 	if len(units.raw) > 0 {
 		units.ctx.bot.unitsOrderPos(units.Tags(), ability, target)
 	}
@@ -210,7 +210,7 @@ func (u Unit) OrderTarget(ability api.AbilityID, target Unit) {
 }
 
 // OrderPos ...
-func (u Unit) OrderPos(ability api.AbilityID, target *api.Point2D) {
+func (u Unit) OrderPos(ability api.AbilityID, target api.Point2D) {
 	if !u.IsNil() {
 		u.ctx.bot.UnitOrderPos(u, ability, target)
 	}
