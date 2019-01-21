@@ -41,6 +41,7 @@ type AgentInfo interface {
 	LeaveGame()
 
 	OnBeforeStep(func())
+	OnSubStep(func())
 	OnAfterStep(func())
 }
 
@@ -130,6 +131,16 @@ func (c *Client) LeaveGame() {
 func (c *Client) OnBeforeStep(callback func()) {
 	if callback != nil {
 		c.beforeStep = append(c.beforeStep, callback)
+	}
+}
+
+// OnSubStep is called after every observation. This is generally equivalent
+// to OnAfterStep except in realtime mode when multiple observations may occur
+// to reach the desired step size. This can be used to observe transient data
+// that only appears in a single observation (actions, events, chat, etc).
+func (c *Client) OnSubStep(callback func()) {
+	if callback != nil {
+		c.subStep = append(c.subStep, callback)
 	}
 }
 

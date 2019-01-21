@@ -23,6 +23,7 @@ type Client struct {
 	newUpgrades []api.UpgradeID
 
 	beforeStep []func()
+	subStep    []func()
 	afterStep  []func()
 }
 
@@ -217,7 +218,13 @@ func (c *Client) Step(stepSize int) error {
 		if c.observation, err = c.connection.observation(api.RequestObservation{}); err != nil {
 			return err
 		}
-		if c.observation.GetObservation().GetGameLoop() >= step {
+
+		// Call sub-step callbacks
+		for _, cb := range c.subStep {
+			cb()
+		}
+
+		if c.observation.GetObservation().GetGameLoop() >= step || !c.IsInGame() {
 			break
 		}
 	}
