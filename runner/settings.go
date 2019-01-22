@@ -30,7 +30,12 @@ func LoadSettings() bool {
 	}
 
 	// Parse the command line arguments
+	showHelp := flag.Bool("help", false, "Prints help message")
 	flag.Parse()
+	if *showHelp {
+		flag.PrintDefaults()
+		os.Exit(0)
+	}
 
 	if len(processSettings.processPath) == 0 {
 		fmt.Fprintln(flag.CommandLine.Output(), "Please run StarCraft II before running this API")
