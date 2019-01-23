@@ -125,6 +125,7 @@ func (c *Client) RequestReplayInfo(path string) (*api.ResponseReplayInfo, error)
 		Replay: &api.RequestReplayInfo_ReplayPath{
 			ReplayPath: path,
 		},
+		DownloadData: true,
 	})
 	if err != nil {
 		return nil, err
