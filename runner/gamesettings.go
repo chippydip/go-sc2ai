@@ -35,4 +35,5 @@ var replaySettings = struct {
 	dir    string
 	files  []string
 	player api.PlayerID
-}{"", nil, 1}
+	filter func(info *api.ResponseReplayInfo) bool
+}{"", nil, 1, nil}

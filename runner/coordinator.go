@@ -344,11 +344,17 @@ func cleanup(c *client.Client) {
 }
 
 // StartReplay ...
-func StartReplay(path string) {
+func StartReplay(path string) bool {
 	// Get info about the replay
 	info, err := clients[0].RequestReplayInfo(path)
 	if err != nil {
 		log.Fatalf("Unable to get replay info: %v", err)
+	}
+
+	// Allow the bot user to skip certain replays after looking at the info
+	if replaySettings.filter != nil && !replaySettings.filter(info) {
+		log.Printf("Skipping replay: %v", path)
+		return false
 	}
 
 	// Check if we need to re-launch the game
@@ -381,6 +387,8 @@ func StartReplay(path string) {
 	if err != nil {
 		log.Fatalf("Unable to start replay: %v", err)
 	}
+
+	return true
 }
 
 // SetReplayPath ...
@@ -410,6 +418,13 @@ func SetReplayPath(path string) error {
 		}
 	}
 	return nil
+}
+
+// SetReplayFilter provides a filter which determines if a replay should be run. This allows such
+// things as MMR filtering within a large group of replays. The filter function can also call
+// SetReplayPlayerID before returning true to alter the player who will be observed for the replay.
+func SetReplayFilter(filter func(info *api.ResponseReplayInfo) bool) {
+	replaySettings.filter = filter
 }
 
 // SetReplayPlayerID ...
