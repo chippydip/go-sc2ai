@@ -32,8 +32,9 @@ var gameSettings = struct {
 }{}
 
 var replaySettings = struct {
-	dir    string
-	files  []string
-	player api.PlayerID
-	filter func(info *api.ResponseReplayInfo) bool
-}{"", nil, 1, nil}
+	dir     string
+	files   []string
+	player  api.PlayerID
+	filter  func(info *api.ResponseReplayInfo) bool
+	current string
+}{"", nil, 1, nil, ""}

@@ -441,3 +441,8 @@ func LoadReplayList(path string) error {
 func SaveReplayList(path string) error {
 	return errors.New("NYI")
 }
+
+// CurrentReplayPath provides access to the replay filename and full path of the current replay (if any).
+func CurrentReplayPath() string {
+	return replaySettings.current
+}

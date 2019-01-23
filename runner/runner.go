@@ -60,9 +60,11 @@ func RunAgent(agent client.PlayerSetup) {
 
 		if len(replaySettings.files) > 0 {
 			for _, file := range replaySettings.files {
+				replaySettings.current = file
 				if StartReplay(file) {
 					Run()
 				}
+				replaySettings.current = ""
 			}
 			return
 		}
