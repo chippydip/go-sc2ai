@@ -386,6 +386,11 @@ func StartReplay(path string) {
 // SetReplayPath ...
 func SetReplayPath(path string) error {
 	replaySettings.files = nil
+	if p, err := filepath.Abs(path); err != nil {
+		log.Printf("Failed to get absolute path: %v", err)
+	} else {
+		path = p
+	}
 
 	if filepath.Ext(path) == ".SC2Replay" {
 		replaySettings.files = []string{path}
