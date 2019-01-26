@@ -171,4 +171,5 @@ const (
 	NexusShieldOvercharge                               api.BuffID = 286
 	ParasiticBombDelayTimedLife                         api.BuffID = 287
 	Transfusion                                         api.BuffID = 288
+	InhibitorZoneTemporalField                          api.BuffID = 289
 )

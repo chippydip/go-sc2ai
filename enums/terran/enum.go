@@ -180,7 +180,7 @@ const (
 	Reaper                                         api.UnitTypeID = 49
 	ReaperPlaceholder                              api.UnitTypeID = 152
 	Refinery                                       api.UnitTypeID = 20
-	RefineryRich                                   api.UnitTypeID = 1946
+	RefineryRich                                   api.UnitTypeID = 1949
 	RenegadeLongboltMissileWeapon                  api.UnitTypeID = 1939
 	RenegadeMissileTurret                          api.UnitTypeID = 1941
 	SCV                                            api.UnitTypeID = 45

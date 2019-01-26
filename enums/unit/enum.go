@@ -59,13 +59,19 @@ const (
 	Neutral_CollapsibleRockTower                          api.UnitTypeID = 609
 	Neutral_CollapsibleRockTowerDebris                    api.UnitTypeID = 490
 	Neutral_CollapsibleRockTowerDebrisRampLeft            api.UnitTypeID = 518
+	Neutral_CollapsibleRockTowerDebrisRampLeftGreen       api.UnitTypeID = 1951
 	Neutral_CollapsibleRockTowerDebrisRampRight           api.UnitTypeID = 517
+	Neutral_CollapsibleRockTowerDebrisRampRightGreen      api.UnitTypeID = 1952
 	Neutral_CollapsibleRockTowerDiagonal                  api.UnitTypeID = 588
 	Neutral_CollapsibleRockTowerPushUnit                  api.UnitTypeID = 561
 	Neutral_CollapsibleRockTowerPushUnitRampLeft          api.UnitTypeID = 564
+	Neutral_CollapsibleRockTowerPushUnitRampLeftGreen     api.UnitTypeID = 1953
 	Neutral_CollapsibleRockTowerPushUnitRampRight         api.UnitTypeID = 563
+	Neutral_CollapsibleRockTowerPushUnitRampRightGreen    api.UnitTypeID = 1954
 	Neutral_CollapsibleRockTowerRampLeft                  api.UnitTypeID = 664
+	Neutral_CollapsibleRockTowerRampLeftGreen             api.UnitTypeID = 1955
 	Neutral_CollapsibleRockTowerRampRight                 api.UnitTypeID = 663
+	Neutral_CollapsibleRockTowerRampRightGreen            api.UnitTypeID = 1956
 	Neutral_CollapsibleTerranTower                        api.UnitTypeID = 610
 	Neutral_CollapsibleTerranTowerDebris                  api.UnitTypeID = 485
 	Neutral_CollapsibleTerranTowerDiagonal                api.UnitTypeID = 589
@@ -214,6 +220,9 @@ const (
 	Neutral_ImmortalKaraxACGluescreenDummy                api.UnitTypeID = 235
 	Neutral_ImmortalTaldarimACGluescreenDummy             api.UnitTypeID = 258
 	Neutral_InfestorEnsnareAttackMissile                  api.UnitTypeID = 1920
+	Neutral_InhibitorZoneLarge                            api.UnitTypeID = 1948
+	Neutral_InhibitorZoneMedium                           api.UnitTypeID = 1947
+	Neutral_InhibitorZoneSmall                            api.UnitTypeID = 1946
 	Neutral_InvisibleTargetDummy                          api.UnitTypeID = 607
 	Neutral_KarakFemale                                   api.UnitTypeID = 324
 	Neutral_KarakMale                                     api.UnitTypeID = 323
@@ -232,6 +241,7 @@ const (
 	Neutral_MengskStatue                                  api.UnitTypeID = 380
 	Neutral_MengskStatueAlone                             api.UnitTypeID = 379
 	Neutral_MineralField                                  api.UnitTypeID = 341
+	Neutral_MineralField450                               api.UnitTypeID = 1950
 	Neutral_MineralField750                               api.UnitTypeID = 483
 	Neutral_MissileTurretACGluescreenDummy                api.UnitTypeID = 165
 	Neutral_Moopy                                         api.UnitTypeID = 839
@@ -796,7 +806,7 @@ const (
 	Terran_Reaper                                         api.UnitTypeID = 49
 	Terran_ReaperPlaceholder                              api.UnitTypeID = 152
 	Terran_Refinery                                       api.UnitTypeID = 20
-	Terran_RefineryRich                                   api.UnitTypeID = 1946
+	Terran_RefineryRich                                   api.UnitTypeID = 1949
 	Terran_RenegadeLongboltMissileWeapon                  api.UnitTypeID = 1939
 	Terran_RenegadeMissileTurret                          api.UnitTypeID = 1941
 	Terran_SCV                                            api.UnitTypeID = 45

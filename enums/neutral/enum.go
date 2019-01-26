@@ -58,13 +58,19 @@ const (
 	CollapsibleRockTower                         api.UnitTypeID = 609
 	CollapsibleRockTowerDebris                   api.UnitTypeID = 490
 	CollapsibleRockTowerDebrisRampLeft           api.UnitTypeID = 518
+	CollapsibleRockTowerDebrisRampLeftGreen      api.UnitTypeID = 1951
 	CollapsibleRockTowerDebrisRampRight          api.UnitTypeID = 517
+	CollapsibleRockTowerDebrisRampRightGreen     api.UnitTypeID = 1952
 	CollapsibleRockTowerDiagonal                 api.UnitTypeID = 588
 	CollapsibleRockTowerPushUnit                 api.UnitTypeID = 561
 	CollapsibleRockTowerPushUnitRampLeft         api.UnitTypeID = 564
+	CollapsibleRockTowerPushUnitRampLeftGreen    api.UnitTypeID = 1953
 	CollapsibleRockTowerPushUnitRampRight        api.UnitTypeID = 563
+	CollapsibleRockTowerPushUnitRampRightGreen   api.UnitTypeID = 1954
 	CollapsibleRockTowerRampLeft                 api.UnitTypeID = 664
+	CollapsibleRockTowerRampLeftGreen            api.UnitTypeID = 1955
 	CollapsibleRockTowerRampRight                api.UnitTypeID = 663
+	CollapsibleRockTowerRampRightGreen           api.UnitTypeID = 1956
 	CollapsibleTerranTower                       api.UnitTypeID = 610
 	CollapsibleTerranTowerDebris                 api.UnitTypeID = 485
 	CollapsibleTerranTowerDiagonal               api.UnitTypeID = 589
@@ -213,6 +219,9 @@ const (
 	ImmortalKaraxACGluescreenDummy               api.UnitTypeID = 235
 	ImmortalTaldarimACGluescreenDummy            api.UnitTypeID = 258
 	InfestorEnsnareAttackMissile                 api.UnitTypeID = 1920
+	InhibitorZoneLarge                           api.UnitTypeID = 1948
+	InhibitorZoneMedium                          api.UnitTypeID = 1947
+	InhibitorZoneSmall                           api.UnitTypeID = 1946
 	InvisibleTargetDummy                         api.UnitTypeID = 607
 	KarakFemale                                  api.UnitTypeID = 324
 	KarakMale                                    api.UnitTypeID = 323
@@ -231,6 +240,7 @@ const (
 	MengskStatue                                 api.UnitTypeID = 380
 	MengskStatueAlone                            api.UnitTypeID = 379
 	MineralField                                 api.UnitTypeID = 341
+	MineralField450                              api.UnitTypeID = 1950
 	MineralField750                              api.UnitTypeID = 483
 	MissileTurretACGluescreenDummy               api.UnitTypeID = 165
 	Moopy                                        api.UnitTypeID = 839
