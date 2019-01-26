@@ -1,6 +1,9 @@
 package botutil
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/chippydip/go-sc2ai/client"
 )
 
@@ -26,6 +29,7 @@ func NewBot(info client.AgentInfo) *Bot {
 
 	update := func() {
 		bot.GameLoop = bot.Observation().GetObservation().GetGameLoop()
+		log.SetPrefix(fmt.Sprintf("[%v] ", bot.GameLoop))
 	}
 	update()
 	bot.OnAfterStep(update)
