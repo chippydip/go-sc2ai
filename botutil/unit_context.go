@@ -35,7 +35,6 @@ type UnitContext struct {
 	data    []*api.UnitTypeData
 	wrapped []Unit
 	byTag   map[api.UnitTag]*Unit
-	loop    uint32
 
 	groups [28]int
 
@@ -49,7 +48,7 @@ type UnitContext struct {
 
 // NewUnitContext creates a new context and registers it to update after each step.
 func NewUnitContext(info client.AgentInfo, bot *Bot) *UnitContext {
-	u := &UnitContext{
+	ctx := &UnitContext{
 		byTag:   map[api.UnitTag]*Unit{},
 		Self:    self{},
 		Ally:    ally{},
@@ -59,14 +58,14 @@ func NewUnitContext(info client.AgentInfo, bot *Bot) *UnitContext {
 	}
 	update := func() {
 		// Load the latest observation
-		u.raw = info.Observation().GetObservation().GetRawData().GetUnits()
-		u.data = info.Data().GetUnits()
-		u.loop = info.Observation().GetObservation().GetGameLoop()
-		u.update()
+		ctx.raw = info.Observation().GetObservation().GetRawData().GetUnits()
+		ctx.data = info.Data().GetUnits()
+
+		ctx.update()
 	}
 	update()
 	info.OnAfterStep(update)
-	return u
+	return ctx
 }
 
 func (ctx *UnitContext) update() {

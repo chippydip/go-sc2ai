@@ -43,11 +43,8 @@ func CalculateExpansionLocations(bot *botutil.Bot, debug bool) []UnitCluster {
 					// This is slightly inefficient, but much easier than repeating the same loop 4x for the edges
 					if (x == xMin || x == xMax || y == yMin || y == yMax) && placement.Get(x, y) == 255 {
 						dx, dy := x-px, y-py
-						r2 := dx*dx + dy*dy
-						if r2 < r2Min {
-							r2Min = r2
-							xBest = x
-							yBest = y
+						if r2 := dx*dx + dy*dy; r2 < r2Min {
+							r2Min, xBest, yBest = r2, x, y
 						}
 					}
 				}
@@ -150,7 +147,6 @@ func debugPrint(clusters []UnitCluster, placement api.ImageDataBytes, bot client
 			},
 		},
 	})
-
 }
 
 // Re-use these colors so we don't have to keep allocating them

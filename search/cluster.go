@@ -15,11 +15,9 @@ func Cluster(units botutil.Units, distance float32) []UnitCluster {
 	var clusters []UnitCluster
 	units.Each(func(u botutil.Unit) {
 		// Find the nearest cluster
-		minDist := float32(math.MaxFloat32)
-		clusterIndex := -1
+		minDist, clusterIndex := float32(math.MaxFloat32), -1
 		for i, cluster := range clusters {
-			d := u.Pos.ToPoint2D().Distance2(cluster.Center())
-			if d < minDist {
+			if d := u.Pos2D().Distance2(cluster.Center()); d < minDist {
 				minDist = d
 				clusterIndex = i
 			}
