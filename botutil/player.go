@@ -10,6 +10,7 @@ type Player struct {
 	api.PlayerCommon
 	api.PlayerInfo
 
+	OpponentID   api.PlayerID
 	OpponentRace api.Race
 }
 
@@ -20,6 +21,7 @@ func NewPlayer(info client.AgentInfo) *Player {
 		if pi.GetPlayerId() == info.PlayerID() {
 			p.PlayerInfo = *pi
 		} else {
+			p.OpponentID = pi.GetPlayerId()
 			if p.OpponentRace == api.Race_NoRace {
 				p.OpponentRace = pi.GetRaceRequested()
 			} else if p.OpponentRace != pi.GetRaceRequested() {
@@ -64,4 +66,14 @@ func (p *Player) Spend(cost Cost) {
 	p.Minerals -= cost.Minerals
 	p.Vespene -= cost.Vespene
 	p.FoodUsed += cost.Food
+}
+
+// UpgradeCost returns the cost to research the given upgrade.
+func (b *Bot) UpgradeCost(upgrade api.UpgradeID) Cost {
+	data := b.Data().GetUpgrades()[upgrade]
+	return Cost{
+		data.MineralCost,
+		data.VespeneCost,
+		0,
+	}
 }
