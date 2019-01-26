@@ -1,10 +1,13 @@
 package botutil
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/chippydip/go-sc2ai/api"
 	"github.com/chippydip/go-sc2ai/client"
+	"github.com/chippydip/go-sc2ai/enums/ability"
+	"github.com/chippydip/go-sc2ai/enums/unit"
 )
 
 // Actions provides convenience methods for queueing actions to be sent in a batch.
@@ -32,9 +35,39 @@ func (a *Actions) OnActionError(handler ActionErrorHandler) {
 
 // LogActionErrors registers an error handler that will log the error.
 func (a *Actions) LogActionErrors() {
-	a.OnActionError(func(a *api.Action, r api.ActionResult) {
-		log.Print("ActionError: ", r, a)
+	a.OnActionError(func(action *api.Action, r api.ActionResult) {
+		//	*ActionRaw_UnitCommand
+		//	*ActionRaw_CameraMove
+		//	*ActionRaw_ToggleAutocast
+		switch raw := action.GetActionRaw().GetAction().(type) {
+		case *api.ActionRaw_UnitCommand:
+			var src []string
+			for _, k := range raw.UnitCommand.GetUnitTags() {
+				src = append(src, a.unitTagString(k))
+			}
+
+			abil := ability.String(raw.UnitCommand.GetAbilityId())
+
+			var dst string
+			if k := raw.UnitCommand.GetTargetUnitTag(); k != 0 {
+				dst = a.unitTagString(k)
+			} else {
+				dst = raw.UnitCommand.GetTargetWorldSpacePos().String()
+			}
+			log.Printf("Action %v: %v %v > %v", r, src, abil, dst)
+		default:
+			log.Printf("Action %v: %v", r, action)
+		}
 	})
+}
+
+func (a *Actions) unitTagString(tag api.UnitTag) string {
+	for _, u := range a.info.Observation().GetObservation().GetRawData().GetUnits() {
+		if u.Tag == tag {
+			return fmt.Sprintf("%v%v", unit.String(u.UnitType), u.Pos.ToPoint2D())
+		}
+	}
+	return fmt.Sprintf("%v", tag)
 }
 
 // Send is called automatically to submit queued actions before each Step(). It may also be
