@@ -37,7 +37,31 @@ func NewPlayer(info client.AgentInfo) *Player {
 	return p
 }
 
-// FoodLeft ...
+// FoodLeft returns the amount under (positive) or over (negative) the current food cap.
 func (p *Player) FoodLeft() int {
 	return int(p.FoodCap) - int(p.FoodUsed)
+}
+
+// Cost represents the full cost of an ability.
+type Cost struct {
+	Minerals, Vespene, Food uint32
+}
+
+// Mul multiplies the cost by the given count and returns a new Cost.
+func (c Cost) Mul(count uint32) Cost {
+	return Cost{c.Minerals * count, c.Vespene * count, c.Food * count}
+}
+
+// CanAfford determines if the player can currently afford the given cost.
+func (p *Player) CanAfford(cost Cost) bool {
+	return p.Minerals >= cost.Minerals && p.Vespene >= cost.Vespene &&
+		(cost.Food == 0 || p.FoodCap >= p.FoodUsed+cost.Food)
+
+}
+
+// Spend tentatively marks the given resources as unavailable.
+func (p *Player) Spend(cost Cost) {
+	p.Minerals -= cost.Minerals
+	p.Vespene -= cost.Vespene
+	p.FoodUsed += cost.Food
 }

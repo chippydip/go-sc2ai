@@ -163,12 +163,13 @@ func (bot *bot) strategy() {
 	}
 
 	// Morph
-	// bot.CanBuy(ability.Morph_OrbitalCommand) requires 550 minerals?
-	if bot.Self.CountInProduction(terran.Reaper) >= 2 && bot.Minerals > 150 {
+	cost := bot.ProductionCost(terran.CommandCenter, ability.Morph_OrbitalCommand)
+	if bot.Self.CountInProduction(terran.Reaper) >= 2 && bot.CanAfford(cost) {
 		if cc := bot.Self[terran.CommandCenter].Choose(func(u botutil.Unit) bool {
 			return u.IsBuilt() && u.IsIdle()
 		}).First(); !cc.IsNil() {
 			cc.Order(ability.Morph_OrbitalCommand)
+			bot.Spend(cost)
 		}
 	}
 	if supply := bot.Self[terran.SupplyDepot].First(); !supply.IsNil() && supply.IsBuilt() {

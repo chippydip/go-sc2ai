@@ -55,13 +55,13 @@ func (b *Builder) BuildUnits(producer api.UnitTypeID, train api.AbilityID, count
 		return 0
 	}
 
-	cost := b.getProductionCost(producer, train)
+	cost := b.ProductionCost(producer, train)
 
 	// Find all available producers
 	origCount := count
 	b.units.Self[producer].EachUntil(func(u Unit) bool {
 		// Check if we can afford one more
-		if !b.canAfford(cost) {
+		if !b.player.CanAfford(cost) {
 			return false
 		}
 
@@ -71,7 +71,7 @@ func (b *Builder) BuildUnits(producer api.UnitTypeID, train api.AbilityID, count
 
 		// Produce the unit and adjust available resources
 		u.Order(train)
-		b.spend(cost)
+		b.player.Spend(cost)
 		count--
 		return count == 0
 	})
@@ -85,8 +85,8 @@ func (b *Builder) BuildUnits(producer api.UnitTypeID, train api.AbilityID, count
 // If the food, mineral, and vespene requirements are not met or no producer was found it does nothing and returns false.
 func (b *Builder) BuildUnitAt(producer api.UnitTypeID, train api.AbilityID, pos api.Point2D) bool {
 	// Check if we can afford one
-	cost := b.getProductionCost(producer, train)
-	if !b.canAfford(cost) {
+	cost := b.ProductionCost(producer, train)
+	if !b.player.CanAfford(cost) {
 		return false
 	}
 
@@ -98,7 +98,7 @@ func (b *Builder) BuildUnitAt(producer api.UnitTypeID, train api.AbilityID, pos 
 
 	// Produce the unit and adjust available resources
 	u.OrderPos(train, pos)
-	b.spend(cost)
+	b.player.Spend(cost)
 	return true
 }
 
@@ -106,8 +106,8 @@ func (b *Builder) BuildUnitAt(producer api.UnitTypeID, train api.AbilityID, pos 
 // If the food, mineral, and vespene requirements are not met or no producer was found it does nothing and returns false.
 func (b *Builder) BuildUnitOn(producer api.UnitTypeID, train api.AbilityID, target Unit) bool {
 	// Check if we can afford one
-	cost := b.getProductionCost(producer, train)
-	if !b.canAfford(cost) {
+	cost := b.ProductionCost(producer, train)
+	if !b.player.CanAfford(cost) {
 		return false
 	}
 
@@ -119,7 +119,7 @@ func (b *Builder) BuildUnitOn(producer api.UnitTypeID, train api.AbilityID, targ
 
 	// Produce the unit and adjust available resources
 	u.OrderTarget(train, target)
-	b.spend(cost)
+	b.player.Spend(cost)
 	return true
 }
 
@@ -130,7 +130,13 @@ func (b *Builder) getNearestBuilder(producer api.UnitTypeID, pos api.Point2D) Un
 	return builders.ClosestTo(pos)
 }
 
-func (b *Builder) getProductionCost(producerType api.UnitTypeID, train api.AbilityID) unitCost {
+// ProductionCost computes the Cost for producerType to train once.
+func (b *Builder) ProductionCost(producerType api.UnitTypeID, train api.AbilityID) Cost {
+	// Special-case archon's since they are weird (and free)
+	if train == ability.Morph_Archon {
+		return Cost{}
+	}
+
 	// Get the unit that will be built/trained
 	targetType := ability.Produces(train)
 	if targetType == unit.Invalid {
@@ -158,27 +164,40 @@ func (b *Builder) getProductionCost(producerType api.UnitTypeID, train api.Abili
 		log.Panicf("unexpected FoodRequirement: %v -> %v x%v for %v", producer.FoodRequired, target.FoodRequired, multiplier, targetType)
 	}
 
-	// Return the per-build cost for this unit
-	return unitCost{
-		uint32(foodMult),
+	// Per-build cost for this unit
+	cost := Cost{
 		target.MineralCost * multiplier,
 		target.VespeneCost * multiplier,
+		uint32(foodMult),
 	}
+
+	// Except that morphs include the entire production cost, so subtract out the base unit's cost
+	if producerType == unit.Zerg_Drone || isMorph[train] {
+		cost.Minerals -= producer.MineralCost * multiplier
+		cost.Vespene -= producer.VespeneCost * multiplier
+	}
+	return cost
 }
 
-type unitCost struct {
-	food, minerals, vespene uint32
-}
-
-func (b *Builder) canAfford(cost unitCost) bool {
-	return (cost.food == 0 || b.player.FoodCap >= b.player.FoodUsed+cost.food) &&
-		b.player.Minerals >= cost.minerals && b.player.Vespene >= cost.vespene
-}
-
-func (b *Builder) spend(cost unitCost) {
-	b.player.FoodUsed += cost.food
-	b.player.Minerals -= cost.minerals
-	b.player.Vespene -= cost.vespene
+// Build abilities which consume their producer
+var isMorph = map[api.AbilityID]bool{
+	ability.Morph_BroodLord:         true,
+	ability.Morph_GreaterSpire:      true,
+	ability.Morph_Hive:              true,
+	ability.Morph_Lair:              true,
+	ability.Morph_Lurker:            true,
+	ability.Morph_OrbitalCommand:    true,
+	ability.Morph_OverlordTransport: true,
+	ability.Morph_Overseer:          true,
+	ability.Morph_PlanetaryFortress: true,
+	ability.Morph_Ravager:           true,
+	ability.Train_Baneling:          true,
+	// ability.Morph_Archon:            true,
+	// ability.Morph_Hellbat:           true,
+	// ability.Morph_Hellion:           true,
+	// ability.Morph_Mothership:        true,
+	// ability.Morph_Gateway:           true,
+	// ability.Morph_WarpGate:          true,
 }
 
 // Convenience methods for giving orders directly to units:
@@ -191,14 +210,14 @@ func (u Unit) BuildUnitAt(train api.AbilityID, pos api.Point2D) bool {
 	b := u.ctx.bot
 
 	// Check if we can afford one
-	cost := b.getProductionCost(u.UnitType, train)
-	if !b.canAfford(cost) {
+	cost := b.ProductionCost(u.UnitType, train)
+	if !b.player.CanAfford(cost) {
 		return false
 	}
 
 	// Produce the unit and adjust available resources
 	u.OrderPos(train, pos)
-	b.spend(cost)
+	b.player.Spend(cost)
 	return true
 
 }
@@ -211,14 +230,14 @@ func (u Unit) BuildUnitOn(train api.AbilityID, target Unit) bool {
 	b := u.ctx.bot
 
 	// Check if we can afford one
-	cost := b.getProductionCost(u.UnitType, train)
-	if !b.canAfford(cost) {
+	cost := b.ProductionCost(u.UnitType, train)
+	if !b.player.CanAfford(cost) {
 		return false
 	}
 
 	// Produce the unit and adjust available resources
 	u.OrderTarget(train, target)
-	b.spend(cost)
+	b.player.Spend(cost)
 	return true
 
 }
