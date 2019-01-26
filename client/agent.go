@@ -41,7 +41,7 @@ type AgentInfo interface {
 	LeaveGame()
 
 	OnBeforeStep(func())
-	OnSubStep(func())
+	OnObservation(func())
 	OnAfterStep(func())
 }
 
@@ -98,6 +98,10 @@ func (c *Client) Query(query api.RequestQuery) *api.ResponseQuery {
 
 // SendActions ...
 func (c *Client) SendActions(actions []*api.Action) []api.ActionResult {
+	if c.replayInfo != nil {
+		return nil // ignore actions in a replay
+	}
+
 	resp, err := c.connection.action(api.RequestAction{
 		Actions: actions,
 	})
@@ -110,6 +114,10 @@ func (c *Client) SendActions(actions []*api.Action) []api.ActionResult {
 
 // SendObserverActions ...
 func (c *Client) SendObserverActions(obsActions []*api.ObserverAction) {
+	if c.replayInfo == nil {
+		return // ignore observer actions in a normal game
+	}
+
 	c.connection.obsAction(api.RequestObserverAction{
 		Actions: obsActions,
 	})
@@ -134,11 +142,11 @@ func (c *Client) OnBeforeStep(callback func()) {
 	}
 }
 
-// OnSubStep is called after every observation. This is generally equivalent
+// OnObservation is called after every observation. This is generally equivalent
 // to OnAfterStep except in realtime mode when multiple observations may occur
 // to reach the desired step size. This can be used to observe transient data
 // that only appears in a single observation (actions, events, chat, etc).
-func (c *Client) OnSubStep(callback func()) {
+func (c *Client) OnObservation(callback func()) {
 	if callback != nil {
 		c.subStep = append(c.subStep, callback)
 	}

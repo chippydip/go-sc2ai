@@ -52,7 +52,7 @@ func (a *mockAgentInfo) LeaveGame() {
 
 func (a *mockAgentInfo) OnBeforeStep(func()) {
 }
-func (a *mockAgentInfo) OnSubStep(func()) {
+func (a *mockAgentInfo) OnObservation(func()) {
 }
 func (a *mockAgentInfo) OnAfterStep(func()) {
 }
