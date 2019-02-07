@@ -124,14 +124,17 @@ func (u Unit) HasEnergy(energy float32) bool {
 	return u.Energy >= energy
 }
 
+// GroundWeaponDamage returns damage per shot the unit can do to ground targets.
 func (u Unit) GroundWeaponDamage() float32 {
 	return u.weaponDamage(api.Weapon_Ground)
 }
 
+// AirWeaponDamage returns damage per shot the unit can do to air targets.
 func (u Unit) AirWeaponDamage() float32 {
 	return u.weaponDamage(api.Weapon_Air)
 }
 
+// WeaponDamage returns damage per shot the unit can do to the given target.
 func (u Unit) WeaponDamage(target Unit) float32 {
 	if target.IsFlying {
 		return u.weaponDamage(api.Weapon_Air)
