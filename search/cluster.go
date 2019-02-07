@@ -40,6 +40,15 @@ type UnitCluster struct {
 	units []botutil.Unit
 }
 
+// Clear removes all units from the cluster without freeing the slice memory.
+func (c *UnitCluster) Clear() {
+	c.sum = api.Vec2D{}
+	for i := range c.units {
+		c.units[i] = botutil.Unit{}
+	}
+	c.units = c.units[:0]
+}
+
 // Add adds a new unit to the cluster and updates the center of mass.
 func (c *UnitCluster) Add(u botutil.Unit) {
 	c.sum = c.sum.Add(api.Vec2D(u.Pos2D()))
