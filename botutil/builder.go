@@ -13,11 +13,12 @@ import (
 type Builder struct {
 	player *Player
 	units  *UnitContext
+	used   map[api.UnitTag]bool
 }
 
 // NewBuilder creates a new Builder and registers it to fix FoodUsed rounding for zerg.
 func NewBuilder(info client.AgentInfo, player *Player, units *UnitContext) *Builder {
-	b := &Builder{player, units}
+	b := &Builder{player, units, map[api.UnitTag]bool{}}
 
 	// This is only really an issue for zerg
 	if player.RaceActual != api.Race_Zerg {
@@ -34,6 +35,10 @@ func NewBuilder(info client.AgentInfo, player *Player, units *UnitContext) *Buil
 		// this makes it seem like you can build units when you actually can't.
 		if n%2 != 0 {
 			b.player.FoodUsed++
+		}
+
+		for k := range b.used {
+			delete(b.used, k)
 		}
 	}
 	update()
@@ -65,12 +70,13 @@ func (b *Builder) BuildUnits(producer api.UnitTypeID, train api.AbilityID, count
 			return false
 		}
 
-		if u.BuildProgress < 1 || (len(u.Orders) > 0 && u.IsStructure()) {
+		if u.BuildProgress < 1 || (len(u.Orders) > 0 && u.IsStructure()) || b.used[u.Tag] {
 			return false
 		}
 
 		// Produce the unit and adjust available resources
 		u.Order(train)
+		b.used[u.Tag] = true
 		b.player.Spend(cost)
 		count--
 		return count == 0
@@ -98,6 +104,7 @@ func (b *Builder) BuildUnitAt(producer api.UnitTypeID, train api.AbilityID, pos 
 
 	// Produce the unit and adjust available resources
 	u.OrderPos(train, pos)
+	b.used[u.Tag] = true
 	b.player.Spend(cost)
 	return true
 }
@@ -119,13 +126,14 @@ func (b *Builder) BuildUnitOn(producer api.UnitTypeID, train api.AbilityID, targ
 
 	// Produce the unit and adjust available resources
 	u.OrderTarget(train, target)
+	b.used[u.Tag] = true
 	b.player.Spend(cost)
 	return true
 }
 
 func (b *Builder) getNearestBuilder(producer api.UnitTypeID, pos api.Point2D) Unit {
 	builders := b.units.Self[producer].Drop(func(u Unit) bool {
-		return u.BuildProgress < 1 || (len(u.Orders) > 0 && u.IsStructure())
+		return u.BuildProgress < 1 || (len(u.Orders) > 0 && u.IsStructure()) || b.used[u.Tag]
 	})
 	return builders.ClosestTo(pos)
 }
@@ -166,9 +174,9 @@ func (b *Builder) ProductionCost(producerType api.UnitTypeID, train api.AbilityI
 
 	// Per-build cost for this unit
 	cost := Cost{
-		target.MineralCost * multiplier,
-		target.VespeneCost * multiplier,
-		uint32(foodMult),
+		Minerals: target.MineralCost * multiplier,
+		Vespene:  target.VespeneCost * multiplier,
+		Food:     uint32(foodMult),
 	}
 
 	// Except that morphs include the entire production cost, so subtract out the base unit's cost
@@ -217,6 +225,7 @@ func (u Unit) BuildUnitAt(train api.AbilityID, pos api.Point2D) bool {
 
 	// Produce the unit and adjust available resources
 	u.OrderPos(train, pos)
+	b.used[u.Tag] = true
 	b.player.Spend(cost)
 	return true
 
@@ -237,6 +246,7 @@ func (u Unit) BuildUnitOn(train api.AbilityID, target Unit) bool {
 
 	// Produce the unit and adjust available resources
 	u.OrderTarget(train, target)
+	b.used[u.Tag] = true
 	b.player.Spend(cost)
 	return true
 
