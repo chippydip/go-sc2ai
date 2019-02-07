@@ -6,10 +6,16 @@ import (
 	"github.com/chippydip/go-sc2ai/client"
 )
 
+// Expansion contains the optimal build location for a given resource cluster.
+type Expansion struct {
+	Resources UnitCluster
+	Location  api.Point2D
+}
+
 // CalculateExpansionLocations groups resources into clusters and determines the best town hall location for each cluster.
 // The Center() point of each cluster is the optimal town hall location. If debug is true then the results will also
 // be visualized in-game (until new debug info is drawn).
-func CalculateExpansionLocations(bot *botutil.Bot, debug bool) []UnitCluster {
+func CalculateExpansionLocations(bot *botutil.Bot, debug bool) []Expansion {
 	// Start by finding resource clusters
 	clusters := Cluster(bot.Neutral.Resources(), 15)
 
@@ -22,7 +28,7 @@ func CalculateExpansionLocations(bot *botutil.Bot, debug bool) []UnitCluster {
 		markUnbuildable(placement, int(u.Pos.X-1), int(u.Pos.Y-1), 3, 3)
 	})
 
-	// Mark locations which *can't* have an expansion centers
+	// Mark locations which *can't* have town hall centers
 	for y := 0; y < placement.Height(); y++ {
 		for x := 0; x < placement.Width(); x++ {
 			if placement.Get(x, y) < 128 {
@@ -32,6 +38,7 @@ func CalculateExpansionLocations(bot *botutil.Bot, debug bool) []UnitCluster {
 	}
 
 	// Find the nearest remaining square to each cluster's CoM
+	expansions := make([]Expansion, len(clusters))
 	for i, cluster := range clusters {
 		pt := cluster.Center()
 		px, py := int(pt.X), int(pt.Y)
@@ -52,14 +59,14 @@ func CalculateExpansionLocations(bot *botutil.Bot, debug bool) []UnitCluster {
 		}
 
 		// Update the Center to be the detected location rather than the actual CoM (just don't add new units)
-		clusters[i].sum = api.Vec2D{X: float32(xBest) + 0.5, Y: float32(yBest) + 0.5}.Mul(float32(len(cluster.units)))
+		expansions[i] = Expansion{clusters[i], api.Point2D{X: float32(xBest) + 0.5, Y: float32(yBest) + 0.5}}
 	}
 
 	if debug {
-		debugPrint(clusters, placement, bot)
+		debugPrint(expansions, placement, bot)
 	}
 
-	return clusters
+	return expansions
 }
 
 // markUnbuildable marks a w x h area around px, py (minus corners) as unbuildable (red)
@@ -94,7 +101,7 @@ func expandUnbuildable(placement api.ImageDataBytes, px, py int) {
 }
 
 // debugPrint shows debug info about the expansion search procedure in-game
-func debugPrint(clusters []UnitCluster, placement api.ImageDataBytes, bot client.AgentInfo) {
+func debugPrint(expansions []Expansion, placement api.ImageDataBytes, bot client.AgentInfo) {
 	info := bot.GameInfo()
 	heightMap := info.StartRaw.TerrainHeight.Bytes()
 	pathable := info.StartRaw.PathingGrid.Bytes()
@@ -118,8 +125,8 @@ func debugPrint(clusters []UnitCluster, placement api.ImageDataBytes, bot client
 	}
 
 	// Expansion locations
-	for _, cluster := range clusters {
-		pt := cluster.Center()
+	for _, exp := range expansions {
+		pt := exp.Location
 		z := (float32(heightMap.Get(int(pt.X), int(pt.Y)))/254)*200 - 100
 		boxes = append(boxes, &api.DebugBox{
 			Color: green,

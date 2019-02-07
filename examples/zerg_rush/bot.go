@@ -48,7 +48,7 @@ func (bot *bot) init() {
 	expansions := search.CalculateExpansionLocations(bot.Bot, false)
 	query := make([]*api.RequestQueryPathing, len(expansions))
 	for i, exp := range expansions {
-		pos := exp.Center()
+		pos := exp.Location
 		query[i] = &api.RequestQueryPathing{
 			Start: &api.RequestQueryPathing_StartPos{
 				StartPos: &bot.myStartLocation,
@@ -63,7 +63,7 @@ func (bot *bot) init() {
 			best, minDist = i, result.Distance
 		}
 	}
-	bot.myNaturalLocation = expansions[best].Center()
+	bot.myNaturalLocation = expansions[best].Location
 
 	// Send a friendly hello
 	bot.Chat("(glhf)")

@@ -48,7 +48,7 @@ func runAgent(info client.AgentInfo) {
 func (bot *bot) init() {
 	bot.initLocations()
 	for _, uc := range search.CalculateExpansionLocations(bot.Bot, false) {
-		bot.baseLocations = append(bot.baseLocations, uc.Center())
+		bot.baseLocations = append(bot.baseLocations, uc.Location)
 	}
 	bot.findBuildingsPositions()
 	bot.retreat = map[api.UnitTag]bool{}
