@@ -14,6 +14,7 @@ import (
 type Actions struct {
 	info         client.AgentInfo
 	actions      []*api.Action
+	prevActions  []*api.Action
 	errorHandler ActionErrorHandler
 }
 
@@ -85,7 +86,13 @@ func (a *Actions) Send() {
 			}
 		}
 	}
+	a.prevActions = a.actions
 	a.actions = nil
+}
+
+// PrevActions returns the actions that were sent on the last call to Send.
+func (a *Actions) PrevActions() []*api.Action {
+	return a.prevActions
 }
 
 // Chat sends a message that all players can see.
