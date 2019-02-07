@@ -255,7 +255,7 @@ func (bot *bot) tactics() {
 		// Weapon is recharging
 		if reaper.WeaponCooldown > 1 {
 			// Enemy is closer than shooting distance - 0.5
-			if reaper.InRange(target, -0.5) {
+			if reaper.IsInWeaponsRange(target, -0.5) {
 				// Retreat a little
 				reaper.OrderPos(ability.Move, bot.positionsForBarracks)
 				return

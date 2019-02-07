@@ -277,7 +277,7 @@ func (units Units) IsTownHall() Units {
 	return units.Choose(Unit.IsTownHall)
 }
 
-// IsHarvester ...
-func (units Units) IsHarvester() Units {
-	return units.Choose(Unit.IsHarvester)
+// IsWorker ...
+func (units Units) IsWorker() Units {
+	return units.Choose(Unit.IsWorker)
 }

@@ -3,6 +3,7 @@ package botutil
 import (
 	"github.com/chippydip/go-sc2ai/api"
 	"github.com/chippydip/go-sc2ai/enums/ability"
+	"github.com/chippydip/go-sc2ai/enums/buff"
 	"github.com/chippydip/go-sc2ai/enums/unit"
 )
 
@@ -77,8 +78,8 @@ func (u Unit) IsTownHall() bool {
 	return false
 }
 
-// IsHarvester returns true if the unit is a SCV/Probe/Drone.
-func (u Unit) IsHarvester() bool {
+// IsWorker returns true if the unit is a SCV/Probe/Drone.
+func (u Unit) IsWorker() bool {
 	switch u.UnitType {
 	case unit.Protoss_Probe,
 		unit.Terran_SCV,
@@ -91,6 +92,21 @@ func (u Unit) IsHarvester() bool {
 // IsGathering returns true if the unit is currently gathering.
 func (u Unit) IsGathering() bool {
 	return !u.IsIdle() && ability.Remap(u.Orders[0].AbilityId) == ability.Harvest_Gather
+}
+
+// IsCarryingResources returns true if the unit is carrying minerals or gas.
+func (u Unit) IsCarryingResources() bool {
+	for _, b := range u.BuffIds {
+		switch b {
+		case buff.CarryMineralFieldMinerals,
+			buff.CarryHighYieldMineralFieldMinerals,
+			buff.CarryHarvestableVespeneGeyserGas,
+			buff.CarryHarvestableVespeneGeyserGasProtoss,
+			buff.CarryHarvestableVespeneGeyserGasZerg:
+			return true
+		}
+	}
+	return false
 }
 
 // HasBuff ...
@@ -108,9 +124,40 @@ func (u Unit) HasEnergy(energy float32) bool {
 	return u.Energy >= energy
 }
 
+func (u Unit) GroundWeaponDamage() float32 {
+	return u.weaponDamage(api.Weapon_Ground)
+}
+
+func (u Unit) AirWeaponDamage() float32 {
+	return u.weaponDamage(api.Weapon_Air)
+}
+
+func (u Unit) WeaponDamage(target Unit) float32 {
+	if target.IsFlying {
+		return u.weaponDamage(api.Weapon_Air)
+	}
+	return u.weaponDamage(api.Weapon_Ground)
+}
+
+func (u Unit) weaponDamage(weaponType api.Weapon_TargetType) float32 {
+	maxDamage := float32(0)
+	for _, weapon := range u.Weapons {
+		if weapon.Type == weaponType || weapon.Type == api.Weapon_Any {
+			if weapon.Damage > maxDamage {
+				maxDamage = weapon.Damage
+			}
+		}
+	}
+	return maxDamage
+}
+
 // WeaponRange returns the maximum range to attack the target from. If
 // the result is negative the target cannot be attacked.
 func (u Unit) WeaponRange(target Unit) float32 {
+	if target.IsNil() {
+		return -1
+	}
+
 	weaponType := api.Weapon_Ground
 	if target.IsFlying {
 		weaponType = api.Weapon_Air
@@ -127,8 +174,8 @@ func (u Unit) WeaponRange(target Unit) float32 {
 	return maxRange
 }
 
-// InRange returns true if the unit is within weapons range of the target.
-func (u Unit) InRange(target Unit, gap float32) bool {
+// IsInWeaponsRange returns true if the unit is within weapons range of the target.
+func (u Unit) IsInWeaponsRange(target Unit, gap float32) bool {
 	maxRange := u.WeaponRange(target)
 	if maxRange < 0 {
 		return false
