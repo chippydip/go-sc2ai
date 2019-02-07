@@ -1,6 +1,8 @@
 package botutil
 
 import (
+	"log"
+
 	"github.com/chippydip/go-sc2ai/api"
 	"github.com/chippydip/go-sc2ai/client"
 )
@@ -22,16 +24,23 @@ func NewPlayer(info client.AgentInfo) *Player {
 			p.PlayerInfo = *pi
 		} else {
 			p.OpponentID = pi.GetPlayerId()
-			if p.OpponentRace == api.Race_NoRace {
-				p.OpponentRace = pi.GetRaceRequested()
-			} else if p.OpponentRace != pi.GetRaceRequested() {
-				p.OpponentRace = api.Race_Random
-			}
+			p.OpponentRace = pi.GetRaceRequested()
 		}
 	}
 	update := func() {
 		if pc := info.Observation().GetObservation().GetPlayerCommon(); pc != nil {
 			p.PlayerCommon = *pc
+		}
+
+		if p.OpponentRace == api.Race_Random {
+			for _, u := range info.Observation().GetObservation().GetRawData().GetUnits() {
+				if u.GetOwner() == p.OpponentID {
+					data := info.Data().GetUnits()[u.GetUnitType()]
+					p.OpponentRace = data.GetRace()
+					log.Printf("Detected OpponentRace: %v", p.OpponentRace)
+					break
+				}
+			}
 		}
 	}
 	update()
@@ -51,7 +60,11 @@ type Cost struct {
 
 // Mul multiplies the cost by the given count and returns a new Cost.
 func (c Cost) Mul(count uint32) Cost {
-	return Cost{c.Minerals * count, c.Vespene * count, c.Food * count}
+	return Cost{
+		Minerals: c.Minerals * count,
+		Vespene:  c.Vespene * count,
+		Food:     c.Food * count,
+	}
 }
 
 // CanAfford determines if the player can currently afford the given cost.
@@ -72,8 +85,8 @@ func (p *Player) Spend(cost Cost) {
 func (b *Bot) UpgradeCost(upgrade api.UpgradeID) Cost {
 	data := b.Data().GetUpgrades()[upgrade]
 	return Cost{
-		data.MineralCost,
-		data.VespeneCost,
-		0,
+		Minerals: data.MineralCost,
+		Vespene:  data.VespeneCost,
+		Food:     0,
 	}
 }
