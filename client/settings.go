@@ -30,12 +30,13 @@ func NewParticipant(race api.Race, agent Agent, name string) PlayerSetup {
 }
 
 // NewComputer ...
-func NewComputer(race api.Race, difficulty api.Difficulty) PlayerSetup {
+func NewComputer(race api.Race, difficulty api.Difficulty, build api.AIBuild) PlayerSetup {
 	return PlayerSetup{
 		PlayerSetup: &api.PlayerSetup{
 			Type:       api.PlayerType_Computer,
 			Race:       race,
 			Difficulty: difficulty,
+			AiBuild:    build,
 		},
 	}
 }

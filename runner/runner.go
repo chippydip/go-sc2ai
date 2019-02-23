@@ -17,6 +17,7 @@ var opponentID = ""
 var computerOpponent = false
 var computerRace = api.Race_Terran
 var computerDifficulty = api.Difficulty_Easy
+var computerBuild = api.AIBuild_RandomBuild
 
 func init() {
 	// Ladder Flags
@@ -29,6 +30,7 @@ func init() {
 	flagBool("ComputerOpponent", &computerOpponent, "If we set up a computer opponent")
 	flagVar("ComputerRace", (*raceFlag)(&computerRace), "Race of computer opponent")
 	flagVar("ComputerDifficulty", (*difficultyFlag)(&computerDifficulty), "Difficulty of computer opponent")
+	flagVar("ComputerBuild", (*buildFlag)(&computerBuild), "Build of computer opponent")
 }
 
 // RunAgent ...
@@ -42,7 +44,7 @@ func RunAgent(agent client.PlayerSetup) {
 
 	var numAgents = 1
 	if computerOpponent && gamePort == 0 {
-		SetParticipants(agent, client.NewComputer(computerRace, computerDifficulty))
+		SetParticipants(agent, client.NewComputer(computerRace, computerDifficulty, computerBuild))
 	} else {
 		numAgents = 2
 		SetParticipants(agent)
@@ -109,6 +111,23 @@ func (f *difficultyFlag) Set(value string) error {
 
 func (f *difficultyFlag) String() string {
 	if v, ok := api.Difficulty_name[int32(*f)]; ok {
+		return v
+	}
+	return ""
+}
+
+type buildFlag api.AIBuild
+
+func (f *buildFlag) Set(value string) error {
+	if v, ok := api.AIBuild_value[value]; ok {
+		*f = buildFlag(v)
+		return nil
+	}
+	return fmt.Errorf("Unknown build: %v", value)
+}
+
+func (f *buildFlag) String() string {
+	if v, ok := api.AIBuild_name[int32(*f)]; ok {
 		return v
 	}
 	return ""

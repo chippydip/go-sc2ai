@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"sync/atomic"
 	"time"
 
 	"github.com/chippydip/go-sc2ai/api"
@@ -17,6 +18,7 @@ type connection struct {
 
 	Status api.Status
 
+	counter  uint32
 	requests chan<- request
 }
 
@@ -99,6 +101,8 @@ func (c *connection) sendRecv(data []byte, name string) ([]byte, error) {
 }
 
 func (c *connection) request(r *api.Request) (*api.Response, error) {
+	r.Id = atomic.AddUint32(&c.counter, 1)
+
 	// Serialize
 	data, err := proto.Marshal(r)
 	if err != nil {
@@ -129,6 +133,11 @@ func (c *connection) request(r *api.Request) (*api.Response, error) {
 	// Update status
 	if resp.Status != api.Status_nil {
 		c.Status = resp.Status
+	}
+
+	// Check Id
+	if resp.Id != r.Id {
+		log.Printf("bad response ID: got %v, expected %v", resp.Id, r.Id)
 	}
 
 	// Report errors (if any) and return

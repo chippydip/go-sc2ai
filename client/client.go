@@ -216,7 +216,7 @@ func (c *Client) Step(stepSize int) error {
 	// Get an updated observation
 	step := c.observation.GetObservation().GetGameLoop() + uint32(stepSize)
 	for {
-		if c.observation, err = c.connection.observation(api.RequestObservation{}); err != nil {
+		if c.observation, err = c.connection.observation(api.RequestObservation{GameLoop: step}); err != nil {
 			return err
 		}
 
