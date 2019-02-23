@@ -264,3 +264,8 @@ func (ctx *UnitContext) UnitByTag(tag api.UnitTag) Unit {
 	}
 	return Unit{}
 }
+
+// AllUnits returns all units from the most recent observation.
+func (ctx *UnitContext) AllUnits() Units {
+	return Units{ctx, ctx.wrapped, nil}
+}
