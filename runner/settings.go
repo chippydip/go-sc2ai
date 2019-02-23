@@ -97,6 +97,16 @@ func init() {
 	flagInt("timeout", &processSettings.timeoutMS, "Timeout for how long the library will block for a response.")
 }
 
+// SetRealtime sets the default realtime option.
+func SetRealtime() {
+	Set("realtime", "1")
+}
+
+// SetMap sets the default map to use.
+func SetMap(name string) {
+	Set("map", name)
+}
+
 func getUserDirectory() (string, error) {
 	switch runtime.GOOS {
 	case "windows":

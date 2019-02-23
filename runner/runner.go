@@ -33,6 +33,14 @@ func init() {
 	flagVar("ComputerBuild", (*buildFlag)(&computerBuild), "Build of computer opponent")
 }
 
+// SetComputer sets the default computer opponent flags (can still be overridden on the command line).
+func SetComputer(race api.Race, difficulty api.Difficulty, build api.AIBuild) {
+	Set("ComputerOpponent", "true")
+	Set("ComputerRace", api.Race_name[int32(race)])
+	Set("ComputerDifficulty", api.Difficulty_name[int32(difficulty)])
+	Set("ComputerBuild", api.AIBuild_name[int32(build)])
+}
+
 // RunAgent ...
 func RunAgent(agent client.PlayerSetup) {
 	if !LoadSettings() {

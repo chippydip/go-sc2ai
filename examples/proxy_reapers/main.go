@@ -8,10 +8,8 @@ import (
 
 func main() {
 	// Play a random map against a VeryHard difficulty computer
-	runner.Set("map", runner.Random1v1Map())
-	runner.Set("ComputerOpponent", "true")
-	runner.Set("ComputerRace", "random")
-	runner.Set("ComputerDifficulty", "VeryHard")
+	runner.SetMap(runner.Random1v1Map())
+	runner.SetComputer(api.Race_Random, api.Difficulty_VeryHard, api.AIBuild_RandomBuild)
 
 	// Create the agent and then start the game
 	agent := client.AgentFunc(runAgent)

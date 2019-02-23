@@ -7,10 +7,9 @@ import (
 )
 
 func main() {
-	runner.Set("map", runner.Random1v1Map())
-	runner.Set("ComputerOpponent", "true")
-	runner.Set("ComputerRace", "random")
-	runner.Set("ComputerDifficulty", "Medium")
+	// Play a random map against a medium difficulty computer
+	runner.SetMap(runner.Random1v1Map())
+	runner.SetComputer(api.Race_Random, api.Difficulty_Medium, api.AIBuild_RandomBuild)
 
 	// Create the agent and then start the game
 	agent := client.AgentFunc(runAgent)
