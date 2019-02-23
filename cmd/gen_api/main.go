@@ -119,7 +119,7 @@ func upgradeProto(path string) []string {
 			lines = append(lines, line)
 
 			// Enums must have a zero value in proto3 (and unfortunately they must be unique due to C++ scoping rules)
-			if strings.HasPrefix(line, enumPrefix) && line != "enum Race {" {
+			if strings.HasPrefix(line, enumPrefix) && line != "enum Race {" && line != "enum CloakState {" {
 				lines = append(lines, line[len(enumPrefix):len(line)-2]+"_nil = 0 [(gogoproto.enumvalue_customname) = \"nil\"];")
 			}
 
