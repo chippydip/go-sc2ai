@@ -71,8 +71,8 @@ func (bot *bot) findBuildingsPositions() {
 
 	// Pick locations for supply depots
 	pos := bot.myStartLocation.Offset(homeMinerals.Center(), -6)
-	bot.positionsForSupplies = append(bot.positionsForSupplies, pos)
-	bot.positionsForSupplies = append(bot.positionsForSupplies, neighbours8(pos, 2)...)
+	neighbors8 := pos.Offset8By(2)
+	bot.positionsForSupplies = append(append(bot.positionsForSupplies, pos), neighbors8[:]...)
 
 	// Determine proxy location
 	pos = bot.enemyStartLocation.Offset(bot.myStartLocation, 25)
@@ -84,7 +84,7 @@ func (bot *bot) findBuildingsPositions() {
 	bot.barracksQuery.IgnoreResourceRequirements()
 
 	bot.barracksQuery.Placement(ability.Build_Barracks, pos)
-	for _, np := range neighbours8(pos, 4) {
+	for _, np := range pos.Offset4By(4) {
 		bot.barracksQuery.Placement(ability.Build_Barracks, np)
 	}
 }
