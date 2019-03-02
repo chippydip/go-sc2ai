@@ -202,3 +202,50 @@ func (u Unit) IsInWeaponsRange(target Unit, gap float32) bool {
 	dist := float32(u.Pos2D().Distance(target.Pos2D()))
 	return dist-gap <= maxRange+u.Radius+target.Radius
 }
+
+// AttackTarget issues an attack order if the unit isn't already attacking the target.
+func (u Unit) AttackTarget(target Unit) {
+	if !u.IsIdle() {
+		if ability.Remap(u.Orders[0].AbilityId) == ability.Attack &&
+			u.Orders[0].GetTargetUnitTag() == target.Tag {
+			return
+		}
+	}
+
+	u.OrderTarget(ability.Attack, target)
+}
+
+// AttackMove issues an attack order if the unit isn't already attacking within tollerance of pos.
+func (u Unit) AttackMove(pos api.Point2D, tollerance float32) {
+	if !u.IsIdle() {
+		i := 0
+		// If the first order is a targeted attack, examine the second order
+		if tag := u.Orders[0].GetTargetUnitTag(); tag != 0 &&
+			len(u.Orders) > 1 &&
+			ability.Remap(u.Orders[0].AbilityId) == ability.Attack {
+			i++
+		}
+		// If the non-specific order is an attack close enough to pos just use that
+		if p := u.Orders[i].GetTargetWorldSpacePos(); p != nil &&
+			ability.Remap(u.Orders[i].AbilityId) == ability.Attack &&
+			p.ToPoint2D().Distance2(pos) <= tollerance*tollerance {
+			return
+		}
+
+	}
+
+	u.OrderPos(ability.Attack, pos)
+}
+
+// MoveTo issues a move order if the unit isn't already moving within tollerance of pos.
+func (u Unit) MoveTo(pos api.Point2D, tollerance float32) {
+	if !u.IsIdle() {
+		if p := u.Orders[0].GetTargetWorldSpacePos(); p != nil &&
+			ability.Remap(u.Orders[0].AbilityId) == ability.Move &&
+			p.ToPoint2D().Distance2(pos) <= tollerance*tollerance {
+			return
+		}
+	}
+
+	u.OrderPos(ability.Move, pos)
+}
