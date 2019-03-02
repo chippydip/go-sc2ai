@@ -38,7 +38,12 @@ func (v VecI) Len2() int32 {
 }
 
 // Len computes the length (magnitude) of the vector.
-func (v VecI) Len() float64 {
+func (v VecI) Len() float32 {
+	return float32(v.Len())
+}
+
+// Len64 computes the length (magnitude) of the vector.
+func (v VecI) Len64() float64 {
 	return math.Sqrt(float64(v.Len2()))
 }
 
@@ -97,7 +102,12 @@ func (v Vec2D) Len2() float32 {
 }
 
 // Len computes the length (magnitude) of the vector.
-func (v Vec2D) Len() float64 {
+func (v Vec2D) Len() float32 {
+	return float32(v.Len64())
+}
+
+// Len64 computes the length (magnitude) of the vector.
+func (v Vec2D) Len64() float64 {
 	return math.Sqrt(float64(v.Len2()))
 }
 
@@ -114,7 +124,7 @@ func (v Vec2D) Manhattan() float32 {
 
 // Norm computes the unit vector pointing is the same direction as v.
 func (v Vec2D) Norm() Vec2D {
-	return v.Mul64(1.0 / v.Len())
+	return v.Mul64(1.0 / v.Len64())
 }
 
 // Vec is a 3D vector with real components.
@@ -161,7 +171,12 @@ func (v Vec) Len2() float32 {
 }
 
 // Len computes the length (magnitude) of the vector.
-func (v Vec) Len() float64 {
+func (v Vec) Len() float32 {
+	return float32(v.Len64())
+}
+
+// Len64 computes the length (magnitude) of the vector.
+func (v Vec) Len64() float64 {
 	return math.Sqrt(float64(v.Len2()))
 }
 
@@ -181,7 +196,7 @@ func (v Vec) Manhattan() float32 {
 
 // Norm computes the unit vector pointing is the same direction as v.
 func (v Vec) Norm() Vec {
-	return v.Mul64(1.0 / v.Len())
+	return v.Mul64(1.0 / v.Len64())
 }
 
 // Cross computes the cross product of v x v2.

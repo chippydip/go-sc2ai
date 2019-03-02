@@ -30,7 +30,7 @@ func (p PointI) VecTo(p2 PointI) VecI {
 // For DirTo and Offset, just convert to Point2D first since the result may not be integers
 
 // Distance computes the absolute distance between two points.
-func (p PointI) Distance(p2 PointI) float64 {
+func (p PointI) Distance(p2 PointI) float32 {
 	return p.VecTo(p2).Len()
 }
 
@@ -77,7 +77,7 @@ func (p Point2D) Offset(toward Point2D, by float32) Point2D {
 }
 
 // Distance computes the absolute distance between two points.
-func (p Point2D) Distance(p2 Point2D) float64 {
+func (p Point2D) Distance(p2 Point2D) float32 {
 	return p.VecTo(p2).Len()
 }
 
@@ -124,7 +124,7 @@ func (p Point) Offset(toward Point, by float32) Point {
 }
 
 // Distance computes the absolute distance between two points.
-func (p Point) Distance(p2 Point) float64 {
+func (p Point) Distance(p2 Point) float32 {
 	return p.VecTo(p2).Len()
 }
 
