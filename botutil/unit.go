@@ -64,7 +64,7 @@ func (u Unit) IsIdle() bool {
 	return len(u.Orders) == 0
 }
 
-// IsTownHall return true if the unit is a Nexus/CC/OC/PF/Hatch/Lair/Hive.
+// IsTownHall returns true if the unit is a Nexus/CC/OC/PF/Hatch/Lair/Hive.
 func (u Unit) IsTownHall() bool {
 	switch u.UnitType {
 	case unit.Protoss_Nexus,
@@ -72,13 +72,28 @@ func (u Unit) IsTownHall() bool {
 		unit.Terran_OrbitalCommand,
 		unit.Terran_PlanetaryFortress,
 		unit.Zerg_Hatchery,
-		unit.Zerg_Lair:
+		unit.Zerg_Lair,
+		unit.Zerg_Hive:
 		return true
 	}
 	return false
 }
 
-// IsWorker returns true if the unit is a SCV/Probe/Drone.
+// IsGasBuilding returns true if the unit is an Assimilator/Refinery/Extractory.
+func (u Unit) IsGasBuilding() bool {
+	switch u.UnitType {
+	case unit.Protoss_Assimilator,
+		unit.Protoss_AssimilatorRich,
+		unit.Terran_Refinery,
+		unit.Terran_RefineryRich,
+		unit.Zerg_Extractor,
+		unit.Zerg_ExtractorRich:
+		return true
+	}
+	return false
+}
+
+// IsWorker returns true if the unit is a Probe/SCV/Drone (but not MULE).
 func (u Unit) IsWorker() bool {
 	switch u.UnitType {
 	case unit.Protoss_Probe,
