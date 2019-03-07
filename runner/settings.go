@@ -48,30 +48,25 @@ func LoadSettings() bool {
 }
 
 func init() {
+	// Default to the environment variable (Linux mostly)
+	if sc2path := os.Getenv("SC2PATH"); len(sc2path) > 0 {
+		processSettings.processPath = filepath.Join(sc2path, "Versions", "dummy")
+	}
+
+	// Read value from ExecuteInfo.txt if the current user has run the game before
 	file, _ := getUserDirectory()
 	if len(file) > 0 {
 		file = filepath.Join(file, "Starcraft II", "ExecuteInfo.txt")
 	}
 
-	// ParseFromFile
 	if props, err := newPropertyReader(file); err == nil {
 		props.getString("executable", &processSettings.processPath)
-
-		var realtime int
-		if props.getInt("realtime", &realtime) && realtime != 0 {
-			processSettings.realtime = true
-		}
-
-		props.getInt("port", &processSettings.portStart)
-		props.getString("map", &gameSettings.mapName)
-		props.getInt("timeout", &processSettings.timeoutMS)
 	}
 
-	// FindLatestExe
+	// Backout the defaulted path to the Versions directory and then find the latest Base game
 	if len(processSettings.processPath) > 0 {
 		// Get the exe name and then back out to the Versions directory
-		path, exe := filepath.Split(processSettings.processPath)
-		path = filepath.Dir(path) // remove trailing slash
+		path := filepath.Dir(processSettings.processPath)
 		for path != "." && filepath.Base(path) != "Versions" {
 			path = filepath.Dir(path)
 		}
@@ -80,7 +75,7 @@ func init() {
 		if path != "." {
 			subdirs := getSubdirs(path)
 			for i := len(subdirs) - 1; i >= 0; i-- {
-				p := filepath.Join(path, subdirs[i], exe)
+				p := filepath.Join(path, subdirs[i], getBinPath())
 				if _, err := os.Stat(p); err == nil {
 					processSettings.processPath = p
 					break
@@ -139,6 +134,17 @@ func getUserDirectory() (string, error) {
 			return "", err
 		}
 		return user.HomeDir, nil
+	}
+}
+
+func getBinPath() string {
+	switch runtime.GOOS {
+	case "windows":
+		return "SC2_x64.exe"
+	case "darwin":
+		return "SC2.app/Contents/MacOS/SC2"
+	default:
+		return "SC2_x64"
 	}
 }
 

@@ -85,8 +85,17 @@ func CreateGame(mapPath string) bool {
 		log.Panic("Game not started")
 	}
 
+	// Fix linux client using maps directory instead of Maps
+	path := filepath.Dir(processSettings.processPath)
+	for path != "." && filepath.Base(path) != "StarCraft II" {
+		path = filepath.Dir(path)
+	}
+	if path != "." {
+		mapPath = filepath.Join(path, "Maps", mapPath)
+	}
+
 	// Create with the first client
-	err := clients[0].CreateGame(gameSettings.mapName, gameSettings.playerSetup, processSettings.realtime)
+	err := clients[0].CreateGame(mapPath, gameSettings.playerSetup, processSettings.realtime)
 	if err != nil {
 		log.Print(err)
 		return false
