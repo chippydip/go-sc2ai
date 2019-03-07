@@ -136,7 +136,7 @@ func (c *connection) request(r *api.Request) (*api.Response, error) {
 	}
 
 	// Check Id
-	if resp.Id != r.Id {
+	if resp.Id != 0 && resp.Id != r.Id {
 		log.Printf("bad response ID: got %v, expected %v", resp.Id, r.Id)
 	}
 
