@@ -127,6 +127,17 @@ func (v Vec2D) Norm() Vec2D {
 	return v.Mul64(1.0 / v.Len64())
 }
 
+// Quadrant rounds the vector angle to the nearest nth of a circle and normalizes it.
+func (v Vec2D) Quadrant(n int) Vec2D {
+	a := math.Atan2(float64(v.Y), float64(v.X))
+
+	q := int(float64(n)*a/(2*math.Pi)+float64(n)+0.5) % n
+	a = 2 * math.Pi * float64(q) / float64(n)
+
+	y, x := math.Sincos(a)
+	return Vec2D{float32(x), float32(y)}
+}
+
 // Vec is a 3D vector with real components.
 type Vec Point
 
