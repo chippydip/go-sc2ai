@@ -4,6 +4,7 @@ import (
 	"math"
 
 	"github.com/chippydip/go-sc2ai/api"
+	"github.com/chippydip/go-sc2ai/enums/ability"
 )
 
 // Units ...
@@ -290,4 +291,25 @@ func (units Units) IsGasBuilding() Units {
 // IsWorker ...
 func (units Units) IsWorker() Units {
 	return units.Choose(Unit.IsWorker)
+}
+
+// AttackTarget issues an attack order to any unit that isn't already attacking the target.
+func (units Units) AttackTarget(target Unit) {
+	units.Choose(func(u Unit) bool {
+		return u.needsAttackTargetOrder(target)
+	}).OrderTarget(ability.Attack, target)
+}
+
+// AttackMove issues an attack order to any unit that isn't already attacking within tollerance of pos.
+func (units Units) AttackMove(pos api.Point2D, tollerance float32) {
+	units.Choose(func(u Unit) bool {
+		return u.needsAttackMoveOrder(pos, tollerance)
+	}).OrderPos(ability.Attack, pos)
+}
+
+// MoveTo issues a move order to any unit that isn't already moving to or within tollerance of pos.
+func (units Units) MoveTo(pos api.Point2D, tollerance float32) {
+	units.Choose(func(u Unit) bool {
+		return u.needsMoveToOrder(pos, tollerance)
+	}).OrderPos(ability.Move, pos)
 }
