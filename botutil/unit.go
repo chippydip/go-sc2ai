@@ -21,21 +21,24 @@ func (u Unit) IsNil() bool {
 
 // IsVisible checks if DisplayType is Visible.
 func (u Unit) IsVisible() bool {
-	return u.DisplayType == api.DisplayType_Visible
+	return u.Unit != nil && u.DisplayType == api.DisplayType_Visible
 }
 
 // IsSnapshot checks if DisplayType is Snapshot.
 func (u Unit) IsSnapshot() bool {
-	return u.DisplayType == api.DisplayType_Snapshot
+	return u.Unit != nil && u.DisplayType == api.DisplayType_Snapshot
 }
 
 // IsHidden checks if DisplayType is Hidden.
 func (u Unit) IsHidden() bool {
-	return u.DisplayType == api.DisplayType_Hidden
+	return u.Unit != nil && u.DisplayType == api.DisplayType_Hidden
 }
 
 // HasAttribute checks if this unit has the specified attribute.
 func (u Unit) HasAttribute(attr api.Attribute) bool {
+	if u.Unit == nil {
+		return false
+	}
 	for _, a := range u.Attributes {
 		if a == attr {
 			return true
@@ -54,18 +57,26 @@ func (u Unit) Pos2D() api.Point2D {
 	return u.Pos.ToPoint2D()
 }
 
+// IsStarted returns true if the unit has started building (is not ghost placement).
+func (u Unit) IsStarted() bool {
+	return u.Unit != nil && u.BuildProgress > 0
+}
+
 // IsBuilt returns true if the unit is done building.
 func (u Unit) IsBuilt() bool {
-	return u.BuildProgress == 1
+	return u.Unit != nil && u.BuildProgress == 1
 }
 
 // IsIdle returns true if the unit has no orders.
 func (u Unit) IsIdle() bool {
-	return len(u.Orders) == 0
+	return u.Unit != nil && len(u.Orders) == 0
 }
 
 // IsTownHall returns true if the unit is a Nexus/CC/OC/PF/Hatch/Lair/Hive.
 func (u Unit) IsTownHall() bool {
+	if u.Unit == nil {
+		return false
+	}
 	switch u.UnitType {
 	case unit.Protoss_Nexus,
 		unit.Terran_CommandCenter,
@@ -81,6 +92,9 @@ func (u Unit) IsTownHall() bool {
 
 // IsGasBuilding returns true if the unit is an Assimilator/Refinery/Extractory.
 func (u Unit) IsGasBuilding() bool {
+	if u.Unit == nil {
+		return false
+	}
 	switch u.UnitType {
 	case unit.Protoss_Assimilator,
 		unit.Protoss_AssimilatorRich,
@@ -95,6 +109,9 @@ func (u Unit) IsGasBuilding() bool {
 
 // IsWorker returns true if the unit is a Probe/SCV/Drone (but not MULE).
 func (u Unit) IsWorker() bool {
+	if u.Unit == nil {
+		return false
+	}
 	switch u.UnitType {
 	case unit.Protoss_Probe,
 		unit.Terran_SCV,
@@ -106,11 +123,14 @@ func (u Unit) IsWorker() bool {
 
 // IsGathering returns true if the unit is currently gathering.
 func (u Unit) IsGathering() bool {
-	return !u.IsIdle() && ability.Remap(u.Orders[0].AbilityId) == ability.Harvest_Gather
+	return u.Unit != nil && !u.IsIdle() && ability.Remap(u.Orders[0].AbilityId) == ability.Harvest_Gather
 }
 
 // IsCarryingResources returns true if the unit is carrying minerals or gas.
 func (u Unit) IsCarryingResources() bool {
+	if u.Unit == nil {
+		return false
+	}
 	for _, b := range u.BuffIds {
 		switch b {
 		case buff.CarryMineralFieldMinerals,
@@ -126,6 +146,9 @@ func (u Unit) IsCarryingResources() bool {
 
 // HasBuff ...
 func (u Unit) HasBuff(buffID api.BuffID) bool {
+	if u.Unit == nil {
+		return false
+	}
 	for _, b := range u.BuffIds {
 		if b == buffID {
 			return true
@@ -136,7 +159,7 @@ func (u Unit) HasBuff(buffID api.BuffID) bool {
 
 // HasEnergy ...
 func (u Unit) HasEnergy(energy float32) bool {
-	return u.Energy >= energy
+	return u.Unit != nil && u.Energy >= energy
 }
 
 // GroundWeaponDamage returns damage per shot the unit can do to ground targets.
@@ -194,6 +217,9 @@ func (u Unit) WeaponRange(target Unit) float32 {
 
 // IsInWeaponsRange returns true if the unit is within weapons range of the target.
 func (u Unit) IsInWeaponsRange(target Unit, gap float32) bool {
+	if u.Unit == nil {
+		return false
+	}
 	maxRange := u.WeaponRange(target)
 	if maxRange < 0 {
 		return false

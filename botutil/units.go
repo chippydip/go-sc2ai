@@ -238,16 +238,6 @@ func (units Units) HasEnergy(energy float32) Units {
 	})
 }
 
-// IsBuilt ...
-func (units Units) IsBuilt() Units {
-	return units.Choose(Unit.IsBuilt)
-}
-
-// IsIdle ...
-func (units Units) IsIdle() Units {
-	return units.Choose(Unit.IsIdle)
-}
-
 // HasBuff ...
 func (units Units) HasBuff(buffID api.BuffID) Units {
 	return units.Choose(func(u Unit) bool {
@@ -272,9 +262,29 @@ func (units Units) NoBuff(buffID api.BuffID) Units {
 	})
 }
 
+// IsStarted ...
+func (units Units) IsStarted() Units {
+	return units.Choose(Unit.IsStarted)
+}
+
+// IsBuilt ...
+func (units Units) IsBuilt() Units {
+	return units.Choose(Unit.IsBuilt)
+}
+
+// IsIdle ...
+func (units Units) IsIdle() Units {
+	return units.Choose(Unit.IsIdle)
+}
+
 // IsTownHall ...
 func (units Units) IsTownHall() Units {
 	return units.Choose(Unit.IsTownHall)
+}
+
+// IsGasBuilding ...
+func (units Units) IsGasBuilding() Units {
+	return units.Choose(Unit.IsGasBuilding)
 }
 
 // IsWorker ...
