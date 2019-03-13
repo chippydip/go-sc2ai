@@ -109,9 +109,9 @@ func debugPrint(expansions []Expansion, placement api.ImageDataBytes, bot client
 	var boxes []*api.DebugBox
 
 	// Debug placement grid
-			color := mapColor(placement.Get(x, y), pathable.Get(x, y))
 	for y := int32(0); y < placement.Height(); y++ {
 		for x := int32(0); x < placement.Width(); x++ {
+			color := mapColor(placement.Get(x, y), pathable.Get(x, y))
 			if color != nil {
 				//z := float32(int(0.75*(float32(heightMap.Get(x, y))-127)+0.5)) + 0.01
 				z := (float32(heightMap.Get(x, y))/254)*200 - 100
