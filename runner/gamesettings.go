@@ -1,6 +1,8 @@
 package runner
 
 import (
+	"path/filepath"
+
 	"github.com/chippydip/go-sc2ai/api"
 	"github.com/chippydip/go-sc2ai/client"
 )
@@ -38,3 +40,16 @@ var replaySettings = struct {
 	filter  func(info *api.ResponseReplayInfo) bool
 	current string
 }{"", nil, 1, nil, ""}
+
+func sc2Path() string {
+	for path := processSettings.processPath; ; {
+		prev := path
+		path = filepath.Dir(path)
+
+		if filepath.Base(path) == "Versions" {
+			return filepath.Dir(path)
+		} else if path == prev {
+			return ""
+		}
+	}
+}

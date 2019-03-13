@@ -65,14 +65,9 @@ func init() {
 
 	// Backout the defaulted path to the Versions directory and then find the latest Base game
 	if len(processSettings.processPath) > 0 {
-		// Get the exe name and then back out to the Versions directory
-		path := filepath.Dir(processSettings.processPath)
-		for path != "." && filepath.Base(path) != "Versions" {
-			path = filepath.Dir(path)
-		}
-
 		// Find the highest version folder where the exe exists
-		if path != "." {
+		if path := sc2Path(); path != "" {
+			path = filepath.Join(path, "Versions")
 			subdirs := getSubdirs(path)
 			for i := len(subdirs) - 1; i >= 0; i-- {
 				p := filepath.Join(path, subdirs[i], getBinPath())

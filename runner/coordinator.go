@@ -86,13 +86,7 @@ func CreateGame(mapPath string) bool {
 	}
 
 	// Fix linux client using maps directory instead of Maps
-	path := filepath.Dir(processSettings.processPath)
-	for path != "." && filepath.Base(path) != "StarCraft II" {
-		path = filepath.Dir(path)
-	}
-	if path != "." {
-		mapPath = filepath.Join(path, "Maps", mapPath)
-	}
+	mapPath = filepath.Join(sc2Path(), "Maps", mapPath)
 
 	// Create with the first client
 	err := clients[0].CreateGame(mapPath, gameSettings.playerSetup, processSettings.realtime)
@@ -188,11 +182,8 @@ func launchAndAttach(c *client.Client, clientIndex int) {
 		path := processSettings.processPath
 		if processSettings.baseBuild != 0 {
 			// Get the exe name and then back out to the Versions directory
-			dir, exe := filepath.Split(path)
-			dir = filepath.Dir(path) // remove trailing slash
-			for dir != "." && filepath.Base(dir) != "Versions" {
-				dir = filepath.Dir(dir)
-			}
+			_, exe := filepath.Split(path)
+			dir := filepath.Join(sc2Path(), "Versions")
 
 			// Get the path of the correct version and make sure the exe exists
 			path = filepath.Join(dir, fmt.Sprintf("Base%v", processSettings.baseBuild), exe)
@@ -224,11 +215,8 @@ func startProcess(path string, args []string) int {
 
 	// Set the working directory on windows
 	if runtime.GOOS == "windows" {
-		path, exe := filepath.Split(path)
-		path = filepath.Dir(path) // remove trailing slash
-		for path != "." && filepath.Base(path) != "StarCraft II" {
-			path = filepath.Dir(path)
-		}
+		_, exe := filepath.Split(path)
+		path := sc2Path()
 		if strings.Contains(exe, "_x64") {
 			path = filepath.Join(path, "Support64")
 		} else {
