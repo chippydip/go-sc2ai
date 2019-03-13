@@ -22,15 +22,15 @@ func CalculateExpansionLocations(bot *botutil.Bot, debug bool) []Expansion {
 	// Add resource-restrictions to the placement grid
 	placement := bot.GameInfo().StartRaw.PlacementGrid.Copy().Bytes()
 	bot.Neutral.Minerals().Each(func(u botutil.Unit) {
-		markUnbuildable(placement, int(u.Pos.X-0.5), int(u.Pos.Y), 2, 1)
+		markUnbuildable(placement, int32(u.Pos.X-0.5), int32(u.Pos.Y), 2, 1)
 	})
 	bot.Neutral.Vespene().Each(func(u botutil.Unit) {
-		markUnbuildable(placement, int(u.Pos.X-1), int(u.Pos.Y-1), 3, 3)
+		markUnbuildable(placement, int32(u.Pos.X-1), int32(u.Pos.Y-1), 3, 3)
 	})
 
 	// Mark locations which *can't* have town hall centers
-	for y := 0; y < placement.Height(); y++ {
-		for x := 0; x < placement.Width(); x++ {
+	for y := int32(0); y < placement.Height(); y++ {
+		for x := int32(0); x < placement.Width(); x++ {
 			if placement.Get(x, y) < 128 {
 				expandUnbuildable(placement, x, y)
 			}
@@ -41,9 +41,9 @@ func CalculateExpansionLocations(bot *botutil.Bot, debug bool) []Expansion {
 	expansions := make([]Expansion, len(clusters))
 	for i, cluster := range clusters {
 		pt := cluster.Center()
-		px, py := int(pt.X), int(pt.Y)
-		r2Min, xBest, yBest := 256, -1, -1
-		for r := 0; r*r <= r2Min; r++ { // search radius
+		px, py := int32(pt.X), int32(pt.Y)
+		var r2Min, xBest, yBest int32 = 256, -1, -1
+		for r := int32(0); r*r <= r2Min; r++ { // search radius
 			xMin, xMax, yMin, yMax := px-r, px+r, py-r, py+r
 			for y := yMin; y <= yMax; y++ {
 				for x := xMin; x <= xMax; x++ {
@@ -70,7 +70,7 @@ func CalculateExpansionLocations(bot *botutil.Bot, debug bool) []Expansion {
 }
 
 // markUnbuildable marks a w x h area around px, py (minus corners) as unbuildable (red)
-func markUnbuildable(placement api.ImageDataBytes, px, py, w, h int) {
+func markUnbuildable(placement api.ImageDataBytes, px, py, w, h int32) {
 	xMin, xMax := px-3, px+w+2
 	yMin, yMax := py-3, py+h+2
 
@@ -87,7 +87,7 @@ func markUnbuildable(placement api.ImageDataBytes, px, py, w, h int) {
 }
 
 // expandUnbuildable marks any tile within 2 units of px, py as unbuildable (blue)
-func expandUnbuildable(placement api.ImageDataBytes, px, py int) {
+func expandUnbuildable(placement api.ImageDataBytes, px, py int32) {
 	xMin, xMax := px-2, px+2
 	yMin, yMax := py-2, py+2
 
@@ -109,9 +109,9 @@ func debugPrint(expansions []Expansion, placement api.ImageDataBytes, bot client
 	var boxes []*api.DebugBox
 
 	// Debug placement grid
-	for y := 0; y < placement.Height(); y++ {
-		for x := 0; x < placement.Width(); x++ {
 			color := mapColor(placement.Get(x, y), pathable.Get(x, y))
+	for y := int32(0); y < placement.Height(); y++ {
+		for x := int32(0); x < placement.Width(); x++ {
 			if color != nil {
 				//z := float32(int(0.75*(float32(heightMap.Get(x, y))-127)+0.5)) + 0.01
 				z := (float32(heightMap.Get(x, y))/254)*200 - 100
@@ -127,7 +127,7 @@ func debugPrint(expansions []Expansion, placement api.ImageDataBytes, bot client
 	// Expansion locations
 	for _, exp := range expansions {
 		pt := exp.Location
-		z := (float32(heightMap.Get(int(pt.X), int(pt.Y)))/254)*200 - 100
+		z := (float32(heightMap.Get(int32(pt.X), int32(pt.Y)))/254)*200 - 100
 		boxes = append(boxes, &api.DebugBox{
 			Color: green,
 			Min:   &api.Point{X: pt.X - 2.5, Y: pt.Y - 2.5, Z: z},
