@@ -332,10 +332,20 @@ func runAgent(c *client.Client) {
 		}
 	}()
 
-	err := c.Init() // get GameInfo, Data, and Observation
-	if err == nil && c.IsInGame() {
-		c.Agent.RunAgent(c)
+	// get GameInfo, Data, and Observation
+	if err := c.Init(); err != nil {
+		log.Printf("Failed to init client: %v", err)
+		return
 	}
+
+	// make sure the bot was added to a game or replay
+	if !c.IsInGame() {
+		log.Print("Client is not in-game")
+		return
+	}
+
+	// run the agent's code
+	c.Agent.RunAgent(c)
 }
 
 func cleanup(c *client.Client) {
