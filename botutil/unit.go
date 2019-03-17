@@ -237,7 +237,7 @@ func (u Unit) AttackTarget(target Unit) {
 }
 
 func (u Unit) needsAttackTargetOrder(target Unit) bool {
-	if !u.IsIdle() {
+	if !u.IsIdle() && !target.IsNil() {
 		if ability.Remap(u.Orders[0].AbilityId) == ability.Attack &&
 			u.Orders[0].GetTargetUnitTag() == target.Tag {
 			return false
