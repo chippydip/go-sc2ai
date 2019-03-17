@@ -71,7 +71,7 @@ func filterToMask(filter byte) [9]bool {
 }
 
 func newFilter(m map[api.UnitTypeID]Units, alliance api.Alliance) filteredUnits {
-	return filteredUnits{ctx: m[0].ctx, alliance: alliance}
+	return filteredUnits{ctx: m[0].ctx(), alliance: alliance}
 }
 
 func (f filteredUnits) Flying() filteredUnits     { f.bits |= filterFlying; return f }
@@ -134,7 +134,7 @@ func (f filteredUnits) All() Units {
 		}
 	}
 
-	return Units{ctx: f.ctx, raw: raw}
+	return Units{raw: raw}
 }
 
 func (f filteredUnits) First() Unit {
@@ -191,7 +191,7 @@ func (m self) Choose(filter func(Unit) bool) filteredUnits {
 func (m self) TechAlias(unitType api.UnitTypeID) Units {
 	units := m[unitType]
 	// TODO: Pre-compute this
-	for _, data := range m[0].ctx.data {
+	for _, data := range m[0].ctx().data {
 		for _, alias := range data.TechAlias {
 			if alias == unitType {
 				other := m[data.UnitId]
@@ -209,7 +209,7 @@ func (m self) Count(unitType api.UnitTypeID) int {
 }
 
 func (m self) CountInProduction(unitType api.UnitTypeID) int {
-	n, abil := 0, m[0].ctx.data[unitType].AbilityId
+	n, abil := 0, m[0].ctx().data[unitType].AbilityId
 	for _, u := range m.All().raw {
 		for _, order := range u.Orders {
 			if order.AbilityId == abil {
@@ -265,9 +265,9 @@ func (m enemy) Choose(filter func(Unit) bool) filteredUnits {
 type neutral map[api.UnitTypeID]Units
 
 func newNeutral(m neutral, start, length int) Units {
-	ctx := m[0].ctx
+	ctx := m[0].ctx()
 	start, end := ctx.groups[start], ctx.groups[start+length]
-	return Units{ctx: ctx, raw: ctx.wrapped[start:end]}
+	return Units{raw: ctx.wrapped[start:end]}
 }
 
 func (m neutral) Minerals() Units  { return newNeutral(m, neutralMinerals, 1) }

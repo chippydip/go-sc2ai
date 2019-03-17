@@ -9,9 +9,20 @@ import (
 
 // Units ...
 type Units struct {
-	ctx    *UnitContext
 	raw    []Unit
 	filter func(Unit) bool
+}
+
+// NewUnits wraps a regular []Unit into a Units struct.
+func NewUnits(units []Unit) Units {
+	return Units{raw: units}
+}
+
+func (units Units) ctx() *UnitContext {
+	if len(units.raw) > 0 {
+		return units.raw[0].ctx
+	}
+	return nil
 }
 
 func (units *Units) applyFilter(extra int) {
@@ -39,8 +50,8 @@ func (units *Units) ensureOwns(extra int) {
 		return // we may not even have a ctx to compare to
 	}
 
-	// Don't mess the the ctx's slice
-	if sliceID(units.raw) == sliceID(units.ctx.wrapped) {
+	// Don't mess with the ctx's slice
+	if sliceID(units.raw) == sliceID(units.ctx().wrapped) {
 		tmp := make([]Unit, len(units.raw), len(units.raw)+extra)
 		copy(tmp, units.raw)
 		units.raw = tmp
@@ -82,7 +93,6 @@ func (units Units) Slice() []Unit {
 
 func (units *Units) append(u Unit) {
 	units.ensureOwns(1)
-	units.ctx = u.ctx // in case unitx.ctx was nil
 	units.raw = append(units.raw, u)
 }
 
@@ -93,7 +103,6 @@ func (units *Units) concat(other *Units) {
 		units.ensureOwns(len(other.raw))
 		other.applyFilter(len(other.raw))
 		if len(other.raw) > 0 {
-			units.ctx = other.ctx // in case units.ctx was nil
 			units.raw = append(units.raw, other.raw...)
 		}
 	}
@@ -154,12 +163,12 @@ func (units Units) Choose(filter func(Unit) bool) Units {
 
 	// If this is the first filter, just set and return it
 	if units.filter == nil {
-		return Units{units.ctx, units.raw, filter}
+		return Units{units.raw, filter}
 	}
 
 	// Otherwise, union the two filters
 	prev := units.filter
-	return Units{units.ctx, units.raw, func(u Unit) bool {
+	return Units{units.raw, func(u Unit) bool {
 		return prev(u) && filter(u)
 	}}
 }

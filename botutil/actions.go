@@ -217,21 +217,21 @@ func (a *Actions) unitOrder(cmd *api.ActionRawUnitCommand) {
 // Order ...
 func (units Units) Order(ability api.AbilityID) {
 	if len(units.raw) > 0 {
-		units.ctx.bot.unitsOrder(units.Tags(), ability)
+		units.ctx().bot.unitsOrder(units.Tags(), ability)
 	}
 }
 
 // OrderTarget ...
 func (units Units) OrderTarget(ability api.AbilityID, target Unit) {
 	if len(units.raw) > 0 {
-		units.ctx.bot.unitsOrderTarget(units.Tags(), ability, target)
+		units.ctx().bot.unitsOrderTarget(units.Tags(), ability, target)
 	}
 }
 
 // OrderPos ...
 func (units Units) OrderPos(ability api.AbilityID, target api.Point2D) {
 	if len(units.raw) > 0 {
-		units.ctx.bot.unitsOrderPos(units.Tags(), ability, target)
+		units.ctx().bot.unitsOrderPos(units.Tags(), ability, target)
 	}
 }
 

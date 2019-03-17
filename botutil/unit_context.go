@@ -44,6 +44,8 @@ type UnitContext struct {
 	Neutral neutral
 
 	bot *Bot
+
+	dummy Units
 }
 
 // NewUnitContext creates a new context and registers it to update after each step.
@@ -56,6 +58,7 @@ func NewUnitContext(info client.AgentInfo, bot *Bot) *UnitContext {
 		Neutral: neutral{},
 		bot:     bot,
 	}
+	ctx.dummy = Units{raw: []Unit{Unit{ctx: ctx}}}
 	update := func() {
 		// Load the latest observation
 		ctx.raw = info.Observation().GetObservation().GetRawData().GetUnits()
@@ -110,7 +113,7 @@ func (ctx *UnitContext) clear(m map[api.UnitTypeID]Units) {
 	}
 
 	// Stash a ctx pointer in an easy to find place
-	m[0] = Units{ctx: ctx}
+	m[0] = ctx.dummy
 }
 
 // Use the high bits of a UnitTypeID to allow us to specify sort criteria and stuff sort in-place.
@@ -204,13 +207,13 @@ func (g *grouper) updateMap(ctx *UnitContext, i int) {
 	n := ctx.wrapped[g.typeStart:i]
 	if r == nil {
 		// Normal case
-		m[t] = Units{ctx: ctx, raw: n}
+		m[t] = Units{raw: n}
 	} else {
 		// Only happens if there are flying and ground units of the same type (locust?)
 		s := make([]Unit, len(r)+len(n))
 		copy(s, r)
 		copy(s[:len(r)], n)
-		m[t] = Units{ctx: ctx, raw: s}
+		m[t] = Units{raw: s}
 	}
 	g.typeStart = i
 }
@@ -267,5 +270,5 @@ func (ctx *UnitContext) UnitByTag(tag api.UnitTag) Unit {
 
 // AllUnits returns all units from the most recent observation.
 func (ctx *UnitContext) AllUnits() Units {
-	return Units{ctx, ctx.wrapped, nil}
+	return Units{raw: ctx.wrapped}
 }
