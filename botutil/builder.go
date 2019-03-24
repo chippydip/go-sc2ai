@@ -216,6 +216,9 @@ func (u Unit) BuildUnitAt(train api.AbilityID, pos api.Point2D) bool {
 		return false
 	}
 	b := u.ctx.bot
+	if b.used[u.Tag] {
+		return false
+	}
 
 	// Check if we can afford one
 	cost := b.ProductionCost(u.UnitType, train)
@@ -228,7 +231,6 @@ func (u Unit) BuildUnitAt(train api.AbilityID, pos api.Point2D) bool {
 	b.used[u.Tag] = true
 	b.player.Spend(cost)
 	return true
-
 }
 
 // BuildUnitOn ...
@@ -237,6 +239,9 @@ func (u Unit) BuildUnitOn(train api.AbilityID, target Unit) bool {
 		return false
 	}
 	b := u.ctx.bot
+	if b.used[u.Tag] {
+		return false
+	}
 
 	// Check if we can afford one
 	cost := b.ProductionCost(u.UnitType, train)
@@ -249,5 +254,27 @@ func (u Unit) BuildUnitOn(train api.AbilityID, target Unit) bool {
 	b.used[u.Tag] = true
 	b.player.Spend(cost)
 	return true
+}
 
+// Morph ...
+func (u Unit) Morph(train api.AbilityID) bool {
+	if u.IsNil() {
+		return false
+	}
+	b := u.ctx.bot
+	if b.used[u.Tag] {
+		return false
+	}
+
+	// Check if we can afford one
+	cost := b.ProductionCost(u.UnitType, train)
+	if !b.player.CanAfford(cost) {
+		return false
+	}
+
+	// Produce the unit and adjust available resources
+	u.Order(train)
+	b.used[u.Tag] = true
+	b.player.Spend(cost)
+	return true
 }
