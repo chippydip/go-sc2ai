@@ -177,6 +177,8 @@ func check(err error) {
 
 // Make the API more type-safe
 var typeMap = map[string]string{
+	// common.proto
+	"AvailableAbility.ability_id": "AbilityID",
 	// data.proto
 	"AbilityData.ability_id":           "AbilityID",
 	"AbilityData.remaps_to_ability_id": "AbilityID",
