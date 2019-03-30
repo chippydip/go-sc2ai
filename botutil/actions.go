@@ -135,8 +135,10 @@ func (a *Actions) UnitOrder(u Unit, ability api.AbilityID) {
 }
 
 // UnitOrderTarget orders a unit to use an ability on a target unit.
-func (a *Actions) UnitOrderTarget(u Unit, ability api.AbilityID, target Unit) {
-	a.unitsOrderTarget([]api.UnitTag{u.GetTag()}, ability, target)
+func (a *Actions) UnitOrderTarget(u Unit, abil api.AbilityID, target Unit) {
+	if u.IsIdle() || ability.Remap(u.Orders[0].AbilityId) != ability.Remap(abil) || u.Orders[0].GetTargetUnitTag() != target.Tag {
+		a.unitsOrderTarget([]api.UnitTag{u.GetTag()}, abil, target)
+	}
 }
 
 // UnitOrderPos orders a unit to use an ability at a target location.
