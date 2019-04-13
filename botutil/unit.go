@@ -12,6 +12,7 @@ type Unit struct {
 	ctx *UnitContext
 	*api.Unit
 	*api.UnitTypeData
+	Actions []*api.AvailableAbility
 }
 
 // IsNil checks if the underlying Unit pointer is nil.

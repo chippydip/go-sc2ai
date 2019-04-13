@@ -219,41 +219,56 @@ func (a *Actions) unitOrder(cmd *api.ActionRawUnitCommand) {
 // Order ...
 func (units Units) Order(ability api.AbilityID) {
 	if len(units.raw) > 0 {
-		units.ctx().bot.unitsOrder(units.Tags(), ability)
+		units.ctx().bot.unitsOrder(units.CanOrder(ability).Tags(), ability)
 	}
 }
 
 // OrderTarget ...
 func (units Units) OrderTarget(ability api.AbilityID, target Unit) {
 	if len(units.raw) > 0 {
-		units.ctx().bot.unitsOrderTarget(units.Tags(), ability, target)
+		units.ctx().bot.unitsOrderTarget(units.CanOrder(ability).Tags(), ability, target)
 	}
 }
 
 // OrderPos ...
 func (units Units) OrderPos(ability api.AbilityID, target api.Point2D) {
 	if len(units.raw) > 0 {
-		units.ctx().bot.unitsOrderPos(units.Tags(), ability, target)
+		units.ctx().bot.unitsOrderPos(units.CanOrder(ability).Tags(), ability, target)
 	}
 }
 
 // Order ...
 func (u Unit) Order(ability api.AbilityID) {
-	if !u.IsNil() {
+	if !u.IsNil() && u.CanOrder(ability) {
 		u.ctx.bot.UnitOrder(u, ability)
 	}
 }
 
 // OrderTarget ...
 func (u Unit) OrderTarget(ability api.AbilityID, target Unit) {
-	if !u.IsNil() {
+	if !u.IsNil() && u.CanOrder(ability) {
 		u.ctx.bot.UnitOrderTarget(u, ability, target)
 	}
 }
 
 // OrderPos ...
 func (u Unit) OrderPos(ability api.AbilityID, target api.Point2D) {
-	if !u.IsNil() {
+	if !u.IsNil() && u.CanOrder(ability) {
 		u.ctx.bot.UnitOrderPos(u, ability, target)
 	}
+}
+
+// CanOrder returns true if the unit can be given the given order right now.
+func (u Unit) CanOrder(abil api.AbilityID) bool {
+	if u.IsNil() {
+		return false
+	}
+
+	abil = ability.Remap(abil)
+	for _, a := range u.Actions {
+		if ability.Remap(a.GetAbilityId()) == abil {
+			return true
+		}
+	}
+	return false
 }

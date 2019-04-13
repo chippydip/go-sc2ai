@@ -177,7 +177,7 @@ func (bot *bot) strategy() {
 	}
 
 	// Cast
-	if cc := bot.Self[terran.OrbitalCommand].HasEnergy(50).First(); !cc.IsNil() {
+	if cc := bot.Self[terran.OrbitalCommand].CanOrder(ability.Effect_CalldownMULE).First(); !cc.IsNil() {
 		if !bot.homeMineral.IsNil() {
 			cc.OrderTarget(ability.Effect_CalldownMULE, bot.homeMineral)
 		}

@@ -118,7 +118,7 @@ func (bot *bot) strategy() {
 func (bot *bot) tactics() {
 	// If a hatch needs an injection, find the closest queen with energy
 	bot.Self[zerg.Hatchery].IsBuilt().NoBuff(buff.QueenSpawnLarvaTimer).Each(func(u botutil.Unit) {
-		bot.Self[zerg.Queen].HasEnergy(25).ClosestTo(u.Pos2D()).OrderTarget(ability.Effect_InjectLarva, u)
+		bot.Self[zerg.Queen].CanOrder(ability.Effect_InjectLarva).ClosestTo(u.Pos2D()).OrderTarget(ability.Effect_InjectLarva, u)
 	})
 
 	lings := bot.Self[zerg.Zergling]

@@ -272,6 +272,13 @@ func (units Units) NoBuff(buffID api.BuffID) Units {
 	})
 }
 
+// CanOrder ...
+func (units Units) CanOrder(ability api.AbilityID) Units {
+	return units.Choose(func(u Unit) bool {
+		return u.CanOrder(ability)
+	})
+}
+
 // IsStarted ...
 func (units Units) IsStarted() Units {
 	return units.Choose(Unit.IsStarted)

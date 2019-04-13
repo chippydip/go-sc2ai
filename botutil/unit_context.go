@@ -1,6 +1,8 @@
 package botutil
 
 import (
+	"log"
+
 	"github.com/chippydip/go-sc2ai/api"
 	"github.com/chippydip/go-sc2ai/client"
 )
@@ -59,19 +61,13 @@ func NewUnitContext(info client.AgentInfo, bot *Bot) *UnitContext {
 		bot:     bot,
 	}
 	ctx.dummy = Units{raw: []Unit{Unit{ctx: ctx}}}
-	update := func() {
-		// Load the latest observation
-		ctx.raw = info.Observation().GetObservation().GetRawData().GetUnits()
-		ctx.data = info.Data().GetUnits()
-
-		ctx.update()
-	}
+	update := func() { ctx.update(info) }
 	update()
 	info.OnAfterStep(update)
 	return ctx
 }
 
-func (ctx *UnitContext) update() {
+func (ctx *UnitContext) update(info client.AgentInfo) {
 	for k := range ctx.byTag {
 		delete(ctx.byTag, k)
 	}
@@ -82,8 +78,10 @@ func (ctx *UnitContext) update() {
 	ctx.clear(ctx.Enemy)
 	ctx.clear(ctx.Neutral)
 
-	// This should never happen, but just in case...
-	if len(ctx.raw) == 0 {
+	// Load the latest observation
+	ctx.raw = info.Observation().GetObservation().GetRawData().GetUnits()
+	ctx.data = info.Data().GetUnits()
+	if len(ctx.raw) == 0 || !info.IsInGame() {
 		return
 	}
 
@@ -99,11 +97,23 @@ func (ctx *UnitContext) update() {
 	}
 	sortUnits(&ctx.raw)
 
+	// Get available actions
+	query := make([]*api.RequestQueryAvailableAbilities, len(ctx.raw))
+	for i, u := range ctx.raw {
+		query[i] = &api.RequestQueryAvailableAbilities{
+			UnitTag: u.Tag,
+		}
+	}
+	available := info.Query(api.RequestQuery{Abilities: query})
+	if len(available.Abilities) != len(ctx.raw) {
+		log.Panicf("Missing ability responses, expected: %v got: %v", len(ctx.raw), len(available.Abilities))
+	}
+
 	// Allocate a new array for wrapped unit objects
 	ctx.wrapped = make([]Unit, len(ctx.raw))
 
 	// Slice up the sorted result
-	(&grouper{}).group(ctx)
+	(&grouper{}).group(ctx, available.Abilities)
 }
 
 func (ctx *UnitContext) clear(m map[api.UnitTypeID]Units) {
@@ -175,7 +185,7 @@ type grouper struct {
 	prevType  api.UnitTypeID
 }
 
-func (g *grouper) group(ctx *UnitContext) {
+func (g *grouper) group(ctx *UnitContext, abilities []*api.ResponseQueryAvailableAbilities) {
 	g.prevType = ctx.raw[0].UnitType
 	for i, u := range ctx.raw {
 		if u.UnitType != g.prevType {
@@ -193,7 +203,7 @@ func (g *grouper) group(ctx *UnitContext) {
 		u.UnitType &= idMask
 
 		// Wrap the unit
-		ctx.wrapped[i] = Unit{ctx, u, ctx.data[u.UnitType]}
+		ctx.wrapped[i] = Unit{ctx, u, ctx.data[u.UnitType], abilities[i].Abilities}
 		ctx.byTag[u.Tag] = &ctx.wrapped[i]
 	}
 	g.updateMap(ctx, len(ctx.raw))
