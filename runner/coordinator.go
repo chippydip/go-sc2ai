@@ -355,7 +355,8 @@ func StartReplay(path string) bool {
 	// Get info about the replay
 	info, err := clients[0].RequestReplayInfo(path)
 	if err != nil {
-		log.Fatalf("Unable to get replay info: %v", err)
+		log.Printf("Unable to get replay info: %v", err)
+		return false
 	}
 
 	// Allow the bot user to skip certain replays after looking at the info
