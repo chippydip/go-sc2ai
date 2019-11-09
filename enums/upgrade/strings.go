@@ -158,4 +158,5 @@ var strings = map[uint32]string{
 	293: "DiggingClaws",
 	294: "CarrierCarrierCapacity",
 	295: "CarrierLeashRangeUpgrade",
+	296: "EnhancedShockwaves",
 }

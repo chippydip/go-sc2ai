@@ -154,4 +154,5 @@ const (
 	DiggingClaws                       api.UpgradeID = 293
 	CarrierCarrierCapacity             api.UpgradeID = 294
 	CarrierLeashRangeUpgrade           api.UpgradeID = 295
+	EnhancedShockwaves                 api.UpgradeID = 296
 )
