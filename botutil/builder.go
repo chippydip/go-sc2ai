@@ -20,21 +20,19 @@ type Builder struct {
 func NewBuilder(info client.AgentInfo, player *Player, units *UnitContext) *Builder {
 	b := &Builder{player, units, map[api.UnitTag]bool{}}
 
-	// This is only really an issue for zerg
-	if player.RaceActual != api.Race_Zerg {
-		return b
-	}
-
 	update := func() {
-		// Count number of units that consume half a food
-		n := b.units.Self.CountIf(func(u Unit) bool {
-			return u.FoodRequired == 0.5
-		})
+		// This is only really an issue for zerg
+		if player.RaceActual != api.Race_Zerg {
+			// Count number of units that consume half a food
+			n := b.units.Self.CountIf(func(u Unit) bool {
+				return u.FoodRequired == 0.5
+			})
 
-		// The game rounds fractional food down, but should really round up since
-		// this makes it seem like you can build units when you actually can't.
-		if n%2 != 0 {
-			b.player.FoodUsed++
+			// The game rounds fractional food down, but should really round up since
+			// this makes it seem like you can build units when you actually can't.
+			if n%2 != 0 {
+				b.player.FoodUsed++
+			}
 		}
 
 		for k := range b.used {

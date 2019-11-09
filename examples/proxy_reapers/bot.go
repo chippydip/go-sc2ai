@@ -70,7 +70,7 @@ func (bot *bot) findBuildingsPositions() {
 	}
 
 	// Pick locations for supply depots
-	pos := bot.myStartLocation.Offset(homeMinerals.Center(), -6)
+	pos := bot.myStartLocation.Offset(homeMinerals.Center(), -7)
 	neighbors8 := pos.Offset8By(2)
 	bot.positionsForSupplies = append(append(bot.positionsForSupplies, pos), neighbors8[:]...)
 
