@@ -149,6 +149,15 @@ func (c *connection) saveReplay(saveReplay api.RequestSaveReplay) (*api.Response
 	return r.GetSaveReplay(), err
 }
 
+func (c *connection) mapCommand(mapCommand api.RequestMapCommand) (*api.ResponseMapCommand, error) {
+	r, err := c.request(&api.Request{
+		Request: &api.Request_MapCommand{
+			MapCommand: &mapCommand,
+		},
+	})
+	return r.GetMapCommand(), err
+}
+
 func (c *connection) replayInfo(replayInfo api.RequestReplayInfo) (*api.ResponseReplayInfo, error) {
 	r, err := c.request(&api.Request{
 		Request: &api.Request_ReplayInfo{

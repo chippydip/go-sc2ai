@@ -45,7 +45,7 @@ func (bot *bot) init() {
 	bot.camera = bot.myStartLocation
 
 	// Find natural location
-	expansions := search.CalculateExpansionLocations(bot.Bot, false)
+	expansions := search.CalculateBaseLocations(bot.Bot, false)
 	query := make([]*api.RequestQueryPathing, len(expansions))
 	for i, exp := range expansions {
 		pos := exp.Location

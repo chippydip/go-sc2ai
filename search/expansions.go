@@ -6,21 +6,21 @@ import (
 	"github.com/chippydip/go-sc2ai/client"
 )
 
-// Expansion contains the optimal build location for a given resource cluster.
-type Expansion struct {
+// BaseLocation contains the optimal build location for a given resource cluster.
+type BaseLocation struct {
 	Resources UnitCluster
 	Location  api.Point2D
 }
 
-// CalculateExpansionLocations groups resources into clusters and determines the best town hall location for each cluster.
+// CalculateBaseLocations groups resources into clusters and determines the best town hall location for each cluster.
 // The Center() point of each cluster is the optimal town hall location. If debug is true then the results will also
 // be visualized in-game (until new debug info is drawn).
-func CalculateExpansionLocations(bot *botutil.Bot, debug bool) []Expansion {
+func CalculateBaseLocations(bot *botutil.Bot, debug bool) []BaseLocation {
 	// Start by finding resource clusters
 	clusters := Cluster(bot.Neutral.Resources(), 15)
 
 	// Add resource-restrictions to the placement grid
-	placement := bot.GameInfo().StartRaw.PlacementGrid.Copy().Bytes()
+	placement := bot.GameInfo().StartRaw.PlacementGrid.Bits().ToBytes()
 	bot.Neutral.Minerals().Each(func(u botutil.Unit) {
 		markUnbuildable(placement, int32(u.Pos.X-0.5), int32(u.Pos.Y), 2, 1)
 	})
@@ -38,7 +38,7 @@ func CalculateExpansionLocations(bot *botutil.Bot, debug bool) []Expansion {
 	}
 
 	// Find the nearest remaining square to each cluster's CoM
-	expansions := make([]Expansion, len(clusters))
+	locs := make([]BaseLocation, len(clusters))
 	for i, cluster := range clusters {
 		pt := cluster.Center()
 		px, py := int32(pt.X), int32(pt.Y)
@@ -59,14 +59,14 @@ func CalculateExpansionLocations(bot *botutil.Bot, debug bool) []Expansion {
 		}
 
 		// Update the Center to be the detected location rather than the actual CoM (just don't add new units)
-		expansions[i] = Expansion{clusters[i], api.Point2D{X: float32(xBest) + 0.5, Y: float32(yBest) + 0.5}}
+		locs[i] = BaseLocation{clusters[i], api.Point2D{X: float32(xBest) + 0.5, Y: float32(yBest) + 0.5}}
 	}
 
 	if debug {
-		debugPrint(expansions, placement, bot)
+		debugPrintBaseLocs(locs, placement, bot)
 	}
 
-	return expansions
+	return locs
 }
 
 // markUnbuildable marks a w x h area around px, py (minus corners) as unbuildable (red)
@@ -100,42 +100,41 @@ func expandUnbuildable(placement api.ImageDataBytes, px, py int32) {
 	}
 }
 
-// debugPrint shows debug info about the expansion search procedure in-game
-func debugPrint(expansions []Expansion, placement api.ImageDataBytes, bot client.AgentInfo) {
+// debugPrintBaseLocs shows debug info about the base location search procedure in-game
+func debugPrintBaseLocs(locs []BaseLocation, placement api.ImageDataBytes, bot client.AgentInfo) {
 	info := bot.GameInfo()
 	heightMap := info.StartRaw.TerrainHeight.Bytes()
-	pathable := info.StartRaw.PathingGrid.Bytes()
+	pathable := info.StartRaw.PathingGrid.Bits()
 
 	var boxes []*api.DebugBox
 
 	// Debug placement grid
 	for y := int32(0); y < placement.Height(); y++ {
 		for x := int32(0); x < placement.Width(); x++ {
-			color := mapColor(placement.Get(x, y), pathable.Get(x, y))
+			color := baseLocColor(placement.Get(x, y), pathable.Get(x, y))
 			if color != nil {
-				//z := float32(int(0.75*(float32(heightMap.Get(x, y))-127)+0.5)) + 0.01
-				z := (float32(heightMap.Get(x, y))/254)*200 - 100
+				z := (float32(heightMap.Get(x, y)) - 127) / 8
 				boxes = append(boxes, &api.DebugBox{
 					Color: color,
-					Min:   &api.Point{X: float32(x) + 0.25, Y: float32(y) + 0.25, Z: z},
-					Max:   &api.Point{X: float32(x) + 0.75, Y: float32(y) + 0.75, Z: z},
+					Min:   &api.Point{X: float32(x) + 0.25, Y: float32(y) + 0.25, Z: z - 0.125},
+					Max:   &api.Point{X: float32(x) + 0.75, Y: float32(y) + 0.75, Z: z + 0.125},
 				})
 			}
 		}
 	}
 
-	// Expansion locations
-	for _, exp := range expansions {
+	// Base locations
+	for _, exp := range locs {
 		pt := exp.Location
-		z := (float32(heightMap.Get(int32(pt.X), int32(pt.Y)))/254)*200 - 100
+		z := (float32(heightMap.Get(int32(pt.X), int32(pt.Y))) - 127) / 8
 		boxes = append(boxes, &api.DebugBox{
 			Color: green,
-			Min:   &api.Point{X: pt.X - 2.5, Y: pt.Y - 2.5, Z: z},
-			Max:   &api.Point{X: pt.X + 2.5, Y: pt.Y + 2.5, Z: z},
+			Min:   &api.Point{X: pt.X - 2.5, Y: pt.Y - 2.5, Z: z - 0.125},
+			Max:   &api.Point{X: pt.X + 2.5, Y: pt.Y + 2.5, Z: z + 0.125},
 		}, &api.DebugBox{
 			Color: green,
-			Min:   &api.Point{X: pt.X - 0.05, Y: pt.Y - 0.05, Z: z},
-			Max:   &api.Point{X: pt.X + 0.05, Y: pt.Y + 0.05, Z: z},
+			Min:   &api.Point{X: pt.X - 0.05, Y: pt.Y - 0.05, Z: z - 0.125},
+			Max:   &api.Point{X: pt.X + 0.05, Y: pt.Y + 0.05, Z: z + 0.125},
 		})
 
 	}
@@ -164,8 +163,8 @@ var (
 	green = &api.Color{R: 1, G: 255, B: 1}
 )
 
-// mapColor converts a building placement value into a display color
-func mapColor(value byte, pathable byte) *api.Color {
+// baseLocColor converts a building placement value into a display color
+func baseLocColor(value byte, pathable bool) *api.Color {
 	switch value {
 	case 255:
 		return white // center buildable
@@ -174,7 +173,7 @@ func mapColor(value byte, pathable byte) *api.Color {
 	case 1:
 		return red // too close to resources
 	}
-	if pathable == 0 {
+	if pathable {
 		return green // not buildable, but pathable
 	}
 	return nil

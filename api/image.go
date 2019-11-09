@@ -50,7 +50,7 @@ func NewImageDataBits(w, h int32) ImageDataBits {
 func (img ImageDataBits) Get(x, y int32) bool {
 	if img.InBounds(x, y) {
 		i := img.offset(x, y)
-		i, bit := i/8, byte(1<<(uint(i)%8))
+		i, bit := i/8, byte(1<<(7-(uint(i)%8)))
 		return img.data[i]&bit != 0
 	}
 	return false
@@ -61,13 +61,31 @@ func (img ImageDataBits) Get(x, y int32) bool {
 func (img ImageDataBits) Set(x, y int32, value bool) {
 	if img.InBounds(x, y) {
 		i := img.offset(x, y)
-		i, bit := i/8, byte(1<<(uint(i)%8))
+		i, bit := i/8, byte(1<<(7-(uint(i)%8)))
 		if value {
 			img.data[i] |= bit // set
 		} else {
 			img.data[i] &^= bit // clear
 		}
 	}
+}
+
+// ToBytes converts a bitmap into a bytemap with false -> 0 and true -> 255.
+func (img ImageDataBits) ToBytes() ImageDataBytes {
+	bytes := ImageDataBytes{imageData{
+		img.size,
+		make([]byte, img.Width()*img.Height()),
+	}}
+
+	for y := int32(0); y < img.Height(); y++ {
+		for x := int32(0); x < img.Width(); x++ {
+			if img.Get(x, y) {
+				bytes.Set(x, y, 255)
+			}
+		}
+	}
+
+	return bytes
 }
 
 // Bytes returns a byte-indexed version of the ImageData.
@@ -175,5 +193,5 @@ func (img imageData) InBounds(x, y int32) bool {
 // offset converts XY coordinates into a linear offset into the ImageData.
 func (img imageData) offset(x, y int32) int32 {
 	// Image data is stored with an upper left origin
-	return x + (img.Height()-1-y)*img.Width()
+	return x + y*img.Width()
 }
