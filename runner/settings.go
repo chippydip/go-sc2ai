@@ -50,17 +50,24 @@ func LoadSettings() bool {
 func init() {
 	// Default to the environment variable (Linux mostly)
 	if sc2path := os.Getenv("SC2PATH"); len(sc2path) > 0 {
+		log.Printf("SC2PATH: %v", sc2path)
 		processSettings.processPath = filepath.Join(sc2path, "Versions", "dummy")
 	}
 
 	// Read value from ExecuteInfo.txt if the current user has run the game before
-	file, _ := getUserDirectory()
-	if len(file) > 0 {
+	file, err := getUserDirectory()
+	if err != nil {
+		log.Printf("Error getting user directory: %v", err)
+	} else if len(file) > 0 {
 		file = filepath.Join(file, "Starcraft II", "ExecuteInfo.txt")
+		log.Printf("ExecuteInfo path: %v", file)
 	}
 
 	if props, err := newPropertyReader(file); err == nil {
 		props.getString("executable", &processSettings.processPath)
+		log.Printf("  executable = %v", processSettings.processPath)
+	} else {
+		log.Printf("Error reading `executable`: %v", err)
 	}
 
 	// Backout the defaulted path to the Versions directory and then find the latest Base game
