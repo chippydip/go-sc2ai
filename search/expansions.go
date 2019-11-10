@@ -103,7 +103,7 @@ func expandUnbuildable(placement api.ImageDataBytes, px, py int32) {
 // debugPrintBaseLocs shows debug info about the base location search procedure in-game
 func debugPrintBaseLocs(locs []BaseLocation, placement api.ImageDataBytes, bot client.AgentInfo) {
 	info := bot.GameInfo()
-	heightMap := info.StartRaw.TerrainHeight.Bytes()
+	heightMap := NewHeightMap(info.StartRaw)
 	pathable := info.StartRaw.PathingGrid.Bits()
 
 	var boxes []*api.DebugBox
@@ -113,11 +113,11 @@ func debugPrintBaseLocs(locs []BaseLocation, placement api.ImageDataBytes, bot c
 		for x := int32(0); x < placement.Width(); x++ {
 			color := baseLocColor(placement.Get(x, y), pathable.Get(x, y))
 			if color != nil {
-				z := (float32(heightMap.Get(x, y)) - 127) / 8
+				z := heightMap.Interpolate(float32(x)+0.5, float32(y)+0.5)
 				boxes = append(boxes, &api.DebugBox{
 					Color: color,
-					Min:   &api.Point{X: float32(x) + 0.25, Y: float32(y) + 0.25, Z: z - 0.125},
-					Max:   &api.Point{X: float32(x) + 0.75, Y: float32(y) + 0.75, Z: z + 0.125},
+					Min:   &api.Point{X: float32(x) + 0.25, Y: float32(y) + 0.25, Z: z},
+					Max:   &api.Point{X: float32(x) + 0.75, Y: float32(y) + 0.75, Z: z},
 				})
 			}
 		}
@@ -126,15 +126,15 @@ func debugPrintBaseLocs(locs []BaseLocation, placement api.ImageDataBytes, bot c
 	// Base locations
 	for _, exp := range locs {
 		pt := exp.Location
-		z := (float32(heightMap.Get(int32(pt.X), int32(pt.Y))) - 127) / 8
+		z := heightMap.Interpolate(pt.X+0.5, pt.Y+0.5)
 		boxes = append(boxes, &api.DebugBox{
 			Color: green,
-			Min:   &api.Point{X: pt.X - 2.5, Y: pt.Y - 2.5, Z: z - 0.125},
-			Max:   &api.Point{X: pt.X + 2.5, Y: pt.Y + 2.5, Z: z + 0.125},
+			Min:   &api.Point{X: pt.X - 2.5, Y: pt.Y - 2.5, Z: z},
+			Max:   &api.Point{X: pt.X + 2.5, Y: pt.Y + 2.5, Z: z},
 		}, &api.DebugBox{
 			Color: green,
-			Min:   &api.Point{X: pt.X - 0.05, Y: pt.Y - 0.05, Z: z - 0.125},
-			Max:   &api.Point{X: pt.X + 0.05, Y: pt.Y + 0.05, Z: z + 0.125},
+			Min:   &api.Point{X: pt.X - 0.05, Y: pt.Y - 0.05, Z: z},
+			Max:   &api.Point{X: pt.X + 0.05, Y: pt.Y + 0.05, Z: z},
 		})
 
 	}
