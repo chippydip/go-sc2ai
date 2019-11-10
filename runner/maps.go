@@ -25,7 +25,7 @@ var maps2018s4 = []string{
 	"PortAleksanderLE",
 }
 
-var maps2019ladder8 = []string{
+var maps2019ladder8pre2 = []string{
 	"Acropolis",
 	"Artana",
 	"CrystalCavern",
@@ -33,6 +33,16 @@ var maps2019ladder8 = []string{
 	"OldSunshine",
 	"Treachery",
 	"Triton",
+}
+
+var maps2019ladder8 = []string{
+	"AcropolisLE",
+	"DiscoBloodbathLE",
+	"EphemeronLE",
+	"ThunderbirdLE",
+	"TritonLE",
+	"WintersGateLE",
+	"WorldofSleepersLE",
 }
 
 // TODO: check for current ladder pool maps, download if missing?
