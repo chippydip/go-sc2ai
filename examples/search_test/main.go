@@ -27,10 +27,14 @@ func main() {
 func runAgent(info client.AgentInfo) {
 	bot := bot{Bot: botutil.NewBot(info)}
 	bot.LogActionErrors()
+	bot.SetPerfInterval(224)
 
 	search.CalculateBaseLocations(bot.Bot, true)
 
-	if err := bot.Step(1); err != nil {
-		log.Print(err)
+	for bot.IsInGame() {
+		if err := bot.Step(1); err != nil {
+			log.Print(err)
+			break
+		}
 	}
 }

@@ -2,6 +2,9 @@ package client
 
 import (
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/chippydip/go-sc2ai/api"
 )
@@ -38,11 +41,14 @@ type AgentInfo interface {
 	SendActions(actions []*api.Action) []api.ActionResult
 	SendObserverActions(obsActions []*api.ObserverAction)
 	SendDebugCommands(commands []*api.DebugCommand)
+	ClearDebugDraw()
 	LeaveGame()
 
 	OnBeforeStep(func())
 	OnObservation(func())
 	OnAfterStep(func())
+
+	SetPerfInterval(steps uint32)
 }
 
 // IsRealtime returns true if the bot was launched in realtime mode.
@@ -98,6 +104,8 @@ func (c *Client) Query(query api.RequestQuery) *api.ResponseQuery {
 
 // SendActions ...
 func (c *Client) SendActions(actions []*api.Action) []api.ActionResult {
+	c.actions += len(actions)
+
 	if c.replayInfo != nil {
 		return nil // ignore actions in a replay
 	}
@@ -114,6 +122,8 @@ func (c *Client) SendActions(actions []*api.Action) []api.ActionResult {
 
 // SendObserverActions ...
 func (c *Client) SendObserverActions(obsActions []*api.ObserverAction) {
+	c.observerActions += len(obsActions)
+
 	if c.replayInfo == nil {
 		return // ignore observer actions in a normal game
 	}
@@ -125,8 +135,54 @@ func (c *Client) SendObserverActions(obsActions []*api.ObserverAction) {
 
 // SendDebugCommands ...
 func (c *Client) SendDebugCommands(commands []*api.DebugCommand) {
+	c.debugCommands += len(commands)
+
+	c.lastDraw = nil
+	for _, cmd := range commands {
+		if _, ok := cmd.Command.(*api.DebugCommand_Draw); ok {
+			c.lastDraw = append(c.lastDraw, cmd)
+		}
+	}
+	if c.debugDraw == nil && len(c.lastDraw) > 0 {
+		c.debugDraw = deferCleanup(func() { c.ClearDebugDraw() })
+	}
+
 	c.connection.debug(api.RequestDebug{
 		Debug: commands,
+	})
+}
+
+func deferCleanup(cleanup func()) chan struct{} {
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
+	cancel := make(chan struct{})
+
+	go func() {
+		select {
+		case <-sig:
+			cleanup()
+			os.Exit(1)
+		case <-cancel:
+		}
+	}()
+	return cancel
+}
+
+// ClearDebugDraw sends an empty draw command if previous draw commands have been sent
+func (c *Client) ClearDebugDraw() {
+	if c.debugDraw == nil {
+		return
+	}
+	close(c.debugDraw)
+	c.debugDraw = nil
+	c.lastDraw = nil
+
+	c.SendDebugCommands([]*api.DebugCommand{
+		&api.DebugCommand{
+			Command: &api.DebugCommand_Draw{
+				Draw: &api.DebugDraw{},
+			},
+		},
 	})
 }
 
@@ -157,4 +213,10 @@ func (c *Client) OnAfterStep(callback func()) {
 	if callback != nil {
 		c.afterStep = append(c.afterStep, callback)
 	}
+}
+
+// SetPerfInterval determines how often perfornace data will be updated. Values
+// less than or equal to 0 will disable display (defalts to zero).
+func (c *Client) SetPerfInterval(steps uint32) {
+	c.perfInterval = steps
 }

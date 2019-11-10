@@ -3,6 +3,7 @@ package client
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/chippydip/go-sc2ai/api"
@@ -25,6 +26,24 @@ type Client struct {
 	beforeStep []func()
 	subStep    []func()
 	afterStep  []func()
+
+	debugDraw chan struct{}
+
+	perfInterval uint32
+	lastDraw     []*api.DebugCommand
+
+	perfStart       time.Time
+	perfStartFrame  uint32
+	beforeStepTime  time.Duration
+	stepTime        time.Duration
+	observationTime time.Duration
+	afterStepTime   time.Duration
+
+	actions          int
+	maxActions       int
+	actionsCompleted int
+	observerActions  int
+	debugCommands    int
 }
 
 // Connect ...
@@ -182,6 +201,9 @@ func (c *Client) Init() error {
 	c.observation, obsErr = c.connection.observation(api.RequestObservation{})
 	c.upgrades = map[api.UpgradeID]struct{}{}
 
+	c.perfStart = time.Now()
+	c.perfStartFrame = c.observation.GetObservation().GetGameLoop()
+
 	// This info isn't provided for replays, so try to normalize things
 	if c.replayInfo != nil {
 		c.gameInfo.MapName = c.replayInfo.MapName
@@ -200,11 +222,14 @@ func (c *Client) Step(stepSize int) error {
 	var err error
 
 	// Call before callbacks
+	t := time.Now()
 	for _, cb := range c.beforeStep {
 		cb()
 	}
+	c.beforeStepTime += time.Since(t)
 
 	// Step the simulation forward if this isn't in realtime mode
+	t = time.Now()
 	if !c.realtime && stepSize > 0 {
 		if _, err := c.connection.step(api.RequestStep{
 			Count: uint32(stepSize),
@@ -212,12 +237,20 @@ func (c *Client) Step(stepSize int) error {
 			return err
 		}
 	}
+	c.stepTime += time.Since(t)
 
 	// Get an updated observation
+	t = time.Now()
 	step := c.observation.GetObservation().GetGameLoop() + uint32(stepSize)
 	for {
 		if c.observation, err = c.connection.observation(api.RequestObservation{GameLoop: step}); err != nil {
 			return err
+		}
+
+		actionsCompleted := len(c.observation.GetActions())
+		c.actionsCompleted += actionsCompleted
+		if actionsCompleted > c.maxActions {
+			c.maxActions = actionsCompleted
 		}
 
 		// Call sub-step callbacks
@@ -229,6 +262,7 @@ func (c *Client) Step(stepSize int) error {
 			break
 		}
 	}
+	c.observationTime += time.Since(t)
 
 	// Check for new upgrades
 	c.newUpgrades = nil
@@ -250,10 +284,71 @@ func (c *Client) Step(stepSize int) error {
 	}
 
 	// Call after callbacks
+	t = time.Now()
 	for _, cb := range c.afterStep {
 		cb()
 	}
+	c.afterStepTime += time.Since(t)
+
+	// Clear draw commands in case the game is left running
+	if !c.IsInGame() {
+		c.ClearDebugDraw()
+	}
+
+	// Performance reporting (update every perfInterval game frames)
+	if c.perfInterval > 0 && c.observation.GetObservation().GetGameLoop()%c.perfInterval == 0 {
+		c.reportPerf()
+	}
 	return err
+}
+
+func (c *Client) reportPerf() {
+	perfStart, perfStartFrame := time.Now(), c.observation.GetObservation().GetGameLoop()
+	total, frames := perfStart.Sub(c.perfStart), time.Duration(perfStartFrame-c.perfStartFrame)
+
+	text := "" +
+		fmt.Sprintf("frames:      %v\n", int(frames)) +
+		fmt.Sprintf("frameTime:   %v\n", total/frames) +
+		"\n" +
+		fmt.Sprintf("beforeStep:  %v\n", c.beforeStepTime/frames) +
+		fmt.Sprintf("step:        %v\n", c.stepTime/frames) +
+		fmt.Sprintf("observation: %v\n", c.observationTime/frames) +
+		fmt.Sprintf("afterStep:   %v\n", c.afterStepTime/frames) +
+		"\n" +
+		fmt.Sprintf("actions:     %v/%v\n", c.actionsCompleted, c.actions) +
+		fmt.Sprintf("maxActions:  %v\n", c.maxActions) +
+		fmt.Sprintf("obsActions:  %v\n", c.observerActions) +
+		fmt.Sprintf("debugCmds:   %v\n", c.debugCommands) +
+		""
+	text = strings.Replace(text, "µ", "u", -1)
+
+	// Reset perf counters
+	c.perfStart = perfStart
+	c.perfStartFrame = perfStartFrame
+	c.beforeStepTime = 0
+	c.stepTime = 0
+	c.observationTime = 0
+	c.afterStepTime = 0
+	c.actions = 0
+	c.maxActions = 0
+	c.actionsCompleted = 0
+	c.observerActions = 0
+	c.debugCommands = 0
+
+	c.SendDebugCommands(append(c.lastDraw, &api.DebugCommand{
+		Command: &api.DebugCommand_Draw{
+			Draw: &api.DebugDraw{
+				Text: []*api.DebugText{
+					&api.DebugText{
+						Color:      &api.Color{R: 255, G: 255, B: 255},
+						Text:       text,
+						VirtualPos: &api.Point{X: 0, Y: 0, Z: 0},
+					},
+				},
+			},
+		},
+	}))
+	c.lastDraw = c.lastDraw[:len(c.lastDraw)-1]
 }
 
 // SaveReplay(path string) error
