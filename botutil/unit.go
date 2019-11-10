@@ -233,7 +233,11 @@ func (u Unit) IsInWeaponsRange(target Unit, gap float32) bool {
 // AttackTarget issues an attack order if the unit isn't already attacking the target.
 func (u Unit) AttackTarget(target Unit) {
 	if u.needsAttackTargetOrder(target) {
-		u.OrderTarget(ability.Attack, target)
+		if u.ctx.WasObserved(target.Tag) && target.CanBeTargeted() {
+			u.OrderTarget(ability.Attack, target)
+		} else {
+			u.OrderPos(ability.Attack, target.Pos2D())
+		}
 	}
 }
 
@@ -295,4 +299,9 @@ func (u Unit) needsMoveToOrder(pos api.Point2D, tollerance float32) bool {
 		}
 	}
 	return true
+}
+
+// CanBeTargeted returns true if the unit type can be targeted for attacks.
+func (u Unit) CanBeTargeted() bool {
+	return u.UnitType != unit.Protoss_Interceptor
 }

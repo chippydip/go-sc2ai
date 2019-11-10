@@ -233,7 +233,19 @@ func (units Units) OrderTarget(ability api.AbilityID, target Unit) {
 // OrderPos ...
 func (units Units) OrderPos(ability api.AbilityID, target api.Point2D) {
 	if len(units.raw) > 0 {
-		units.ctx().bot.unitsOrderPos(units.CanOrder(ability).Tags(), ability, target)
+		bot := units.ctx().bot
+		size := bot.GameInfo().GetStartRaw().GetMapSize()
+		if target.X < 0 {
+			target.X = 0
+		} else if target.X > float32(size.GetX()) {
+			target.X = float32(size.GetX())
+		}
+		if target.Y < 0 {
+			target.Y = 0
+		} else if target.Y > float32(size.GetY()) {
+			target.Y = float32(size.GetY())
+		}
+		bot.unitsOrderPos(units.CanOrder(ability).Tags(), ability, target)
 	}
 }
 

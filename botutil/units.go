@@ -173,6 +173,20 @@ func (units Units) Choose(filter func(Unit) bool) Units {
 	}}
 }
 
+// Partition splits the units into ones that filter is true for and ones that filter is false for.
+func (units Units) Partition(filter func(Unit) bool) (choose Units, drop Units) {
+	choose = Units{make([]Unit, 0, len(units.raw)), nil}
+	drop = Units{make([]Unit, 0, len(units.raw)), nil}
+	units.Each(func(u Unit) {
+		if filter(u) {
+			choose.raw = append(choose.raw, u)
+		} else {
+			drop.raw = append(drop.raw, u)
+		}
+	})
+	return
+}
+
 // Drop returns a new list without the units for which filter returns true.
 func (units Units) Drop(filter func(Unit) bool) Units {
 	return units.Choose(func(u Unit) bool {
@@ -311,9 +325,14 @@ func (units Units) IsWorker() Units {
 
 // AttackTarget issues an attack order to any unit that isn't already attacking the target.
 func (units Units) AttackTarget(target Unit) {
-	units.Choose(func(u Unit) bool {
+	units = units.Choose(func(u Unit) bool {
 		return u.needsAttackTargetOrder(target)
-	}).OrderTarget(ability.Attack, target)
+	})
+	if ctx := units.ctx(); ctx != nil && ctx.WasObserved(target.Tag) && target.CanBeTargeted() {
+		units.OrderTarget(ability.Attack, target)
+	} else {
+		units.OrderPos(ability.Attack, target.Pos2D())
+	}
 }
 
 // AttackMove issues an attack order to any unit that isn't already attacking within tollerance of pos.
