@@ -47,6 +47,8 @@ func (a *mockAgentInfo) SendObserverActions(obsActions []*api.ObserverAction) {
 }
 func (a *mockAgentInfo) SendDebugCommands(commands []*api.DebugCommand) {
 }
+func (a *mockAgentInfo) ClearDebugDraw() {
+}
 func (a *mockAgentInfo) LeaveGame() {
 }
 
@@ -55,4 +57,7 @@ func (a *mockAgentInfo) OnBeforeStep(func()) {
 func (a *mockAgentInfo) OnObservation(func()) {
 }
 func (a *mockAgentInfo) OnAfterStep(func()) {
+}
+
+func (a *mockAgentInfo) SetPerfInterval(steps uint32) {
 }

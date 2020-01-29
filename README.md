@@ -6,7 +6,7 @@ Go implementation of the Starcraft II AI API
 
 ### Prerequisites
 
-- Install golang >= 1.11  
+- Install golang >= 1.13  
     https://golang.org/dl/
 - Install Starcraft II game  
     https://starcraft2.com/en-us/ (free version is okay)
