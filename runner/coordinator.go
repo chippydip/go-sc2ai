@@ -1,7 +1,6 @@
 package runner
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -22,8 +21,7 @@ var clients []*client.Client
 var started = false
 var lastPort = 0
 
-// SetParticipants ...
-func SetParticipants(participants ...client.PlayerSetup) {
+func setParticipants(participants ...client.PlayerSetup) {
 	gameSettings.playerSetup, clients, started, lastPort, processSettings.processInfo = nil, nil, false, 0, nil
 	for _, p := range participants {
 		if p.Agent != nil {
@@ -33,8 +31,7 @@ func SetParticipants(participants ...client.PlayerSetup) {
 	}
 }
 
-// LaunchStarcraft ...
-func LaunchStarcraft() {
+func launchStarcraft() {
 	if _, err := os.Stat(processSettings.processPath); err != nil {
 		log.Print("Executable path can't be found, try running the StarCraft II executable first.")
 		if len(processSettings.processPath) > 0 {
@@ -52,7 +49,7 @@ func LaunchStarcraft() {
 		portStart = launchProcesses()
 	}
 
-	SetupPorts(len(clients), portStart, true)
+	setupPorts(len(clients), portStart, true)
 	started = true
 	lastPort = portStart
 }
@@ -65,19 +62,17 @@ func reLaunchStarcraft() {
 	}
 	processSettings.processInfo = nil
 
-	LaunchStarcraft()
+	launchStarcraft()
 }
 
-// StartGame ...
-func StartGame(mapPath string) {
-	if !CreateGame(mapPath) {
+func startGame(mapPath string) {
+	if !createGame(mapPath) {
 		log.Fatal("Failed to create game.")
 	}
-	JoinGame()
+	joinGame()
 }
 
-// CreateGame ...
-func CreateGame(mapPath string) bool {
+func createGame(mapPath string) bool {
 	if mapPath == "" {
 		mapPath = gameSettings.mapName
 	}
@@ -97,8 +92,7 @@ func CreateGame(mapPath string) bool {
 	return true
 }
 
-// JoinGame ...
-func JoinGame() bool {
+func joinGame() bool {
 	// TODO: Make this parallel and get rid of the WaitJoinGame method
 	for i, client := range clients {
 		if err := client.RequestJoinGame(gameSettings.playerSetup[i], interfaceOptions, gameSettings.ports); err != nil {
@@ -245,8 +239,7 @@ func attachClients() {
 	}
 }
 
-// Connect ...
-func Connect(port int) {
+func connect(port int) {
 	pi := client.ProcessInfo{Path: processSettings.netAddress, PID: 0, Port: port}
 
 	// Set process info for each bot
@@ -260,8 +253,7 @@ func Connect(port int) {
 	started = true
 }
 
-// SetupPorts ...
-func SetupPorts(numAgents int, startPort int, checkSingle bool) {
+func setupPorts(numAgents int, startPort int, checkSingle bool) {
 	humans := numAgents
 	if checkSingle {
 		humans = 0
@@ -288,8 +280,7 @@ func SetupPorts(numAgents int, startPort int, checkSingle bool) {
 	}
 }
 
-// Run ...
-func Run() {
+func run() {
 	wg := sync.WaitGroup{}
 	wg.Add(len(clients))
 
@@ -350,8 +341,7 @@ func cleanup(c *client.Client) {
 	}
 }
 
-// StartReplay ...
-func StartReplay(path string) bool {
+func startReplay(path string) bool {
 	// Get info about the replay
 	info, err := clients[0].RequestReplayInfo(path)
 	if err != nil {
@@ -399,7 +389,7 @@ func StartReplay(path string) bool {
 	return true
 }
 
-// SetReplayPath ...
+// SetReplayPath a directory of replay files or a single replay to load.
 func SetReplayPath(path string) error {
 	replaySettings.files = nil
 	if p, err := filepath.Abs(path); err != nil {
@@ -408,7 +398,7 @@ func SetReplayPath(path string) error {
 		path = p
 	}
 
-	if filepath.Ext(path) == ".SC2Replay" {
+	if isReplayFile(filepath.Ext(path)) {
 		replaySettings.files = []string{path}
 		return nil
 	}
@@ -421,11 +411,15 @@ func SetReplayPath(path string) error {
 		return err
 	}
 	for _, file := range files {
-		if !file.IsDir() && filepath.Ext(file.Name()) == ".SC2Replay" {
+		if !file.IsDir() && isReplayFile(filepath.Ext(file.Name())) {
 			replaySettings.files = append(replaySettings.files, filepath.Join(path, file.Name()))
 		}
 	}
 	return nil
+}
+
+func isReplayFile(path string) bool {
+	return strings.ToLower(path) == ".sc2replay"
 }
 
 // SetReplayFilter provides a filter which determines if a replay should be run. This allows such
@@ -438,16 +432,6 @@ func SetReplayFilter(filter func(info *api.ResponseReplayInfo) bool) {
 // SetReplayPlayerID ...
 func SetReplayPlayerID(player api.PlayerID) {
 	replaySettings.player = player
-}
-
-// LoadReplayList ...
-func LoadReplayList(path string) error {
-	return errors.New("NYI")
-}
-
-// SaveReplayList ...
-func SaveReplayList(path string) error {
-	return errors.New("NYI")
 }
 
 // CurrentReplayPath provides access to the replay filename and full path of the current replay (if any).

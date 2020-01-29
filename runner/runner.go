@@ -41,9 +41,9 @@ func SetComputer(race api.Race, difficulty api.Difficulty, build api.AIBuild) {
 	Set("ComputerBuild", api.AIBuild_name[int32(build)])
 }
 
-// RunAgent ...
+// RunAgent starts the game.
 func RunAgent(agent client.PlayerSetup) {
-	if !LoadSettings() {
+	if !loadSettings() {
 		return
 	}
 
@@ -52,37 +52,37 @@ func RunAgent(agent client.PlayerSetup) {
 
 	var numAgents = 1
 	if computerOpponent && gamePort == 0 {
-		SetParticipants(agent, client.NewComputer(computerRace, computerDifficulty, computerBuild))
+		setParticipants(agent, client.NewComputer(computerRace, computerDifficulty, computerBuild))
 	} else {
 		numAgents = 2
-		SetParticipants(agent)
+		setParticipants(agent)
 	}
 
 	if gamePort > 0 {
 		log.Print("Connecting to port ", gamePort)
-		Connect(gamePort)
-		SetupPorts(numAgents, startPort, false)
-		JoinGame()
+		connect(gamePort)
+		setupPorts(numAgents, startPort, false)
+		joinGame()
 		processSettings.timeoutMS = 10000
 		log.Print(" Successfully joined game")
 	} else {
-		LaunchStarcraft()
+		launchStarcraft()
 
 		if len(replaySettings.files) > 0 {
 			for _, file := range replaySettings.files {
 				replaySettings.current = file
-				if StartReplay(file) {
-					Run()
+				if startReplay(file) {
+					run()
 				}
 				replaySettings.current = ""
 			}
 			return
 		}
 
-		StartGame(gameSettings.mapName)
+		startGame(gameSettings.mapName)
 	}
 
-	Run()
+	run()
 }
 
 type raceFlag api.Race

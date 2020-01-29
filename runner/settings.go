@@ -14,7 +14,7 @@ import (
 	"strings"
 )
 
-// Set ...
+// Set changes the default value of a command line flag.
 func Set(name, value string) {
 	if err := flag.Set(name, value); err != nil {
 		log.Print(err)
@@ -23,8 +23,7 @@ func Set(name, value string) {
 
 var hasLoaded = false
 
-// LoadSettings ...
-func LoadSettings() bool {
+func loadSettings() bool {
 	if flag.Parsed() {
 		return hasLoaded
 	}
@@ -94,7 +93,7 @@ func init() {
 	flagInt("timeout", &processSettings.timeoutMS, "Timeout for how long the library will block for a response.")
 }
 
-// SetRealtime sets the default realtime option.
+// SetRealtime sets the default realtime option to enabled.
 func SetRealtime() {
 	Set("realtime", "1")
 }
