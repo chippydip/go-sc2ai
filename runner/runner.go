@@ -1,44 +1,30 @@
 package runner
 
 import (
-	"fmt"
 	"log"
-	"strings"
+	"sync"
 
-	"github.com/chippydip/go-sc2ai/api"
 	"github.com/chippydip/go-sc2ai/client"
 )
 
-var gamePort = 0
-var startPort = 0
-var ladderServer = ""
-var opponentID = ""
-
-var computerOpponent = false
-var computerRace = api.Race_Terran
-var computerDifficulty = api.Difficulty_Easy
-var computerBuild = api.AIBuild_RandomBuild
+var (
+	ladderGamePort   = 0
+	ladderStartPort  = 0
+	ladderServer     = ""
+	ladderOpponentID = ""
+)
 
 func init() {
 	// Ladder Flags
-	flagInt("GamePort", &gamePort, "Port of client to connect to")
-	flagInt("StartPort", &startPort, "Starting server port")
+	flagInt("GamePort", &ladderGamePort, "Port of client to connect to")
+	flagInt("StartPort", &ladderStartPort, "Starting server port")
 	flagStr("LadderServer", &ladderServer, "Ladder server address")
-	flagStr("OpponentId", &opponentID, "Ladder ID of the opponent (for learning bots)")
-
-	// Testing Flags
-	flagBool("ComputerOpponent", &computerOpponent, "If we set up a computer opponent")
-	flagVar("ComputerRace", (*raceFlag)(&computerRace), "Race of computer opponent")
-	flagVar("ComputerDifficulty", (*difficultyFlag)(&computerDifficulty), "Difficulty of computer opponent")
-	flagVar("ComputerBuild", (*buildFlag)(&computerBuild), "Build of computer opponent")
+	flagStr("OpponentId", &ladderOpponentID, "Ladder ID of the opponent (for learning bots)")
 }
 
-// SetComputer sets the default computer opponent flags (can still be overridden on the command line).
-func SetComputer(race api.Race, difficulty api.Difficulty, build api.AIBuild) {
-	Set("ComputerOpponent", "true")
-	Set("ComputerRace", api.Race_name[int32(race)])
-	Set("ComputerDifficulty", api.Difficulty_name[int32(difficulty)])
-	Set("ComputerBuild", api.AIBuild_name[int32(build)])
+// OpponentID returns the current ladder opponent ID or an empty string.
+func OpponentID() string {
+	return ladderOpponentID
 }
 
 // RunAgent starts the game.
@@ -51,92 +37,90 @@ func RunAgent(agent client.PlayerSetup) {
 	// fmt.Println(processSettings, gameSettings)
 
 	var numAgents = 1
-	if computerOpponent && gamePort == 0 {
-		setParticipants(agent, client.NewComputer(computerRace, computerDifficulty, computerBuild))
+	var config *gameConfig
+	if computerOpponent && ladderGamePort == 0 {
+		config = newGameConfig(agent, client.NewComputer(computerRace, computerDifficulty, computerBuild))
 	} else {
 		numAgents = 2
-		setParticipants(agent)
+		config = newGameConfig(agent)
 	}
 
-	if gamePort > 0 {
-		log.Print("Connecting to port ", gamePort)
-		connect(gamePort)
-		setupPorts(numAgents, startPort, false)
-		joinGame()
-		processSettings.timeoutMS = 10000
+	if ladderGamePort > 0 {
+		log.Print("Connecting to port ", ladderGamePort)
+		config.connect(ladderGamePort)
+		config.setupPorts(numAgents, ladderStartPort, false)
+		config.joinGame()
 		log.Print(" Successfully joined game")
 	} else {
-		launchStarcraft()
+		config.launchStarcraft()
 
-		if len(replaySettings.files) > 0 {
-			for _, file := range replaySettings.files {
-				replaySettings.current = file
-				if startReplay(file) {
-					run()
-				}
-				replaySettings.current = ""
-			}
-			return
+		if runReplays(config) {
+			return // skip actual game
 		}
 
-		startGame(gameSettings.mapName)
+		config.startGame(mapPath())
 	}
 
-	run()
+	run(config.clients)
 }
 
-type raceFlag api.Race
+func run(clients []*client.Client) {
+	wg := sync.WaitGroup{}
+	wg.Add(len(clients))
 
-func (f *raceFlag) Set(value string) error {
-	// Uppercase first character
-	if len(value) > 0 {
-		value = strings.ToUpper(value[:1]) + value[1:]
+	for _, c := range clients {
+		go func(client *client.Client) {
+			defer wg.Done()
+
+			runAgent(client)
+			cleanup(client)
+		}(c)
 	}
 
-	if v, ok := api.Race_value[value]; ok {
-		*f = raceFlag(v)
-		return nil
-	}
-	return fmt.Errorf("Unknown race: %v", value)
+	wg.Wait()
 }
 
-func (f *raceFlag) String() string {
-	if v, ok := api.Difficulty_name[int32(*f)]; ok {
-		return strings.ToLower(v)
+func runAgent(c *client.Client) {
+	defer func() {
+		if p := recover(); p != nil {
+			client.ReportPanic(p)
+		}
+
+		// If the bot crashed before losing, keep the game running (force the opponent to earn the win)
+		for c.IsInGame() {
+			if err := c.Step(224); err != nil { // 10 seconds per update
+				log.Print(err)
+				break
+			}
+		}
+	}()
+
+	// get GameInfo, Data, and Observation
+	if err := c.Init(); err != nil {
+		log.Printf("Failed to init client: %v", err)
+		return
 	}
-	return ""
+
+	// make sure the bot was added to a game or replay
+	if !c.IsInGame() {
+		log.Print("Client is not in-game")
+		return
+	}
+
+	// run the agent's code
+	c.Agent.RunAgent(c)
 }
 
-type difficultyFlag api.Difficulty
-
-func (f *difficultyFlag) Set(value string) error {
-	if v, ok := api.Difficulty_value[value]; ok {
-		*f = difficultyFlag(v)
-		return nil
+func cleanup(c *client.Client) {
+	if ladderGamePort == 0 {
+		// Leave the game (but only in non-ladder games)
+		c.RequestLeaveGame()
 	}
-	return fmt.Errorf("Unknown difficulty: %v", value)
-}
 
-func (f *difficultyFlag) String() string {
-	if v, ok := api.Difficulty_name[int32(*f)]; ok {
-		return v
+	// Print the winner
+	for _, player := range c.Observation().GetPlayerResult() {
+		if player.GetPlayerId() == c.PlayerID() {
+			log.Print(player.GetResult())
+		}
 	}
-	return ""
-}
-
-type buildFlag api.AIBuild
-
-func (f *buildFlag) Set(value string) error {
-	if v, ok := api.AIBuild_value[value]; ok {
-		*f = buildFlag(v)
-		return nil
-	}
-	return fmt.Errorf("Unknown build: %v", value)
-}
-
-func (f *buildFlag) String() string {
-	if v, ok := api.AIBuild_name[int32(*f)]; ok {
-		return v
-	}
-	return ""
 }
