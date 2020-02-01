@@ -15,10 +15,10 @@ type bot struct {
 
 func main() {
 	// Play a random map against a medium difficulty computer
-	runner.SetMap(runner.Random1v1Map())
 	runner.SetComputer(api.Race_Random, api.Difficulty_Easy, api.AIBuild_RandomBuild)
 
 	// Create the agent and then start the game
+	botutil.SetGameVersion()
 	agent := client.AgentFunc(runAgent)
 	runner.RunAgent(client.NewParticipant(api.Race_Protoss, agent, "StubBot"))
 }
