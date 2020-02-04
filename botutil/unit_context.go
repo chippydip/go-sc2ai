@@ -186,7 +186,7 @@ type grouper struct {
 }
 
 func (g *grouper) group(ctx *UnitContext, abilities []*api.ResponseQueryAvailableAbilities) {
-	g.prevType = ctx.raw[0].UnitType
+	g.prevType = api.UnitTypeID(0)
 	for i, u := range ctx.raw {
 		if u.UnitType != g.prevType {
 			g.updateMap(ctx, i)
