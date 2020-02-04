@@ -18,7 +18,7 @@ import (
 
 func main() {
 	runner.SetMap(runner.Random1v1Map())
-	runner.SetGameVersion(76811, "FF9FA4EACEC5F06DEB27BD297D73ED67")
+	//runner.SetGameVersion(76811, "FF9FA4EACEC5F06DEB27BD297D73ED67")
 
 	agent := client.AgentFunc(generate)
 	runner.RunAgent(client.NewParticipant(api.Race_Random, agent, "NilBot"))

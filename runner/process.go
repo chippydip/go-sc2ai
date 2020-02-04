@@ -88,7 +88,7 @@ func defaultExecutable() string {
 		pp = filepath.Join(pp, "Versions")
 		subdirs := getSubdirs(pp)
 		for i := len(subdirs) - 1; i >= 0; i-- {
-			p := filepath.Join(path, subdirs[i], getBinPath())
+			p := filepath.Join(pp, subdirs[i], getBinPath())
 			if _, err := os.Stat(p); err == nil {
 				path = p
 				break
