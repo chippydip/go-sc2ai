@@ -155,4 +155,9 @@ const (
 	CarrierCarrierCapacity             api.UpgradeID = 294
 	CarrierLeashRangeUpgrade           api.UpgradeID = 295
 	EnhancedShockwaves                 api.UpgradeID = 296
+	MicrobialShroud                    api.UpgradeID = 297
+	SunderingImpact                    api.UpgradeID = 298
+	AmplifiedShielding                 api.UpgradeID = 299
+	PsionicAmplifiers                  api.UpgradeID = 300
+	SecretedCoating                    api.UpgradeID = 301
 )

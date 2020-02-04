@@ -169,7 +169,7 @@ const (
 	PortCity_Bridge_UnitW12Out                     api.UnitTypeID = 794
 	PortCity_Bridge_UnitW8                         api.UnitTypeID = 779
 	PortCity_Bridge_UnitW8Out                      api.UnitTypeID = 778
-	PreviewBunkerUpgraded                          api.UnitTypeID = 1955
+	PreviewBunkerUpgraded                          api.UnitTypeID = 1967
 	PunisherGrenadesLMWeapon                       api.UnitTypeID = 270
 	Raven                                          api.UnitTypeID = 56
 	RavenRepairDrone                               api.UnitTypeID = 1913

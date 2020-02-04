@@ -171,5 +171,9 @@ const (
 	NexusShieldOvercharge                               api.BuffID = 286
 	ParasiticBombDelayTimedLife                         api.BuffID = 287
 	Transfusion                                         api.BuffID = 288
-	InhibitorZoneTemporalField                          api.BuffID = 289
+	AccelerationZoneTemporalField                       api.BuffID = 289
+	InhibitorZoneTemporalField                          api.BuffID = 290
+	ResonatingGlaivesPhaseShift                         api.BuffID = 291
+	AmorphousArmorcloud                                 api.BuffID = 292
+	RavenShredderMissileArmorReductionUISubtruct        api.BuffID = 293
 )

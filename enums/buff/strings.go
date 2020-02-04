@@ -175,5 +175,9 @@ var strings = map[uint32]string{
 	286: "NexusShieldOvercharge",
 	287: "ParasiticBombDelayTimedLife",
 	288: "Transfusion",
-	289: "InhibitorZoneTemporalField",
+	289: "AccelerationZoneTemporalField",
+	290: "InhibitorZoneTemporalField",
+	291: "ResonatingGlaivesPhaseShift",
+	292: "AmorphousArmorcloud",
+	293: "RavenShredderMissileArmorReductionUISubtruct",
 }

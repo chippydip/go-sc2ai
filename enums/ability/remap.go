@@ -64,7 +64,6 @@ var remap = map[api.AbilityID]api.AbilityID{
 	Cancel_AdeptShadePhaseShift:                Cancel,
 	Cancel_BarracksAddOn:                       Cancel,
 	Cancel_BuildInProgress:                     Cancel,
-	Cancel_CreepTumor:                          Cancel,
 	Cancel_FactoryAddOn:                        Cancel,
 	Cancel_GravitonBeam:                        Cancel,
 	Cancel_HangarQueue5:                        Cancel_Last,

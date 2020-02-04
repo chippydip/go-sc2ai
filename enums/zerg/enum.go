@@ -43,7 +43,7 @@ const (
 	Egg                           api.UnitTypeID = 103
 	EvolutionChamber              api.UnitTypeID = 90
 	Extractor                     api.UnitTypeID = 88
-	ExtractorRich                 api.UnitTypeID = 1957
+	ExtractorRich                 api.UnitTypeID = 1975
 	EyeStalkWeapon                api.UnitTypeID = 576
 	FrenzyWeapon                  api.UnitTypeID = 294
 	FungalGrowthMissile           api.UnitTypeID = 313

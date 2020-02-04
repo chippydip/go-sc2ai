@@ -159,4 +159,9 @@ var strings = map[uint32]string{
 	294: "CarrierCarrierCapacity",
 	295: "CarrierLeashRangeUpgrade",
 	296: "EnhancedShockwaves",
+	297: "MicrobialShroud",
+	298: "SunderingImpact",
+	299: "AmplifiedShielding",
+	300: "PsionicAmplifiers",
+	301: "SecretedCoating",
 }

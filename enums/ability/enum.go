@@ -120,7 +120,6 @@ const (
 	Cancel_AdeptShadePhaseShift                api.AbilityID = 2596
 	Cancel_BarracksAddOn                       api.AbilityID = 451
 	Cancel_BuildInProgress                     api.AbilityID = 314
-	Cancel_CreepTumor                          api.AbilityID = 1763
 	Cancel_FactoryAddOn                        api.AbilityID = 484
 	Cancel_GravitonBeam                        api.AbilityID = 174
 	Cancel_HangarQueue5                        api.AbilityID = 1038
@@ -153,6 +152,7 @@ const (
 	Cancel_VoidRayPrismaticAlignment           api.AbilityID = 3707
 	Effect_Abduct                              api.AbilityID = 2067
 	Effect_AdeptPhaseShift                     api.AbilityID = 2544
+	Effect_AmorphousArmorcloud                 api.AbilityID = 3801
 	Effect_AntiArmorMissile                    api.AbilityID = 3753
 	Effect_ArbiterMPRecall                     api.AbilityID = 2475
 	Effect_ArbiterMPStasisField                api.AbilityID = 2473
@@ -180,7 +180,6 @@ const (
 	Effect_GravitonBeam                        api.AbilityID = 173
 	Effect_GuardianShield                      api.AbilityID = 76
 	Effect_Heal                                api.AbilityID = 386
-	Effect_InfestedTerrans                     api.AbilityID = 247
 	Effect_InjectLarva                         api.AbilityID = 251
 	Effect_InterferenceMatrix                  api.AbilityID = 3747
 	Effect_KD8Charge                           api.AbilityID = 2588
@@ -343,7 +342,6 @@ const (
 	Rally_Workers                              api.AbilityID = 3690
 	Research_AdaptiveTalons                    api.AbilityID = 3709
 	Research_AdeptResonatingGlaives            api.AbilityID = 1594
-	Research_AdvancedBallistics                api.AbilityID = 805
 	Research_AnabolicSynthesis                 api.AbilityID = 263
 	Research_BansheeCloakingField              api.AbilityID = 790
 	Research_BansheeHyperflightRotors          api.AbilityID = 799
@@ -357,13 +355,13 @@ const (
 	Research_ConcussiveShells                  api.AbilityID = 732
 	Research_CycloneLockOnDamage               api.AbilityID = 769
 	Research_DrillingClaws                     api.AbilityID = 764
+	Research_EvolveAmorphousArmorcloud         api.AbilityID = 1457
 	Research_ExtendedThermalLance              api.AbilityID = 1097
 	Research_GlialRegeneration                 api.AbilityID = 216
 	Research_GraviticBooster                   api.AbilityID = 1093
 	Research_GraviticDrive                     api.AbilityID = 1094
 	Research_GroovedSpines                     api.AbilityID = 1282
 	Research_HiSecAutoTracking                 api.AbilityID = 650
-	Research_HighCapacityFuelTanks             api.AbilityID = 804
 	Research_InfernalPreigniter                api.AbilityID = 761
 	Research_MuscularAugments                  api.AbilityID = 1283
 	Research_NeuralParasite                    api.AbilityID = 1455
@@ -393,7 +391,11 @@ const (
 	Research_ProtossShieldsLevel3              api.AbilityID = 1070
 	Research_PsiStorm                          api.AbilityID = 1126
 	Research_RavenCorvidReactor                api.AbilityID = 793
+	Research_ResearchBallisticRange            api.AbilityID = 1533
 	Research_ResearchEnhancedShockwaves        api.AbilityID = 822
+	Research_ResearchLurkerRange               api.AbilityID = 3710
+	Research_ResearchRapidReignitionSystem     api.AbilityID = 1534
+	Research_ResearchVoidRaySpeedUpgrade       api.AbilityID = 48
 	Research_ShadowStrike                      api.AbilityID = 2720
 	Research_SmartServos                       api.AbilityID = 766
 	Research_Stimpack                          api.AbilityID = 730
