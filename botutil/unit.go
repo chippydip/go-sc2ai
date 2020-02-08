@@ -10,9 +10,8 @@ import (
 // Unit combines the api Unit with it's UnitTypeData and adds some additional convenience methods.
 type Unit struct {
 	ctx *UnitContext
-	*api.Unit
 	*api.UnitTypeData
-	Actions []*api.AvailableAbility
+	*api.Unit
 }
 
 // IsNil checks if the underlying Unit pointer is nil.

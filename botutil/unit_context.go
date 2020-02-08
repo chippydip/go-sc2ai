@@ -79,7 +79,8 @@ func (ctx *UnitContext) update(info client.AgentInfo) {
 	ctx.clear(ctx.Neutral)
 
 	// Load the latest observation
-	ctx.raw = info.Observation().GetObservation().GetRawData().GetUnits()
+	obs := info.Observation().GetObservation()
+	ctx.raw = obs.GetRawData().GetUnits()
 	ctx.data = info.Data().GetUnits()
 	if len(ctx.raw) == 0 || !info.IsInGame() {
 		return
@@ -98,6 +99,7 @@ func (ctx *UnitContext) update(info client.AgentInfo) {
 	sortUnits(&ctx.raw)
 
 	// Get available actions
+	// TODO: optimize allocations here:
 	query := make([]*api.RequestQueryAvailableAbilities, len(ctx.raw))
 	for i, u := range ctx.raw {
 		query[i] = &api.RequestQueryAvailableAbilities{
@@ -113,7 +115,7 @@ func (ctx *UnitContext) update(info client.AgentInfo) {
 	ctx.wrapped = make([]Unit, len(ctx.raw))
 
 	// Slice up the sorted result
-	(&grouper{}).group(ctx, available.Abilities)
+	(&grouper{}).group(ctx, obs.GameLoop, available.Abilities)
 }
 
 func (ctx *UnitContext) clear(m map[api.UnitTypeID]Units) {
@@ -185,7 +187,7 @@ type grouper struct {
 	prevType  api.UnitTypeID
 }
 
-func (g *grouper) group(ctx *UnitContext, abilities []*api.ResponseQueryAvailableAbilities) {
+func (g *grouper) group(ctx *UnitContext, gameLoop uint32, abilities []*api.ResponseQueryAvailableAbilities) {
 	g.prevType = api.UnitTypeID(0)
 	for i, u := range ctx.raw {
 		if u.UnitType != g.prevType {
@@ -202,9 +204,17 @@ func (g *grouper) group(ctx *UnitContext, abilities []*api.ResponseQueryAvailabl
 		// Revert the unit type so it can be used for data lookup again
 		u.UnitType &= idMask
 
+		// Fill out the additional Unit struct fields
+		u.Actions = abilities[i].Abilities
+		// u.GameLoop = gameLoop
+		// if prev := ctx.byTag[u.Tag]; prev != nil {
+		// 	u.Previous = prev.Unit
+		// }
+
 		// Wrap the unit
-		ctx.wrapped[i] = Unit{ctx, u, ctx.data[u.UnitType], abilities[i].Abilities}
-		ctx.byTag[u.Tag] = &ctx.wrapped[i]
+		ptr := &ctx.wrapped[i]
+		*ptr = Unit{ctx, ctx.data[u.UnitType], u}
+		ctx.byTag[u.Tag] = ptr
 	}
 	g.updateMap(ctx, len(ctx.raw))
 	g.updateGroups(ctx, len(ctx.raw), len(ctx.groups)-1)

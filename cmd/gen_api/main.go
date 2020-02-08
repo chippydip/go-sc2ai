@@ -125,6 +125,11 @@ func upgradeProto(path string) []string {
 
 		// Pop the last path element
 		case line == "}":
+			if propPath[len(propPath)-1] == "Unit" {
+				lines = append(lines,
+					"repeated AvailableAbility actions = 100;",
+				)
+			}
 			propPath = propPath[:len(propPath)-1]
 			lines = append(lines, line)
 
