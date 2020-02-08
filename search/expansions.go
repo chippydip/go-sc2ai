@@ -4,6 +4,7 @@ import (
 	"github.com/chippydip/go-sc2ai/api"
 	"github.com/chippydip/go-sc2ai/botutil"
 	"github.com/chippydip/go-sc2ai/client"
+	"github.com/chippydip/go-sc2ai/enums/neutral"
 )
 
 // BaseLocation contains the optimal build location for a given resource cluster.
@@ -18,7 +19,7 @@ type BaseLocation struct {
 func CalculateBaseLocations(bot *botutil.Bot, debug bool) []BaseLocation {
 	// Start by finding resource clusters
 	clusters := Cluster(bot.Neutral.Resources().Choose(func(u botutil.Unit) bool {
-		return u.HasVespene || u.MineralContents > 100
+		return u.UnitType != neutral.MineralField450 // mineral walls
 	}), 15)
 
 	// Add resource-restrictions to the placement grid
@@ -127,8 +128,28 @@ func debugPrintBaseLocs(locs []BaseLocation, placement api.ImageDataBytes, bot c
 
 	// Base locations
 	for _, exp := range locs {
+		units := exp.Resources.Units()
+		min, max := units[0].Pos2D(), units[0].Pos2D()
+		for i := 1; i < len(units); i++ {
+			p := units[i].Pos2D()
+			if p.X < min.X {
+				min.X = p.X
+			}
+			if p.X > max.X {
+				max.X = p.X
+			}
+			if p.Y < min.Y {
+				min.Y = p.Y
+			}
+			if p.Y > max.Y {
+				max.Y = p.Y
+			}
+		}
+
 		pt := exp.Location
 		z := heightMap.Interpolate(pt.X+0.5, pt.Y+0.5)
+		cm := exp.Resources.Center()
+		cmz := heightMap.Interpolate(cm.X, cm.Y)
 		boxes = append(boxes, &api.DebugBox{
 			Color: green,
 			Min:   &api.Point{X: pt.X - 2.5, Y: pt.Y - 2.5, Z: z},
@@ -137,6 +158,14 @@ func debugPrintBaseLocs(locs []BaseLocation, placement api.ImageDataBytes, bot c
 			Color: green,
 			Min:   &api.Point{X: pt.X - 0.05, Y: pt.Y - 0.05, Z: z},
 			Max:   &api.Point{X: pt.X + 0.05, Y: pt.Y + 0.05, Z: z},
+		}, &api.DebugBox{
+			Color: white,
+			Min:   &api.Point{X: cm.X - 0.05, Y: cm.Y - 0.05, Z: cmz - 1},
+			Max:   &api.Point{X: cm.X + 0.05, Y: cm.Y + 0.05, Z: cmz + 1},
+		}, &api.DebugBox{
+			Color: white,
+			Min:   &api.Point{X: min.X, Y: min.Y, Z: cmz - 1},
+			Max:   &api.Point{X: max.X, Y: max.Y, Z: cmz + 1},
 		})
 
 	}
