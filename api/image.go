@@ -56,6 +56,14 @@ func (img ImageDataBits) Get(x, y int32) bool {
 	return false
 }
 
+// Copy returns an ImageDataBits with a separate data slice copied from the original.
+func (img ImageDataBits) Copy() ImageDataBits {
+	data := make([]byte, len(img.data))
+	copy(data, img.data)
+
+	return ImageDataBits{imageData{img.size, data}}
+}
+
 // Set updates the bit at (x, y) to the given value.
 // If (x, y) is out of bounds it does nothing.
 func (img ImageDataBits) Set(x, y int32, value bool) {
@@ -109,6 +117,14 @@ func NewImageDataBytes(w, h int32) ImageDataBytes {
 	return ImageDataBytes{imageData{size, data}}
 }
 
+// Copy returns an ImageDataBytes with a separate data slice copied from the original.
+func (img ImageDataBytes) Copy() ImageDataBytes {
+	data := make([]byte, len(img.data))
+	copy(data, img.data)
+
+	return ImageDataBytes{imageData{img.size, data}}
+}
+
 // Get returns the byte value at (x, y).
 // If (x, y) is out of bounds it returns 0.
 func (img ImageDataBytes) Get(x, y int32) byte {
@@ -146,6 +162,14 @@ func NewImageDataInts(w, h int32) ImageDataInt32 {
 	data := make([]byte, w*h*4)
 
 	return ImageDataInt32{imageData{size, data}}
+}
+
+// Copy returns an ImageDataInt32 with a separate data slice copied from the original.
+func (img ImageDataInt32) Copy() ImageDataInt32 {
+	data := make([]byte, len(img.data))
+	copy(data, img.data)
+
+	return ImageDataInt32{imageData{img.size, data}}
 }
 
 // Get returns the int32 value at (x, y).
