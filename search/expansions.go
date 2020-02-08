@@ -17,7 +17,9 @@ type BaseLocation struct {
 // be visualized in-game (until new debug info is drawn).
 func CalculateBaseLocations(bot *botutil.Bot, debug bool) []BaseLocation {
 	// Start by finding resource clusters
-	clusters := Cluster(bot.Neutral.Resources(), 15)
+	clusters := Cluster(bot.Neutral.Resources().Choose(func(u botutil.Unit) bool {
+		return u.HasVespene || u.MineralContents > 100
+	}), 15)
 
 	// Add resource-restrictions to the placement grid
 	placement := bot.GameInfo().StartRaw.PlacementGrid.Bits().ToBytes()
