@@ -57,6 +57,9 @@ func (c *UnitCluster) Add(u botutil.Unit) {
 
 // Center is the center of mass of the cluster.
 func (c *UnitCluster) Center() api.Point2D {
+	if len(c.units) == 0 {
+		return api.Point2D{}
+	}
 	return api.Point2D(c.sum.Div(float32(len(c.units))))
 }
 

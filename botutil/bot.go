@@ -32,11 +32,14 @@ func NewBot(info client.AgentInfo) *Bot {
 	update := func() {
 		bot.GameLoop = bot.Observation().GetObservation().GetGameLoop()
 		log.SetPrefix(fmt.Sprintf("[%v] ", bot.GameLoop))
+
+		if bot.GameLoop == 224 {
+			bot.checkVersion()
+		}
 	}
 	update()
 	bot.OnAfterStep(update)
 
-	bot.checkVersion()
 	return bot
 }
 

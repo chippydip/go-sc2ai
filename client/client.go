@@ -253,12 +253,18 @@ func (c *Client) Step(stepSize int) error {
 			c.maxActions = actionsCompleted
 		}
 
+		if !c.IsInGame() {
+			// Clear draw commands in case the game is left running
+			c.ClearDebugDraw()
+			return nil
+		}
+
 		// Call sub-step callbacks
 		for _, cb := range c.subStep {
 			cb()
 		}
 
-		if c.observation.GetObservation().GetGameLoop() >= step || !c.IsInGame() {
+		if c.observation.GetObservation().GetGameLoop() >= step {
 			break
 		}
 	}
@@ -289,11 +295,6 @@ func (c *Client) Step(stepSize int) error {
 		cb()
 	}
 	c.afterStepTime += time.Since(t)
-
-	// Clear draw commands in case the game is left running
-	if !c.IsInGame() {
-		c.ClearDebugDraw()
-	}
 
 	// Performance reporting (update every perfInterval game frames)
 	if c.perfInterval > 0 && c.observation.GetObservation().GetGameLoop()%c.perfInterval == 0 {
