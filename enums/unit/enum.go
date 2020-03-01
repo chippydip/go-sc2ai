@@ -6,6 +6,9 @@ import "github.com/chippydip/go-sc2ai/api"
 const (
 	Invalid                                               api.UnitTypeID = 0
 	Neutral_AberrationACGluescreenDummy                   api.UnitTypeID = 197
+	Neutral_AccelerationZoneFlyingLarge                   api.UnitTypeID = 1976
+	Neutral_AccelerationZoneFlyingMedium                  api.UnitTypeID = 1975
+	Neutral_AccelerationZoneFlyingSmall                   api.UnitTypeID = 1974
 	Neutral_AccelerationZoneLarge                         api.UnitTypeID = 1973
 	Neutral_AccelerationZoneMedium                        api.UnitTypeID = 1972
 	Neutral_AccelerationZoneSmall                         api.UnitTypeID = 1971
@@ -66,19 +69,19 @@ const (
 	Neutral_CollapsibleRockTower                          api.UnitTypeID = 609
 	Neutral_CollapsibleRockTowerDebris                    api.UnitTypeID = 490
 	Neutral_CollapsibleRockTowerDebrisRampLeft            api.UnitTypeID = 518
-	Neutral_CollapsibleRockTowerDebrisRampLeftGreen       api.UnitTypeID = 1979
+	Neutral_CollapsibleRockTowerDebrisRampLeftGreen       api.UnitTypeID = 1985
 	Neutral_CollapsibleRockTowerDebrisRampRight           api.UnitTypeID = 517
-	Neutral_CollapsibleRockTowerDebrisRampRightGreen      api.UnitTypeID = 1980
+	Neutral_CollapsibleRockTowerDebrisRampRightGreen      api.UnitTypeID = 1986
 	Neutral_CollapsibleRockTowerDiagonal                  api.UnitTypeID = 588
 	Neutral_CollapsibleRockTowerPushUnit                  api.UnitTypeID = 561
 	Neutral_CollapsibleRockTowerPushUnitRampLeft          api.UnitTypeID = 564
-	Neutral_CollapsibleRockTowerPushUnitRampLeftGreen     api.UnitTypeID = 1981
+	Neutral_CollapsibleRockTowerPushUnitRampLeftGreen     api.UnitTypeID = 1987
 	Neutral_CollapsibleRockTowerPushUnitRampRight         api.UnitTypeID = 563
-	Neutral_CollapsibleRockTowerPushUnitRampRightGreen    api.UnitTypeID = 1982
+	Neutral_CollapsibleRockTowerPushUnitRampRightGreen    api.UnitTypeID = 1988
 	Neutral_CollapsibleRockTowerRampLeft                  api.UnitTypeID = 664
-	Neutral_CollapsibleRockTowerRampLeftGreen             api.UnitTypeID = 1983
+	Neutral_CollapsibleRockTowerRampLeftGreen             api.UnitTypeID = 1989
 	Neutral_CollapsibleRockTowerRampRight                 api.UnitTypeID = 663
-	Neutral_CollapsibleRockTowerRampRightGreen            api.UnitTypeID = 1984
+	Neutral_CollapsibleRockTowerRampRightGreen            api.UnitTypeID = 1990
 	Neutral_CollapsibleTerranTower                        api.UnitTypeID = 610
 	Neutral_CollapsibleTerranTowerDebris                  api.UnitTypeID = 485
 	Neutral_CollapsibleTerranTowerDiagonal                api.UnitTypeID = 589
@@ -228,6 +231,9 @@ const (
 	Neutral_ImmortalKaraxACGluescreenDummy                api.UnitTypeID = 235
 	Neutral_ImmortalTaldarimACGluescreenDummy             api.UnitTypeID = 258
 	Neutral_InfestorEnsnareAttackMissile                  api.UnitTypeID = 1920
+	Neutral_InhibitorZoneFlyingLarge                      api.UnitTypeID = 1979
+	Neutral_InhibitorZoneFlyingMedium                     api.UnitTypeID = 1978
+	Neutral_InhibitorZoneFlyingSmall                      api.UnitTypeID = 1977
 	Neutral_InhibitorZoneLarge                            api.UnitTypeID = 1970
 	Neutral_InhibitorZoneMedium                           api.UnitTypeID = 1969
 	Neutral_InhibitorZoneSmall                            api.UnitTypeID = 1968
@@ -262,10 +268,10 @@ const (
 	Neutral_MengskStatue                                  api.UnitTypeID = 380
 	Neutral_MengskStatueAlone                             api.UnitTypeID = 379
 	Neutral_MineralField                                  api.UnitTypeID = 341
-	Neutral_MineralField450                               api.UnitTypeID = 1976
+	Neutral_MineralField450                               api.UnitTypeID = 1982
 	Neutral_MineralField750                               api.UnitTypeID = 483
-	Neutral_MineralFieldOpaque                            api.UnitTypeID = 1977
-	Neutral_MineralFieldOpaque900                         api.UnitTypeID = 1978
+	Neutral_MineralFieldOpaque                            api.UnitTypeID = 1983
+	Neutral_MineralFieldOpaque900                         api.UnitTypeID = 1984
 	Neutral_MissileTurretACGluescreenDummy                api.UnitTypeID = 165
 	Neutral_MissileTurretMengskACGluescreenDummy          api.UnitTypeID = 1965
 	Neutral_Moopy                                         api.UnitTypeID = 839
@@ -594,7 +600,7 @@ const (
 	Protoss_ArbiterMPWeaponMissile                        api.UnitTypeID = 813
 	Protoss_Archon                                        api.UnitTypeID = 141
 	Protoss_Assimilator                                   api.UnitTypeID = 61
-	Protoss_AssimilatorRich                               api.UnitTypeID = 1974
+	Protoss_AssimilatorRich                               api.UnitTypeID = 1980
 	Protoss_Carrier                                       api.UnitTypeID = 79
 	Protoss_Colossus                                      api.UnitTypeID = 4
 	Protoss_CorsairMP                                     api.UnitTypeID = 855
@@ -948,7 +954,7 @@ const (
 	Zerg_Egg                                              api.UnitTypeID = 103
 	Zerg_EvolutionChamber                                 api.UnitTypeID = 90
 	Zerg_Extractor                                        api.UnitTypeID = 88
-	Zerg_ExtractorRich                                    api.UnitTypeID = 1975
+	Zerg_ExtractorRich                                    api.UnitTypeID = 1981
 	Zerg_EyeStalkWeapon                                   api.UnitTypeID = 576
 	Zerg_FrenzyWeapon                                     api.UnitTypeID = 294
 	Zerg_FungalGrowthMissile                              api.UnitTypeID = 313

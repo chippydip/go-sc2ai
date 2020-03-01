@@ -172,8 +172,10 @@ const (
 	ParasiticBombDelayTimedLife                         api.BuffID = 287
 	Transfusion                                         api.BuffID = 288
 	AccelerationZoneTemporalField                       api.BuffID = 289
-	InhibitorZoneTemporalField                          api.BuffID = 290
-	ResonatingGlaivesPhaseShift                         api.BuffID = 291
-	AmorphousArmorcloud                                 api.BuffID = 292
-	RavenShredderMissileArmorReductionUISubtruct        api.BuffID = 293
+	AccelerationZoneFlyingTemporalField                 api.BuffID = 290
+	InhibitorZoneFlyingTemporalField                    api.BuffID = 291
+	InhibitorZoneTemporalField                          api.BuffID = 292
+	ResonatingGlaivesPhaseShift                         api.BuffID = 293
+	AmorphousArmorcloud                                 api.BuffID = 294
+	RavenShredderMissileArmorReductionUISubtruct        api.BuffID = 295
 )

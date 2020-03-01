@@ -5,6 +5,9 @@ import "github.com/chippydip/go-sc2ai/api"
 
 const (
 	AberrationACGluescreenDummy                  api.UnitTypeID = 197
+	AccelerationZoneFlyingLarge                  api.UnitTypeID = 1976
+	AccelerationZoneFlyingMedium                 api.UnitTypeID = 1975
+	AccelerationZoneFlyingSmall                  api.UnitTypeID = 1974
 	AccelerationZoneLarge                        api.UnitTypeID = 1973
 	AccelerationZoneMedium                       api.UnitTypeID = 1972
 	AccelerationZoneSmall                        api.UnitTypeID = 1971
@@ -65,19 +68,19 @@ const (
 	CollapsibleRockTower                         api.UnitTypeID = 609
 	CollapsibleRockTowerDebris                   api.UnitTypeID = 490
 	CollapsibleRockTowerDebrisRampLeft           api.UnitTypeID = 518
-	CollapsibleRockTowerDebrisRampLeftGreen      api.UnitTypeID = 1979
+	CollapsibleRockTowerDebrisRampLeftGreen      api.UnitTypeID = 1985
 	CollapsibleRockTowerDebrisRampRight          api.UnitTypeID = 517
-	CollapsibleRockTowerDebrisRampRightGreen     api.UnitTypeID = 1980
+	CollapsibleRockTowerDebrisRampRightGreen     api.UnitTypeID = 1986
 	CollapsibleRockTowerDiagonal                 api.UnitTypeID = 588
 	CollapsibleRockTowerPushUnit                 api.UnitTypeID = 561
 	CollapsibleRockTowerPushUnitRampLeft         api.UnitTypeID = 564
-	CollapsibleRockTowerPushUnitRampLeftGreen    api.UnitTypeID = 1981
+	CollapsibleRockTowerPushUnitRampLeftGreen    api.UnitTypeID = 1987
 	CollapsibleRockTowerPushUnitRampRight        api.UnitTypeID = 563
-	CollapsibleRockTowerPushUnitRampRightGreen   api.UnitTypeID = 1982
+	CollapsibleRockTowerPushUnitRampRightGreen   api.UnitTypeID = 1988
 	CollapsibleRockTowerRampLeft                 api.UnitTypeID = 664
-	CollapsibleRockTowerRampLeftGreen            api.UnitTypeID = 1983
+	CollapsibleRockTowerRampLeftGreen            api.UnitTypeID = 1989
 	CollapsibleRockTowerRampRight                api.UnitTypeID = 663
-	CollapsibleRockTowerRampRightGreen           api.UnitTypeID = 1984
+	CollapsibleRockTowerRampRightGreen           api.UnitTypeID = 1990
 	CollapsibleTerranTower                       api.UnitTypeID = 610
 	CollapsibleTerranTowerDebris                 api.UnitTypeID = 485
 	CollapsibleTerranTowerDiagonal               api.UnitTypeID = 589
@@ -227,6 +230,9 @@ const (
 	ImmortalKaraxACGluescreenDummy               api.UnitTypeID = 235
 	ImmortalTaldarimACGluescreenDummy            api.UnitTypeID = 258
 	InfestorEnsnareAttackMissile                 api.UnitTypeID = 1920
+	InhibitorZoneFlyingLarge                     api.UnitTypeID = 1979
+	InhibitorZoneFlyingMedium                    api.UnitTypeID = 1978
+	InhibitorZoneFlyingSmall                     api.UnitTypeID = 1977
 	InhibitorZoneLarge                           api.UnitTypeID = 1970
 	InhibitorZoneMedium                          api.UnitTypeID = 1969
 	InhibitorZoneSmall                           api.UnitTypeID = 1968
@@ -261,10 +267,10 @@ const (
 	MengskStatue                                 api.UnitTypeID = 380
 	MengskStatueAlone                            api.UnitTypeID = 379
 	MineralField                                 api.UnitTypeID = 341
-	MineralField450                              api.UnitTypeID = 1976
+	MineralField450                              api.UnitTypeID = 1982
 	MineralField750                              api.UnitTypeID = 483
-	MineralFieldOpaque                           api.UnitTypeID = 1977
-	MineralFieldOpaque900                        api.UnitTypeID = 1978
+	MineralFieldOpaque                           api.UnitTypeID = 1983
+	MineralFieldOpaque900                        api.UnitTypeID = 1984
 	MissileTurretACGluescreenDummy               api.UnitTypeID = 165
 	MissileTurretMengskACGluescreenDummy         api.UnitTypeID = 1965
 	Moopy                                        api.UnitTypeID = 839

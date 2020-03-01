@@ -13,7 +13,7 @@ const (
 	ArbiterMPWeaponMissile     api.UnitTypeID = 813
 	Archon                     api.UnitTypeID = 141
 	Assimilator                api.UnitTypeID = 61
-	AssimilatorRich            api.UnitTypeID = 1974
+	AssimilatorRich            api.UnitTypeID = 1980
 	Carrier                    api.UnitTypeID = 79
 	Colossus                   api.UnitTypeID = 4
 	CorsairMP                  api.UnitTypeID = 855
