@@ -174,8 +174,13 @@ const (
 	AccelerationZoneTemporalField                       api.BuffID = 289
 	AccelerationZoneFlyingTemporalField                 api.BuffID = 290
 	InhibitorZoneFlyingTemporalField                    api.BuffID = 291
-	InhibitorZoneTemporalField                          api.BuffID = 292
-	ResonatingGlaivesPhaseShift                         api.BuffID = 293
-	AmorphousArmorcloud                                 api.BuffID = 294
-	RavenShredderMissileArmorReductionUISubtruct        api.BuffID = 295
+	DummyBuff000                                        api.BuffID = 292
+	InhibitorZoneTemporalField                          api.BuffID = 293
+	ResonatingGlaivesPhaseShift                         api.BuffID = 294
+	NeuralParasiteChildren                              api.BuffID = 295
+	AmorphousArmorcloud                                 api.BuffID = 296
+	DummyBuff001                                        api.BuffID = 297
+	BatteryOvercharge                                   api.BuffID = 298
+	RavenShredderMissileArmorReductionUISubtruct        api.BuffID = 300
+	DummyBuff002                                        api.BuffID = 301
 )

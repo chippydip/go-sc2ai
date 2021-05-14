@@ -77,7 +77,7 @@ func (c *connection) Connect(address string, port int) error {
 }
 
 func (r request) process(ws *websocket.Conn) {
-	data, err := []byte(nil), ws.WriteMessage(websocket.TextMessage, r.data)
+	data, err := []byte(nil), ws.WriteMessage(websocket.BinaryMessage, r.data)
 	if err == nil {
 		_, data, err = ws.ReadMessage()
 	}

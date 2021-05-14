@@ -3,14 +3,15 @@
 
 package api
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/gogo/protobuf/gogoproto"
-
-import encoding_binary "encoding/binary"
-
-import io "io"
+import (
+	encoding_binary "encoding/binary"
+	fmt "fmt"
+	_ "github.com/gogo/protobuf/gogoproto"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+	math_bits "math/bits"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +22,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Race int32
 
@@ -40,6 +41,7 @@ var Race_name = map[int32]string{
 	3: "Protoss",
 	4: "Random",
 }
+
 var Race_value = map[string]int32{
 	"NoRace":  0,
 	"Terran":  1,
@@ -51,8 +53,9 @@ var Race_value = map[string]int32{
 func (x Race) String() string {
 	return proto.EnumName(Race_name, int32(x))
 }
+
 func (Race) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_common_9d97b44678c4b088, []int{0}
+	return fileDescriptor_555bd8c177793206, []int{0}
 }
 
 type AvailableAbility struct {
@@ -64,7 +67,7 @@ func (m *AvailableAbility) Reset()         { *m = AvailableAbility{} }
 func (m *AvailableAbility) String() string { return proto.CompactTextString(m) }
 func (*AvailableAbility) ProtoMessage()    {}
 func (*AvailableAbility) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_9d97b44678c4b088, []int{0}
+	return fileDescriptor_555bd8c177793206, []int{0}
 }
 func (m *AvailableAbility) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -74,15 +77,15 @@ func (m *AvailableAbility) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return xxx_messageInfo_AvailableAbility.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *AvailableAbility) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AvailableAbility.Merge(dst, src)
+func (m *AvailableAbility) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AvailableAbility.Merge(m, src)
 }
 func (m *AvailableAbility) XXX_Size() int {
 	return m.Size()
@@ -109,7 +112,7 @@ func (m *AvailableAbility) GetRequiresPoint() bool {
 
 type ImageData struct {
 	BitsPerPixel int32    `protobuf:"varint,1,opt,name=bits_per_pixel,json=bitsPerPixel,proto3" json:"bits_per_pixel,omitempty"`
-	Size_        *Size2DI `protobuf:"bytes,2,opt,name=size" json:"size,omitempty"`
+	Size_        *Size2DI `protobuf:"bytes,2,opt,name=size,proto3" json:"size,omitempty"`
 	Data         []byte   `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
 }
 
@@ -117,7 +120,7 @@ func (m *ImageData) Reset()         { *m = ImageData{} }
 func (m *ImageData) String() string { return proto.CompactTextString(m) }
 func (*ImageData) ProtoMessage()    {}
 func (*ImageData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_9d97b44678c4b088, []int{1}
+	return fileDescriptor_555bd8c177793206, []int{1}
 }
 func (m *ImageData) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -127,15 +130,15 @@ func (m *ImageData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_ImageData.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ImageData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ImageData.Merge(dst, src)
+func (m *ImageData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ImageData.Merge(m, src)
 }
 func (m *ImageData) XXX_Size() int {
 	return m.Size()
@@ -178,7 +181,7 @@ func (m *PointI) Reset()         { *m = PointI{} }
 func (m *PointI) String() string { return proto.CompactTextString(m) }
 func (*PointI) ProtoMessage()    {}
 func (*PointI) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_9d97b44678c4b088, []int{2}
+	return fileDescriptor_555bd8c177793206, []int{2}
 }
 func (m *PointI) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -188,15 +191,15 @@ func (m *PointI) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_PointI.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *PointI) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PointI.Merge(dst, src)
+func (m *PointI) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PointI.Merge(m, src)
 }
 func (m *PointI) XXX_Size() int {
 	return m.Size()
@@ -223,15 +226,15 @@ func (m *PointI) GetY() int32 {
 
 // Screen space rectangular area.
 type RectangleI struct {
-	P0 *PointI `protobuf:"bytes,1,opt,name=p0" json:"p0,omitempty"`
-	P1 *PointI `protobuf:"bytes,2,opt,name=p1" json:"p1,omitempty"`
+	P0 *PointI `protobuf:"bytes,1,opt,name=p0,proto3" json:"p0,omitempty"`
+	P1 *PointI `protobuf:"bytes,2,opt,name=p1,proto3" json:"p1,omitempty"`
 }
 
 func (m *RectangleI) Reset()         { *m = RectangleI{} }
 func (m *RectangleI) String() string { return proto.CompactTextString(m) }
 func (*RectangleI) ProtoMessage()    {}
 func (*RectangleI) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_9d97b44678c4b088, []int{3}
+	return fileDescriptor_555bd8c177793206, []int{3}
 }
 func (m *RectangleI) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -241,15 +244,15 @@ func (m *RectangleI) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_RectangleI.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *RectangleI) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RectangleI.Merge(dst, src)
+func (m *RectangleI) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RectangleI.Merge(m, src)
 }
 func (m *RectangleI) XXX_Size() int {
 	return m.Size()
@@ -285,7 +288,7 @@ func (m *Point2D) Reset()         { *m = Point2D{} }
 func (m *Point2D) String() string { return proto.CompactTextString(m) }
 func (*Point2D) ProtoMessage()    {}
 func (*Point2D) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_9d97b44678c4b088, []int{4}
+	return fileDescriptor_555bd8c177793206, []int{4}
 }
 func (m *Point2D) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -295,15 +298,15 @@ func (m *Point2D) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Point2D.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *Point2D) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Point2D.Merge(dst, src)
+func (m *Point2D) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Point2D.Merge(m, src)
 }
 func (m *Point2D) XXX_Size() int {
 	return m.Size()
@@ -340,7 +343,7 @@ func (m *Point) Reset()         { *m = Point{} }
 func (m *Point) String() string { return proto.CompactTextString(m) }
 func (*Point) ProtoMessage()    {}
 func (*Point) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_9d97b44678c4b088, []int{5}
+	return fileDescriptor_555bd8c177793206, []int{5}
 }
 func (m *Point) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -350,15 +353,15 @@ func (m *Point) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Point.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *Point) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Point.Merge(dst, src)
+func (m *Point) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Point.Merge(m, src)
 }
 func (m *Point) XXX_Size() int {
 	return m.Size()
@@ -400,7 +403,7 @@ func (m *Size2DI) Reset()         { *m = Size2DI{} }
 func (m *Size2DI) String() string { return proto.CompactTextString(m) }
 func (*Size2DI) ProtoMessage()    {}
 func (*Size2DI) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_9d97b44678c4b088, []int{6}
+	return fileDescriptor_555bd8c177793206, []int{6}
 }
 func (m *Size2DI) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -410,15 +413,15 @@ func (m *Size2DI) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Size2DI.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *Size2DI) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Size2DI.Merge(dst, src)
+func (m *Size2DI) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Size2DI.Merge(m, src)
 }
 func (m *Size2DI) XXX_Size() int {
 	return m.Size()
@@ -444,6 +447,7 @@ func (m *Size2DI) GetY() int32 {
 }
 
 func init() {
+	proto.RegisterEnum("SC2APIProtocol.Race", Race_name, Race_value)
 	proto.RegisterType((*AvailableAbility)(nil), "SC2APIProtocol.AvailableAbility")
 	proto.RegisterType((*ImageData)(nil), "SC2APIProtocol.ImageData")
 	proto.RegisterType((*PointI)(nil), "SC2APIProtocol.PointI")
@@ -451,12 +455,44 @@ func init() {
 	proto.RegisterType((*Point2D)(nil), "SC2APIProtocol.Point2D")
 	proto.RegisterType((*Point)(nil), "SC2APIProtocol.Point")
 	proto.RegisterType((*Size2DI)(nil), "SC2APIProtocol.Size2DI")
-	proto.RegisterEnum("SC2APIProtocol.Race", Race_name, Race_value)
 }
+
+func init() { proto.RegisterFile("common.proto", fileDescriptor_555bd8c177793206) }
+
+var fileDescriptor_555bd8c177793206 = []byte{
+	// 412 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x92, 0xcf, 0x6f, 0x94, 0x40,
+	0x14, 0xc7, 0x77, 0x28, 0xbb, 0xed, 0xbe, 0xdd, 0x6e, 0xc8, 0x1c, 0x74, 0xe3, 0x01, 0x09, 0x69,
+	0xcd, 0x46, 0x0d, 0x76, 0xf1, 0xe8, 0x89, 0xca, 0x85, 0x8b, 0x21, 0x53, 0x4f, 0x8d, 0x09, 0x19,
+	0x60, 0x42, 0x26, 0x01, 0x06, 0x07, 0x34, 0xbb, 0xfc, 0x15, 0xfe, 0x59, 0x1e, 0x7b, 0xf4, 0x64,
+	0xcc, 0xee, 0x7f, 0xe1, 0xc9, 0xcc, 0x80, 0x31, 0x35, 0x69, 0x6f, 0xef, 0x3d, 0x3e, 0xf9, 0xfe,
+	0x20, 0x03, 0xcb, 0x4c, 0x54, 0x95, 0xa8, 0xbd, 0x46, 0x8a, 0x4e, 0xe0, 0xd5, 0xcd, 0x7b, 0x3f,
+	0x88, 0xa3, 0x58, 0x2d, 0x99, 0x28, 0x9f, 0x41, 0x21, 0x0a, 0x31, 0x7c, 0x73, 0x0b, 0xb0, 0x82,
+	0xaf, 0x94, 0x97, 0x34, 0x2d, 0x59, 0x90, 0xf2, 0x92, 0x77, 0x7b, 0xfc, 0x1a, 0x80, 0x0e, 0x63,
+	0xc2, 0xf3, 0x35, 0x72, 0xd0, 0x66, 0x7a, 0x7d, 0xfe, 0xfb, 0xe7, 0xf3, 0xf9, 0x08, 0x44, 0x21,
+	0x99, 0x8f, 0x40, 0x94, 0xe3, 0x4b, 0x58, 0x49, 0xf6, 0xf9, 0x0b, 0x97, 0xac, 0x4d, 0x1a, 0xc1,
+	0xeb, 0x6e, 0x6d, 0x38, 0x68, 0x73, 0x46, 0xce, 0xff, 0x5e, 0x63, 0x75, 0x74, 0x25, 0xcc, 0xa3,
+	0x8a, 0x16, 0x2c, 0xa4, 0x1d, 0xc5, 0x17, 0xb0, 0x4a, 0x79, 0xd7, 0x26, 0x0d, 0x93, 0x49, 0xc3,
+	0x77, 0xac, 0x1c, 0x5c, 0xc8, 0x52, 0x5d, 0x63, 0x26, 0x63, 0x75, 0xc3, 0xaf, 0xc0, 0x6c, 0x79,
+	0xcf, 0xb4, 0xde, 0xc2, 0x7f, 0xea, 0xdd, 0xaf, 0xe1, 0xdd, 0xf0, 0x9e, 0xf9, 0x61, 0x44, 0x34,
+	0x84, 0x31, 0x98, 0x39, 0xed, 0xe8, 0xfa, 0xc4, 0x41, 0x9b, 0x25, 0xd1, 0xb3, 0x7b, 0x01, 0x33,
+	0x6d, 0x1e, 0xe1, 0x25, 0xa0, 0xdd, 0xe8, 0x81, 0x76, 0x6a, 0xdb, 0x6b, 0xd5, 0x29, 0x41, 0x7b,
+	0xf7, 0x13, 0x00, 0x61, 0x59, 0x47, 0xeb, 0xa2, 0x64, 0x11, 0x7e, 0x01, 0x46, 0x73, 0xa5, 0xd1,
+	0x85, 0xff, 0xe4, 0x7f, 0xcb, 0x41, 0x8d, 0x18, 0xcd, 0x95, 0xe6, 0xb6, 0x63, 0xb4, 0x87, 0xb9,
+	0xad, 0x7b, 0x09, 0xa7, 0x7a, 0xf3, 0xc3, 0x7f, 0x21, 0x8c, 0x7b, 0x21, 0x0c, 0x15, 0x62, 0x0b,
+	0x53, 0x8d, 0x3d, 0x06, 0xa9, 0xad, 0xd7, 0x05, 0x0d, 0x82, 0x7a, 0xa5, 0x3c, 0xfe, 0x82, 0xc7,
+	0xea, 0xbd, 0x0c, 0xc0, 0x24, 0x34, 0x63, 0x18, 0x60, 0xf6, 0x41, 0xa8, 0xc9, 0x9a, 0xa8, 0xf9,
+	0x23, 0x93, 0x92, 0xd6, 0x16, 0xc2, 0x67, 0x60, 0xde, 0x32, 0x59, 0x58, 0x06, 0x5e, 0xc0, 0xa9,
+	0x6e, 0xd0, 0xb6, 0xd6, 0x89, 0x42, 0x08, 0xad, 0x73, 0x51, 0x59, 0xe6, 0xb5, 0xf3, 0xfd, 0x60,
+	0xa3, 0xbb, 0x83, 0x8d, 0x7e, 0x1d, 0x6c, 0xf4, 0xed, 0x68, 0x4f, 0xee, 0x8e, 0xf6, 0xe4, 0xc7,
+	0xd1, 0x9e, 0xdc, 0xce, 0xbc, 0x37, 0xef, 0x68, 0xc3, 0xd3, 0x99, 0x7e, 0x4d, 0x6f, 0xff, 0x04,
+	0x00, 0x00, 0xff, 0xff, 0xcf, 0xa5, 0x6d, 0x28, 0x79, 0x02, 0x00, 0x00,
+}
+
 func (m *AvailableAbility) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -464,32 +500,37 @@ func (m *AvailableAbility) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *AvailableAbility) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AvailableAbility) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.AbilityId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintCommon(dAtA, i, uint64(m.AbilityId))
-	}
 	if m.RequiresPoint {
-		dAtA[i] = 0x10
-		i++
+		i--
 		if m.RequiresPoint {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x10
 	}
-	return i, nil
+	if m.AbilityId != 0 {
+		i = encodeVarintCommon(dAtA, i, uint64(m.AbilityId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *ImageData) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -497,38 +538,46 @@ func (m *ImageData) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ImageData) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ImageData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.BitsPerPixel != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintCommon(dAtA, i, uint64(m.BitsPerPixel))
+	if len(m.Data) > 0 {
+		i -= len(m.Data)
+		copy(dAtA[i:], m.Data)
+		i = encodeVarintCommon(dAtA, i, uint64(len(m.Data)))
+		i--
+		dAtA[i] = 0x1a
 	}
 	if m.Size_ != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintCommon(dAtA, i, uint64(m.Size_.Size()))
-		n1, err := m.Size_.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Size_.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintCommon(dAtA, i, uint64(size))
 		}
-		i += n1
+		i--
+		dAtA[i] = 0x12
 	}
-	if len(m.Data) > 0 {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintCommon(dAtA, i, uint64(len(m.Data)))
-		i += copy(dAtA[i:], m.Data)
+	if m.BitsPerPixel != 0 {
+		i = encodeVarintCommon(dAtA, i, uint64(m.BitsPerPixel))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *PointI) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -536,27 +585,32 @@ func (m *PointI) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PointI) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PointI) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.X != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintCommon(dAtA, i, uint64(m.X))
-	}
 	if m.Y != 0 {
-		dAtA[i] = 0x10
-		i++
 		i = encodeVarintCommon(dAtA, i, uint64(m.Y))
+		i--
+		dAtA[i] = 0x10
 	}
-	return i, nil
+	if m.X != 0 {
+		i = encodeVarintCommon(dAtA, i, uint64(m.X))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *RectangleI) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -564,37 +618,46 @@ func (m *RectangleI) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *RectangleI) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RectangleI) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.P0 != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintCommon(dAtA, i, uint64(m.P0.Size()))
-		n2, err := m.P0.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n2
-	}
 	if m.P1 != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintCommon(dAtA, i, uint64(m.P1.Size()))
-		n3, err := m.P1.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.P1.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintCommon(dAtA, i, uint64(size))
 		}
-		i += n3
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.P0 != nil {
+		{
+			size, err := m.P0.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintCommon(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *Point2D) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -602,29 +665,34 @@ func (m *Point2D) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Point2D) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Point2D) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.X != 0 {
-		dAtA[i] = 0xd
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.X))))
-		i += 4
-	}
 	if m.Y != 0 {
-		dAtA[i] = 0x15
-		i++
+		i -= 4
 		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Y))))
-		i += 4
+		i--
+		dAtA[i] = 0x15
 	}
-	return i, nil
+	if m.X != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.X))))
+		i--
+		dAtA[i] = 0xd
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *Point) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -632,35 +700,40 @@ func (m *Point) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Point) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Point) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.X != 0 {
-		dAtA[i] = 0xd
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.X))))
-		i += 4
+	if m.Z != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Z))))
+		i--
+		dAtA[i] = 0x1d
 	}
 	if m.Y != 0 {
-		dAtA[i] = 0x15
-		i++
+		i -= 4
 		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Y))))
-		i += 4
+		i--
+		dAtA[i] = 0x15
 	}
-	if m.Z != 0 {
-		dAtA[i] = 0x1d
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Z))))
-		i += 4
+	if m.X != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.X))))
+		i--
+		dAtA[i] = 0xd
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *Size2DI) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -668,31 +741,38 @@ func (m *Size2DI) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Size2DI) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Size2DI) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.X != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintCommon(dAtA, i, uint64(m.X))
-	}
 	if m.Y != 0 {
-		dAtA[i] = 0x10
-		i++
 		i = encodeVarintCommon(dAtA, i, uint64(m.Y))
+		i--
+		dAtA[i] = 0x10
 	}
-	return i, nil
+	if m.X != 0 {
+		i = encodeVarintCommon(dAtA, i, uint64(m.X))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintCommon(dAtA []byte, offset int, v uint64) int {
+	offset -= sovCommon(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *AvailableAbility) Size() (n int) {
 	if m == nil {
@@ -810,14 +890,7 @@ func (m *Size2DI) Size() (n int) {
 }
 
 func sovCommon(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozCommon(x uint64) (n int) {
 	return sovCommon(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -837,7 +910,7 @@ func (m *AvailableAbility) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -865,7 +938,7 @@ func (m *AvailableAbility) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AbilityId |= (AbilityID(b) & 0x7F) << shift
+				m.AbilityId |= AbilityID(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -884,7 +957,7 @@ func (m *AvailableAbility) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -896,7 +969,7 @@ func (m *AvailableAbility) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthCommon
 			}
 			if (iNdEx + skippy) > l {
@@ -926,7 +999,7 @@ func (m *ImageData) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -954,7 +1027,7 @@ func (m *ImageData) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.BitsPerPixel |= (int32(b) & 0x7F) << shift
+				m.BitsPerPixel |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -973,7 +1046,7 @@ func (m *ImageData) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -982,6 +1055,9 @@ func (m *ImageData) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCommon
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthCommon
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1006,7 +1082,7 @@ func (m *ImageData) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1015,6 +1091,9 @@ func (m *ImageData) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCommon
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthCommon
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1029,7 +1108,7 @@ func (m *ImageData) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthCommon
 			}
 			if (iNdEx + skippy) > l {
@@ -1059,7 +1138,7 @@ func (m *PointI) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1087,7 +1166,7 @@ func (m *PointI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.X |= (int32(b) & 0x7F) << shift
+				m.X |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1106,7 +1185,7 @@ func (m *PointI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Y |= (int32(b) & 0x7F) << shift
+				m.Y |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1117,7 +1196,7 @@ func (m *PointI) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthCommon
 			}
 			if (iNdEx + skippy) > l {
@@ -1147,7 +1226,7 @@ func (m *RectangleI) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1175,7 +1254,7 @@ func (m *RectangleI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1184,6 +1263,9 @@ func (m *RectangleI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCommon
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthCommon
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1208,7 +1290,7 @@ func (m *RectangleI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1217,6 +1299,9 @@ func (m *RectangleI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCommon
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthCommon
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1233,7 +1318,7 @@ func (m *RectangleI) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthCommon
 			}
 			if (iNdEx + skippy) > l {
@@ -1263,7 +1348,7 @@ func (m *Point2D) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1305,7 +1390,7 @@ func (m *Point2D) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthCommon
 			}
 			if (iNdEx + skippy) > l {
@@ -1335,7 +1420,7 @@ func (m *Point) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1388,7 +1473,7 @@ func (m *Point) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthCommon
 			}
 			if (iNdEx + skippy) > l {
@@ -1418,7 +1503,7 @@ func (m *Size2DI) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1446,7 +1531,7 @@ func (m *Size2DI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.X |= (int32(b) & 0x7F) << shift
+				m.X |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1465,7 +1550,7 @@ func (m *Size2DI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Y |= (int32(b) & 0x7F) << shift
+				m.Y |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1476,7 +1561,7 @@ func (m *Size2DI) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthCommon
 			}
 			if (iNdEx + skippy) > l {
@@ -1494,6 +1579,7 @@ func (m *Size2DI) Unmarshal(dAtA []byte) error {
 func skipCommon(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1525,10 +1611,8 @@ func skipCommon(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1545,85 +1629,34 @@ func skipCommon(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthCommon
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowCommon
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipCommon(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupCommon
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthCommon
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthCommon = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowCommon   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthCommon        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowCommon          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupCommon = fmt.Errorf("proto: unexpected end of group")
 )
-
-func init() { proto.RegisterFile("common.proto", fileDescriptor_common_9d97b44678c4b088) }
-
-var fileDescriptor_common_9d97b44678c4b088 = []byte{
-	// 408 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x92, 0x4d, 0x8b, 0xd3, 0x40,
-	0x18, 0xc7, 0x33, 0x69, 0xda, 0xdd, 0x3e, 0xcd, 0x96, 0x30, 0x07, 0x2d, 0x82, 0xb1, 0x84, 0x5d,
-	0x29, 0x2a, 0x65, 0x1b, 0x3f, 0x41, 0xd6, 0x5c, 0x72, 0x91, 0x30, 0xeb, 0x69, 0x11, 0xc2, 0x24,
-	0x19, 0xc2, 0x40, 0x92, 0x89, 0x93, 0x28, 0x6d, 0x3e, 0x85, 0x1f, 0xcb, 0xe3, 0x1e, 0x3d, 0x89,
-	0xb4, 0xdf, 0xc2, 0x93, 0xcc, 0x24, 0x22, 0x2b, 0xb8, 0xb7, 0xe7, 0x79, 0xf2, 0xe3, 0xff, 0x12,
-	0x06, 0xec, 0x4c, 0x54, 0x95, 0xa8, 0xb7, 0x8d, 0x14, 0x9d, 0xc0, 0xcb, 0xdb, 0x77, 0x7e, 0x10,
-	0x47, 0xb1, 0x5a, 0x32, 0x51, 0x3e, 0x83, 0x42, 0x14, 0x62, 0xf8, 0xe6, 0x15, 0xe0, 0x04, 0x5f,
-	0x28, 0x2f, 0x69, 0x5a, 0xb2, 0x20, 0xe5, 0x25, 0xef, 0x0e, 0xf8, 0x0d, 0x00, 0x1d, 0xc6, 0x84,
-	0xe7, 0x2b, 0xb4, 0x46, 0x9b, 0xe9, 0xcd, 0xc5, 0xaf, 0x1f, 0x2f, 0xe6, 0x23, 0x10, 0x85, 0x64,
-	0x3e, 0x02, 0x51, 0x8e, 0xaf, 0x60, 0x29, 0xd9, 0xa7, 0xcf, 0x5c, 0xb2, 0x36, 0x69, 0x04, 0xaf,
-	0xbb, 0x95, 0xb9, 0x46, 0x9b, 0x73, 0x72, 0xf1, 0xe7, 0x1a, 0xab, 0xa3, 0x27, 0x61, 0x1e, 0x55,
-	0xb4, 0x60, 0x21, 0xed, 0x28, 0xbe, 0x84, 0x65, 0xca, 0xbb, 0x36, 0x69, 0x98, 0x4c, 0x1a, 0xbe,
-	0x67, 0xe5, 0xe0, 0x42, 0x6c, 0x75, 0x8d, 0x99, 0x8c, 0xd5, 0x0d, 0xbf, 0x06, 0xab, 0xe5, 0x3d,
-	0xd3, 0x7a, 0x0b, 0xff, 0xe9, 0xf6, 0x61, 0x8d, 0xed, 0x2d, 0xef, 0x99, 0x1f, 0x46, 0x44, 0x43,
-	0x18, 0x83, 0x95, 0xd3, 0x8e, 0xae, 0x26, 0x6b, 0xb4, 0xb1, 0x89, 0x9e, 0xbd, 0x4b, 0x98, 0x69,
-	0xf3, 0x08, 0xdb, 0x80, 0xf6, 0xa3, 0x07, 0xda, 0xab, 0xed, 0xa0, 0x55, 0xa7, 0x04, 0x1d, 0xbc,
-	0x8f, 0x00, 0x84, 0x65, 0x1d, 0xad, 0x8b, 0x92, 0x45, 0xf8, 0x25, 0x98, 0xcd, 0xb5, 0x46, 0x17,
-	0xfe, 0x93, 0x7f, 0x2d, 0x07, 0x35, 0x62, 0x36, 0xd7, 0x9a, 0xdb, 0x8d, 0xd1, 0xfe, 0xcf, 0xed,
-	0xbc, 0x2b, 0x38, 0xd3, 0x9b, 0x1f, 0xfe, 0x0d, 0x61, 0x3e, 0x08, 0x61, 0xaa, 0x10, 0x3b, 0x98,
-	0x6a, 0xec, 0x31, 0x48, 0x6d, 0xbd, 0x2e, 0x68, 0x12, 0xd4, 0x2b, 0xe5, 0xf1, 0x17, 0x3c, 0x56,
-	0xef, 0x55, 0x00, 0x16, 0xa1, 0x19, 0xc3, 0x00, 0xb3, 0xf7, 0x42, 0x4d, 0x8e, 0xa1, 0xe6, 0x0f,
-	0x4c, 0x4a, 0x5a, 0x3b, 0x08, 0x9f, 0x83, 0x75, 0xc7, 0x64, 0xe1, 0x98, 0x78, 0x01, 0x67, 0xba,
-	0x41, 0xdb, 0x3a, 0x13, 0x85, 0x10, 0x5a, 0xe7, 0xa2, 0x72, 0xac, 0x9b, 0xe7, 0xdf, 0x8e, 0x2e,
-	0xba, 0x3f, 0xba, 0xe8, 0xe7, 0xd1, 0x45, 0x5f, 0x4f, 0xae, 0x71, 0x7f, 0x72, 0x8d, 0xef, 0x27,
-	0xd7, 0xb8, 0x9b, 0xd0, 0x86, 0xa7, 0x33, 0xfd, 0x94, 0xde, 0xfe, 0x0e, 0x00, 0x00, 0xff, 0xff,
-	0x10, 0xa6, 0x7c, 0x29, 0x76, 0x02, 0x00, 0x00,
-}

@@ -3,14 +3,15 @@
 
 package api
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/gogo/protobuf/gogoproto"
-
-import encoding_binary "encoding/binary"
-
-import io "io"
+import (
+	encoding_binary "encoding/binary"
+	fmt "fmt"
+	_ "github.com/gogo/protobuf/gogoproto"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+	math_bits "math/bits"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,12 +22,12 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type RequestQuery struct {
-	Pathing                    []*RequestQueryPathing            `protobuf:"bytes,1,rep,name=pathing" json:"pathing,omitempty"`
-	Abilities                  []*RequestQueryAvailableAbilities `protobuf:"bytes,2,rep,name=abilities" json:"abilities,omitempty"`
-	Placements                 []*RequestQueryBuildingPlacement  `protobuf:"bytes,3,rep,name=placements" json:"placements,omitempty"`
+	Pathing                    []*RequestQueryPathing            `protobuf:"bytes,1,rep,name=pathing,proto3" json:"pathing,omitempty"`
+	Abilities                  []*RequestQueryAvailableAbilities `protobuf:"bytes,2,rep,name=abilities,proto3" json:"abilities,omitempty"`
+	Placements                 []*RequestQueryBuildingPlacement  `protobuf:"bytes,3,rep,name=placements,proto3" json:"placements,omitempty"`
 	IgnoreResourceRequirements bool                              `protobuf:"varint,4,opt,name=ignore_resource_requirements,json=ignoreResourceRequirements,proto3" json:"ignore_resource_requirements,omitempty"`
 }
 
@@ -34,7 +35,7 @@ func (m *RequestQuery) Reset()         { *m = RequestQuery{} }
 func (m *RequestQuery) String() string { return proto.CompactTextString(m) }
 func (*RequestQuery) ProtoMessage()    {}
 func (*RequestQuery) Descriptor() ([]byte, []int) {
-	return fileDescriptor_query_d0074ff9da7a4de3, []int{0}
+	return fileDescriptor_5c6ac9b241082464, []int{0}
 }
 func (m *RequestQuery) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -44,15 +45,15 @@ func (m *RequestQuery) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return xxx_messageInfo_RequestQuery.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *RequestQuery) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RequestQuery.Merge(dst, src)
+func (m *RequestQuery) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RequestQuery.Merge(m, src)
 }
 func (m *RequestQuery) XXX_Size() int {
 	return m.Size()
@@ -92,16 +93,16 @@ func (m *RequestQuery) GetIgnoreResourceRequirements() bool {
 }
 
 type ResponseQuery struct {
-	Pathing    []*ResponseQueryPathing            `protobuf:"bytes,1,rep,name=pathing" json:"pathing,omitempty"`
-	Abilities  []*ResponseQueryAvailableAbilities `protobuf:"bytes,2,rep,name=abilities" json:"abilities,omitempty"`
-	Placements []*ResponseQueryBuildingPlacement  `protobuf:"bytes,3,rep,name=placements" json:"placements,omitempty"`
+	Pathing    []*ResponseQueryPathing            `protobuf:"bytes,1,rep,name=pathing,proto3" json:"pathing,omitempty"`
+	Abilities  []*ResponseQueryAvailableAbilities `protobuf:"bytes,2,rep,name=abilities,proto3" json:"abilities,omitempty"`
+	Placements []*ResponseQueryBuildingPlacement  `protobuf:"bytes,3,rep,name=placements,proto3" json:"placements,omitempty"`
 }
 
 func (m *ResponseQuery) Reset()         { *m = ResponseQuery{} }
 func (m *ResponseQuery) String() string { return proto.CompactTextString(m) }
 func (*ResponseQuery) ProtoMessage()    {}
 func (*ResponseQuery) Descriptor() ([]byte, []int) {
-	return fileDescriptor_query_d0074ff9da7a4de3, []int{1}
+	return fileDescriptor_5c6ac9b241082464, []int{1}
 }
 func (m *ResponseQuery) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -111,15 +112,15 @@ func (m *ResponseQuery) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_ResponseQuery.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ResponseQuery) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ResponseQuery.Merge(dst, src)
+func (m *ResponseQuery) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResponseQuery.Merge(m, src)
 }
 func (m *ResponseQuery) XXX_Size() int {
 	return m.Size()
@@ -151,20 +152,20 @@ func (m *ResponseQuery) GetPlacements() []*ResponseQueryBuildingPlacement {
 	return nil
 }
 
-// --------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
 type RequestQueryPathing struct {
 	// Types that are valid to be assigned to Start:
 	//	*RequestQueryPathing_StartPos
 	//	*RequestQueryPathing_UnitTag
 	Start  isRequestQueryPathing_Start `protobuf_oneof:"start"`
-	EndPos *Point2D                    `protobuf:"bytes,3,opt,name=end_pos,json=endPos" json:"end_pos,omitempty"`
+	EndPos *Point2D                    `protobuf:"bytes,3,opt,name=end_pos,json=endPos,proto3" json:"end_pos,omitempty"`
 }
 
 func (m *RequestQueryPathing) Reset()         { *m = RequestQueryPathing{} }
 func (m *RequestQueryPathing) String() string { return proto.CompactTextString(m) }
 func (*RequestQueryPathing) ProtoMessage()    {}
 func (*RequestQueryPathing) Descriptor() ([]byte, []int) {
-	return fileDescriptor_query_d0074ff9da7a4de3, []int{2}
+	return fileDescriptor_5c6ac9b241082464, []int{2}
 }
 func (m *RequestQueryPathing) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -174,15 +175,15 @@ func (m *RequestQueryPathing) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return xxx_messageInfo_RequestQueryPathing.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *RequestQueryPathing) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RequestQueryPathing.Merge(dst, src)
+func (m *RequestQueryPathing) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RequestQueryPathing.Merge(m, src)
 }
 func (m *RequestQueryPathing) XXX_Size() int {
 	return m.Size()
@@ -200,10 +201,10 @@ type isRequestQueryPathing_Start interface {
 }
 
 type RequestQueryPathing_StartPos struct {
-	StartPos *Point2D `protobuf:"bytes,1,opt,name=start_pos,json=startPos,oneof"`
+	StartPos *Point2D `protobuf:"bytes,1,opt,name=start_pos,json=startPos,proto3,oneof" json:"start_pos,omitempty"`
 }
 type RequestQueryPathing_UnitTag struct {
-	UnitTag UnitTag `protobuf:"varint,2,opt,name=unit_tag,json=unitTag,proto3,oneof,casttype=UnitTag"`
+	UnitTag UnitTag `protobuf:"varint,2,opt,name=unit_tag,json=unitTag,proto3,oneof,casttype=UnitTag" json:"unit_tag,omitempty"`
 }
 
 func (*RequestQueryPathing_StartPos) isRequestQueryPathing_Start() {}
@@ -237,73 +238,12 @@ func (m *RequestQueryPathing) GetEndPos() *Point2D {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*RequestQueryPathing) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _RequestQueryPathing_OneofMarshaler, _RequestQueryPathing_OneofUnmarshaler, _RequestQueryPathing_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*RequestQueryPathing) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*RequestQueryPathing_StartPos)(nil),
 		(*RequestQueryPathing_UnitTag)(nil),
 	}
-}
-
-func _RequestQueryPathing_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*RequestQueryPathing)
-	// start
-	switch x := m.Start.(type) {
-	case *RequestQueryPathing_StartPos:
-		_ = b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.StartPos); err != nil {
-			return err
-		}
-	case *RequestQueryPathing_UnitTag:
-		_ = b.EncodeVarint(2<<3 | proto.WireVarint)
-		_ = b.EncodeVarint(uint64(x.UnitTag))
-	case nil:
-	default:
-		return fmt.Errorf("RequestQueryPathing.Start has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _RequestQueryPathing_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*RequestQueryPathing)
-	switch tag {
-	case 1: // start.start_pos
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Point2D)
-		err := b.DecodeMessage(msg)
-		m.Start = &RequestQueryPathing_StartPos{msg}
-		return true, err
-	case 2: // start.unit_tag
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Start = &RequestQueryPathing_UnitTag{UnitTag(x)}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _RequestQueryPathing_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*RequestQueryPathing)
-	// start
-	switch x := m.Start.(type) {
-	case *RequestQueryPathing_StartPos:
-		s := proto.Size(x.StartPos)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *RequestQueryPathing_UnitTag:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.UnitTag))
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type ResponseQueryPathing struct {
@@ -314,7 +254,7 @@ func (m *ResponseQueryPathing) Reset()         { *m = ResponseQueryPathing{} }
 func (m *ResponseQueryPathing) String() string { return proto.CompactTextString(m) }
 func (*ResponseQueryPathing) ProtoMessage()    {}
 func (*ResponseQueryPathing) Descriptor() ([]byte, []int) {
-	return fileDescriptor_query_d0074ff9da7a4de3, []int{3}
+	return fileDescriptor_5c6ac9b241082464, []int{3}
 }
 func (m *ResponseQueryPathing) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -324,15 +264,15 @@ func (m *ResponseQueryPathing) XXX_Marshal(b []byte, deterministic bool) ([]byte
 		return xxx_messageInfo_ResponseQueryPathing.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ResponseQueryPathing) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ResponseQueryPathing.Merge(dst, src)
+func (m *ResponseQueryPathing) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResponseQueryPathing.Merge(m, src)
 }
 func (m *ResponseQueryPathing) XXX_Size() int {
 	return m.Size()
@@ -350,7 +290,7 @@ func (m *ResponseQueryPathing) GetDistance() float32 {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
 type RequestQueryAvailableAbilities struct {
 	UnitTag UnitTag `protobuf:"varint,1,opt,name=unit_tag,json=unitTag,proto3,casttype=UnitTag" json:"unit_tag,omitempty"`
 }
@@ -359,7 +299,7 @@ func (m *RequestQueryAvailableAbilities) Reset()         { *m = RequestQueryAvai
 func (m *RequestQueryAvailableAbilities) String() string { return proto.CompactTextString(m) }
 func (*RequestQueryAvailableAbilities) ProtoMessage()    {}
 func (*RequestQueryAvailableAbilities) Descriptor() ([]byte, []int) {
-	return fileDescriptor_query_d0074ff9da7a4de3, []int{4}
+	return fileDescriptor_5c6ac9b241082464, []int{4}
 }
 func (m *RequestQueryAvailableAbilities) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -369,15 +309,15 @@ func (m *RequestQueryAvailableAbilities) XXX_Marshal(b []byte, deterministic boo
 		return xxx_messageInfo_RequestQueryAvailableAbilities.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *RequestQueryAvailableAbilities) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RequestQueryAvailableAbilities.Merge(dst, src)
+func (m *RequestQueryAvailableAbilities) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RequestQueryAvailableAbilities.Merge(m, src)
 }
 func (m *RequestQueryAvailableAbilities) XXX_Size() int {
 	return m.Size()
@@ -396,7 +336,7 @@ func (m *RequestQueryAvailableAbilities) GetUnitTag() UnitTag {
 }
 
 type ResponseQueryAvailableAbilities struct {
-	Abilities  []*AvailableAbility `protobuf:"bytes,1,rep,name=abilities" json:"abilities,omitempty"`
+	Abilities  []*AvailableAbility `protobuf:"bytes,1,rep,name=abilities,proto3" json:"abilities,omitempty"`
 	UnitTag    UnitTag             `protobuf:"varint,2,opt,name=unit_tag,json=unitTag,proto3,casttype=UnitTag" json:"unit_tag,omitempty"`
 	UnitTypeId UnitTypeID          `protobuf:"varint,3,opt,name=unit_type_id,json=unitTypeId,proto3,casttype=UnitTypeID" json:"unit_type_id,omitempty"`
 }
@@ -405,7 +345,7 @@ func (m *ResponseQueryAvailableAbilities) Reset()         { *m = ResponseQueryAv
 func (m *ResponseQueryAvailableAbilities) String() string { return proto.CompactTextString(m) }
 func (*ResponseQueryAvailableAbilities) ProtoMessage()    {}
 func (*ResponseQueryAvailableAbilities) Descriptor() ([]byte, []int) {
-	return fileDescriptor_query_d0074ff9da7a4de3, []int{5}
+	return fileDescriptor_5c6ac9b241082464, []int{5}
 }
 func (m *ResponseQueryAvailableAbilities) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -415,15 +355,15 @@ func (m *ResponseQueryAvailableAbilities) XXX_Marshal(b []byte, deterministic bo
 		return xxx_messageInfo_ResponseQueryAvailableAbilities.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ResponseQueryAvailableAbilities) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ResponseQueryAvailableAbilities.Merge(dst, src)
+func (m *ResponseQueryAvailableAbilities) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResponseQueryAvailableAbilities.Merge(m, src)
 }
 func (m *ResponseQueryAvailableAbilities) XXX_Size() int {
 	return m.Size()
@@ -455,10 +395,10 @@ func (m *ResponseQueryAvailableAbilities) GetUnitTypeId() UnitTypeID {
 	return 0
 }
 
-// --------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
 type RequestQueryBuildingPlacement struct {
 	AbilityId      AbilityID `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3,casttype=AbilityID" json:"ability_id,omitempty"`
-	TargetPos      *Point2D  `protobuf:"bytes,2,opt,name=target_pos,json=targetPos" json:"target_pos,omitempty"`
+	TargetPos      *Point2D  `protobuf:"bytes,2,opt,name=target_pos,json=targetPos,proto3" json:"target_pos,omitempty"`
 	PlacingUnitTag UnitTag   `protobuf:"varint,3,opt,name=placing_unit_tag,json=placingUnitTag,proto3,casttype=UnitTag" json:"placing_unit_tag,omitempty"`
 }
 
@@ -466,7 +406,7 @@ func (m *RequestQueryBuildingPlacement) Reset()         { *m = RequestQueryBuild
 func (m *RequestQueryBuildingPlacement) String() string { return proto.CompactTextString(m) }
 func (*RequestQueryBuildingPlacement) ProtoMessage()    {}
 func (*RequestQueryBuildingPlacement) Descriptor() ([]byte, []int) {
-	return fileDescriptor_query_d0074ff9da7a4de3, []int{6}
+	return fileDescriptor_5c6ac9b241082464, []int{6}
 }
 func (m *RequestQueryBuildingPlacement) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -476,15 +416,15 @@ func (m *RequestQueryBuildingPlacement) XXX_Marshal(b []byte, deterministic bool
 		return xxx_messageInfo_RequestQueryBuildingPlacement.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *RequestQueryBuildingPlacement) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RequestQueryBuildingPlacement.Merge(dst, src)
+func (m *RequestQueryBuildingPlacement) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RequestQueryBuildingPlacement.Merge(m, src)
 }
 func (m *RequestQueryBuildingPlacement) XXX_Size() int {
 	return m.Size()
@@ -524,7 +464,7 @@ func (m *ResponseQueryBuildingPlacement) Reset()         { *m = ResponseQueryBui
 func (m *ResponseQueryBuildingPlacement) String() string { return proto.CompactTextString(m) }
 func (*ResponseQueryBuildingPlacement) ProtoMessage()    {}
 func (*ResponseQueryBuildingPlacement) Descriptor() ([]byte, []int) {
-	return fileDescriptor_query_d0074ff9da7a4de3, []int{7}
+	return fileDescriptor_5c6ac9b241082464, []int{7}
 }
 func (m *ResponseQueryBuildingPlacement) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -534,15 +474,15 @@ func (m *ResponseQueryBuildingPlacement) XXX_Marshal(b []byte, deterministic boo
 		return xxx_messageInfo_ResponseQueryBuildingPlacement.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ResponseQueryBuildingPlacement) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ResponseQueryBuildingPlacement.Merge(dst, src)
+func (m *ResponseQueryBuildingPlacement) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResponseQueryBuildingPlacement.Merge(m, src)
 }
 func (m *ResponseQueryBuildingPlacement) XXX_Size() int {
 	return m.Size()
@@ -570,10 +510,56 @@ func init() {
 	proto.RegisterType((*RequestQueryBuildingPlacement)(nil), "SC2APIProtocol.RequestQueryBuildingPlacement")
 	proto.RegisterType((*ResponseQueryBuildingPlacement)(nil), "SC2APIProtocol.ResponseQueryBuildingPlacement")
 }
+
+func init() { proto.RegisterFile("query.proto", fileDescriptor_5c6ac9b241082464) }
+
+var fileDescriptor_5c6ac9b241082464 = []byte{
+	// 609 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x94, 0xcb, 0x6e, 0xd3, 0x40,
+	0x14, 0x86, 0x33, 0x49, 0x9b, 0xcb, 0x49, 0x1b, 0xa1, 0x01, 0x89, 0x28, 0x2a, 0x4e, 0x64, 0x50,
+	0x95, 0x05, 0xa4, 0x28, 0x40, 0x37, 0x88, 0x8a, 0x86, 0x2e, 0x1a, 0x89, 0x22, 0x33, 0x5c, 0x16,
+	0x6c, 0x22, 0x37, 0x1e, 0x99, 0x91, 0xdc, 0x19, 0x77, 0x66, 0x8c, 0xe4, 0xb7, 0xe0, 0x41, 0x58,
+	0xb1, 0x85, 0x07, 0x60, 0xd9, 0x25, 0xab, 0x0a, 0xb5, 0x7b, 0x1e, 0xa0, 0x2b, 0xe4, 0x4b, 0x8a,
+	0x89, 0xa3, 0x61, 0x37, 0x47, 0xf9, 0xcf, 0x3f, 0xff, 0x7c, 0xe7, 0xc4, 0xd0, 0x3e, 0x8d, 0xa8,
+	0x8c, 0x47, 0xa1, 0x14, 0x5a, 0xe0, 0xce, 0x9b, 0x17, 0xe3, 0x7d, 0x67, 0xea, 0x24, 0xc5, 0x5c,
+	0x04, 0x3d, 0xf0, 0x85, 0x2f, 0xb2, 0xdf, 0x7a, 0x1b, 0x73, 0x71, 0x72, 0x22, 0x78, 0x5e, 0xb5,
+	0xa9, 0x94, 0x42, 0x66, 0x85, 0xfd, 0xa5, 0x0a, 0x1b, 0x84, 0x9e, 0x46, 0x54, 0xe9, 0xd7, 0x89,
+	0x1b, 0x7e, 0x06, 0x8d, 0xd0, 0xd5, 0x1f, 0x19, 0xf7, 0xbb, 0x68, 0x50, 0x1b, 0xb6, 0xc7, 0x77,
+	0x47, 0xff, 0x3a, 0x8f, 0x8a, 0x72, 0x27, 0x93, 0x92, 0x45, 0x0f, 0x7e, 0x09, 0x2d, 0xf7, 0x98,
+	0x05, 0x4c, 0x33, 0xaa, 0xba, 0xd5, 0xd4, 0x60, 0x64, 0x32, 0xd8, 0xff, 0xe4, 0xb2, 0xc0, 0x3d,
+	0x0e, 0xe8, 0xfe, 0xa2, 0x8b, 0xfc, 0x35, 0xc0, 0x47, 0x00, 0x61, 0xe0, 0xce, 0xe9, 0x09, 0xe5,
+	0x5a, 0x75, 0x6b, 0xa9, 0xdd, 0x03, 0x93, 0xdd, 0x24, 0x62, 0x81, 0xc7, 0xb8, 0xef, 0x2c, 0xba,
+	0x48, 0xc1, 0x00, 0x3f, 0x87, 0x2d, 0xe6, 0x73, 0x21, 0xe9, 0x4c, 0x52, 0x25, 0x22, 0x39, 0x4f,
+	0x0e, 0xa7, 0x11, 0x93, 0xf9, 0x05, 0x6b, 0x03, 0x34, 0x6c, 0x92, 0x5e, 0xa6, 0x21, 0xb9, 0x84,
+	0x14, 0x14, 0xf6, 0x6f, 0x04, 0x9b, 0x84, 0xaa, 0x50, 0x70, 0x45, 0x33, 0x5e, 0x7b, 0xcb, 0xbc,
+	0xee, 0x95, 0xf3, 0x15, 0xf4, 0x25, 0x60, 0x47, 0x65, 0x60, 0x3b, 0x46, 0x07, 0x33, 0xb1, 0x57,
+	0x2b, 0x88, 0x8d, 0x8c, 0x7e, 0x46, 0x64, 0xf6, 0x57, 0x04, 0x37, 0x57, 0x0c, 0x1c, 0xef, 0x42,
+	0x4b, 0x69, 0x57, 0xea, 0x59, 0x28, 0x54, 0x17, 0x0d, 0xd0, 0xb0, 0x3d, 0xbe, 0xbd, 0x7c, 0x8d,
+	0x23, 0x18, 0xd7, 0xe3, 0x83, 0xc3, 0x0a, 0x69, 0xa6, 0x5a, 0x47, 0x28, 0x3c, 0x84, 0x66, 0xc4,
+	0x99, 0x9e, 0x69, 0xd7, 0xef, 0x56, 0x07, 0x68, 0xb8, 0x36, 0x69, 0x5f, 0x9d, 0xf7, 0x1b, 0xef,
+	0x38, 0xd3, 0x6f, 0x5d, 0xff, 0xb0, 0x42, 0x1a, 0x51, 0x76, 0xc4, 0x0f, 0xa1, 0x41, 0xb9, 0x97,
+	0xfa, 0xd7, 0x8c, 0xfe, 0xa4, 0x4e, 0xb9, 0xe7, 0x08, 0x35, 0x69, 0xc0, 0x7a, 0x7a, 0x8f, 0x3d,
+	0x86, 0x5b, 0xab, 0xa0, 0xe3, 0x1e, 0x34, 0x3d, 0xa6, 0xb4, 0xcb, 0xe7, 0x34, 0xcd, 0x5c, 0x25,
+	0xd7, 0xb5, 0x7d, 0x08, 0x96, 0x79, 0x2f, 0xf1, 0x76, 0x21, 0x3a, 0x2a, 0x45, 0xbf, 0x0e, 0x6e,
+	0x7f, 0x43, 0xd0, 0xff, 0xcf, 0xc4, 0xf0, 0x5e, 0x71, 0xea, 0xd9, 0xde, 0x0c, 0x96, 0x9f, 0xb7,
+	0xd4, 0x16, 0x17, 0xc7, 0xbc, 0x6d, 0xc4, 0x58, 0x84, 0xb8, 0x91, 0xe9, 0xe2, 0x90, 0xce, 0x98,
+	0x97, 0x92, 0xdc, 0x9c, 0x74, 0xae, 0xce, 0xfb, 0x90, 0x6a, 0xe3, 0x90, 0x4e, 0x0f, 0x08, 0x44,
+	0x8b, 0xb3, 0x67, 0x7f, 0x47, 0x70, 0xc7, 0xf8, 0x8f, 0xc2, 0xf7, 0x01, 0xb2, 0x20, 0x71, 0xe2,
+	0x98, 0x90, 0x58, 0x9f, 0x6c, 0x5e, 0x9d, 0xf7, 0x5b, 0x79, 0xce, 0xe9, 0xc1, 0x22, 0x69, 0x3c,
+	0xf5, 0xf0, 0x2e, 0x80, 0x76, 0xa5, 0x4f, 0xb3, 0x4d, 0xa9, 0x9a, 0x27, 0xd9, 0xca, 0xa4, 0xc9,
+	0xa2, 0x3c, 0x81, 0x1b, 0xc9, 0x1a, 0x32, 0xee, 0xcf, 0xae, 0x5f, 0x5a, 0x2b, 0xbf, 0xb4, 0x93,
+	0x8b, 0xf2, 0xda, 0x7e, 0x9f, 0x8c, 0xd1, 0xb4, 0xdd, 0xf8, 0x31, 0xd4, 0x25, 0x55, 0x51, 0xa0,
+	0xd3, 0xe8, 0x9d, 0xf1, 0x56, 0x89, 0xfb, 0x5c, 0x33, 0xc1, 0x49, 0xaa, 0x21, 0xb9, 0x76, 0x32,
+	0xf8, 0x71, 0x61, 0xa1, 0xb3, 0x0b, 0x0b, 0xfd, 0xba, 0xb0, 0xd0, 0xe7, 0x4b, 0xab, 0x72, 0x76,
+	0x69, 0x55, 0x7e, 0x5e, 0x5a, 0x95, 0x0f, 0xf5, 0xd1, 0xce, 0x53, 0x37, 0x64, 0xc7, 0xf5, 0xf4,
+	0x83, 0xfa, 0xe8, 0x4f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x43, 0x09, 0x85, 0xf6, 0x96, 0x05, 0x00,
+	0x00,
+}
+
 func (m *RequestQuery) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -581,63 +567,74 @@ func (m *RequestQuery) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *RequestQuery) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RequestQuery) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Pathing) > 0 {
-		for _, msg := range m.Pathing {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintQuery(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.Abilities) > 0 {
-		for _, msg := range m.Abilities {
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintQuery(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.Placements) > 0 {
-		for _, msg := range m.Placements {
-			dAtA[i] = 0x1a
-			i++
-			i = encodeVarintQuery(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
 	if m.IgnoreResourceRequirements {
-		dAtA[i] = 0x20
-		i++
+		i--
 		if m.IgnoreResourceRequirements {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x20
 	}
-	return i, nil
+	if len(m.Placements) > 0 {
+		for iNdEx := len(m.Placements) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Placements[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if len(m.Abilities) > 0 {
+		for iNdEx := len(m.Abilities) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Abilities[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if len(m.Pathing) > 0 {
+		for iNdEx := len(m.Pathing) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Pathing[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *ResponseQuery) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -645,53 +642,64 @@ func (m *ResponseQuery) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ResponseQuery) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ResponseQuery) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Pathing) > 0 {
-		for _, msg := range m.Pathing {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintQuery(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+	if len(m.Placements) > 0 {
+		for iNdEx := len(m.Placements) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Placements[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0x1a
 		}
 	}
 	if len(m.Abilities) > 0 {
-		for _, msg := range m.Abilities {
+		for iNdEx := len(m.Abilities) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Abilities[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
 			dAtA[i] = 0x12
-			i++
-			i = encodeVarintQuery(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
 		}
 	}
-	if len(m.Placements) > 0 {
-		for _, msg := range m.Placements {
-			dAtA[i] = 0x1a
-			i++
-			i = encodeVarintQuery(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+	if len(m.Pathing) > 0 {
+		for iNdEx := len(m.Pathing) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Pathing[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *RequestQueryPathing) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -699,55 +707,76 @@ func (m *RequestQueryPathing) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *RequestQueryPathing) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RequestQueryPathing) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Start != nil {
-		nn1, err := m.Start.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += nn1
-	}
 	if m.EndPos != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintQuery(dAtA, i, uint64(m.EndPos.Size()))
-		n2, err := m.EndPos.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.EndPos.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
 		}
-		i += n2
+		i--
+		dAtA[i] = 0x1a
 	}
-	return i, nil
+	if m.Start != nil {
+		{
+			size := m.Start.Size()
+			i -= size
+			if _, err := m.Start.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
+		}
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *RequestQueryPathing_StartPos) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RequestQueryPathing_StartPos) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.StartPos != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintQuery(dAtA, i, uint64(m.StartPos.Size()))
-		n3, err := m.StartPos.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.StartPos.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
 		}
-		i += n3
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *RequestQueryPathing_UnitTag) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
-	dAtA[i] = 0x10
-	i++
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RequestQueryPathing_UnitTag) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	i = encodeVarintQuery(dAtA, i, uint64(m.UnitTag))
-	return i, nil
+	i--
+	dAtA[i] = 0x10
+	return len(dAtA) - i, nil
 }
 func (m *ResponseQueryPathing) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -755,23 +784,28 @@ func (m *ResponseQueryPathing) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ResponseQueryPathing) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ResponseQueryPathing) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.Distance != 0 {
-		dAtA[i] = 0xd
-		i++
+		i -= 4
 		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Distance))))
-		i += 4
+		i--
+		dAtA[i] = 0xd
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *RequestQueryAvailableAbilities) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -779,22 +813,27 @@ func (m *RequestQueryAvailableAbilities) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *RequestQueryAvailableAbilities) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RequestQueryAvailableAbilities) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.UnitTag != 0 {
-		dAtA[i] = 0x8
-		i++
 		i = encodeVarintQuery(dAtA, i, uint64(m.UnitTag))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ResponseQueryAvailableAbilities) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -802,39 +841,46 @@ func (m *ResponseQueryAvailableAbilities) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ResponseQueryAvailableAbilities) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ResponseQueryAvailableAbilities) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Abilities) > 0 {
-		for _, msg := range m.Abilities {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintQuery(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
+	if m.UnitTypeId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.UnitTypeId))
+		i--
+		dAtA[i] = 0x18
 	}
 	if m.UnitTag != 0 {
-		dAtA[i] = 0x10
-		i++
 		i = encodeVarintQuery(dAtA, i, uint64(m.UnitTag))
+		i--
+		dAtA[i] = 0x10
 	}
-	if m.UnitTypeId != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintQuery(dAtA, i, uint64(m.UnitTypeId))
+	if len(m.Abilities) > 0 {
+		for iNdEx := len(m.Abilities) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Abilities[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *RequestQueryBuildingPlacement) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -842,37 +888,44 @@ func (m *RequestQueryBuildingPlacement) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *RequestQueryBuildingPlacement) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RequestQueryBuildingPlacement) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.AbilityId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintQuery(dAtA, i, uint64(m.AbilityId))
+	if m.PlacingUnitTag != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.PlacingUnitTag))
+		i--
+		dAtA[i] = 0x18
 	}
 	if m.TargetPos != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintQuery(dAtA, i, uint64(m.TargetPos.Size()))
-		n4, err := m.TargetPos.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.TargetPos.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
 		}
-		i += n4
+		i--
+		dAtA[i] = 0x12
 	}
-	if m.PlacingUnitTag != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintQuery(dAtA, i, uint64(m.PlacingUnitTag))
+	if m.AbilityId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.AbilityId))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ResponseQueryBuildingPlacement) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -880,26 +933,33 @@ func (m *ResponseQueryBuildingPlacement) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ResponseQueryBuildingPlacement) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ResponseQueryBuildingPlacement) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.Result != 0 {
-		dAtA[i] = 0x8
-		i++
 		i = encodeVarintQuery(dAtA, i, uint64(m.Result))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
+	offset -= sovQuery(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *RequestQuery) Size() (n int) {
 	if m == nil {
@@ -1072,14 +1132,7 @@ func (m *ResponseQueryBuildingPlacement) Size() (n int) {
 }
 
 func sovQuery(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozQuery(x uint64) (n int) {
 	return sovQuery(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -1099,7 +1152,7 @@ func (m *RequestQuery) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1127,7 +1180,7 @@ func (m *RequestQuery) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1136,6 +1189,9 @@ func (m *RequestQuery) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthQuery
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1158,7 +1214,7 @@ func (m *RequestQuery) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1167,6 +1223,9 @@ func (m *RequestQuery) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthQuery
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1189,7 +1248,7 @@ func (m *RequestQuery) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1198,6 +1257,9 @@ func (m *RequestQuery) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthQuery
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1220,7 +1282,7 @@ func (m *RequestQuery) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1232,7 +1294,7 @@ func (m *RequestQuery) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthQuery
 			}
 			if (iNdEx + skippy) > l {
@@ -1262,7 +1324,7 @@ func (m *ResponseQuery) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1290,7 +1352,7 @@ func (m *ResponseQuery) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1299,6 +1361,9 @@ func (m *ResponseQuery) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthQuery
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1321,7 +1386,7 @@ func (m *ResponseQuery) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1330,6 +1395,9 @@ func (m *ResponseQuery) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthQuery
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1352,7 +1420,7 @@ func (m *ResponseQuery) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1361,6 +1429,9 @@ func (m *ResponseQuery) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthQuery
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1375,7 +1446,7 @@ func (m *ResponseQuery) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthQuery
 			}
 			if (iNdEx + skippy) > l {
@@ -1405,7 +1476,7 @@ func (m *RequestQueryPathing) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1433,7 +1504,7 @@ func (m *RequestQueryPathing) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1442,6 +1513,9 @@ func (m *RequestQueryPathing) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthQuery
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1465,7 +1539,7 @@ func (m *RequestQueryPathing) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (UnitTag(b) & 0x7F) << shift
+				v |= UnitTag(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1485,7 +1559,7 @@ func (m *RequestQueryPathing) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1494,6 +1568,9 @@ func (m *RequestQueryPathing) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthQuery
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1510,7 +1587,7 @@ func (m *RequestQueryPathing) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthQuery
 			}
 			if (iNdEx + skippy) > l {
@@ -1540,7 +1617,7 @@ func (m *ResponseQueryPathing) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1571,7 +1648,7 @@ func (m *ResponseQueryPathing) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthQuery
 			}
 			if (iNdEx + skippy) > l {
@@ -1601,7 +1678,7 @@ func (m *RequestQueryAvailableAbilities) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1629,7 +1706,7 @@ func (m *RequestQueryAvailableAbilities) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.UnitTag |= (UnitTag(b) & 0x7F) << shift
+				m.UnitTag |= UnitTag(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1640,7 +1717,7 @@ func (m *RequestQueryAvailableAbilities) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthQuery
 			}
 			if (iNdEx + skippy) > l {
@@ -1670,7 +1747,7 @@ func (m *ResponseQueryAvailableAbilities) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1698,7 +1775,7 @@ func (m *ResponseQueryAvailableAbilities) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1707,6 +1784,9 @@ func (m *ResponseQueryAvailableAbilities) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthQuery
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1729,7 +1809,7 @@ func (m *ResponseQueryAvailableAbilities) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.UnitTag |= (UnitTag(b) & 0x7F) << shift
+				m.UnitTag |= UnitTag(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1748,7 +1828,7 @@ func (m *ResponseQueryAvailableAbilities) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.UnitTypeId |= (UnitTypeID(b) & 0x7F) << shift
+				m.UnitTypeId |= UnitTypeID(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1759,7 +1839,7 @@ func (m *ResponseQueryAvailableAbilities) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthQuery
 			}
 			if (iNdEx + skippy) > l {
@@ -1789,7 +1869,7 @@ func (m *RequestQueryBuildingPlacement) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1817,7 +1897,7 @@ func (m *RequestQueryBuildingPlacement) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AbilityId |= (AbilityID(b) & 0x7F) << shift
+				m.AbilityId |= AbilityID(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1836,7 +1916,7 @@ func (m *RequestQueryBuildingPlacement) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1845,6 +1925,9 @@ func (m *RequestQueryBuildingPlacement) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthQuery
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1869,7 +1952,7 @@ func (m *RequestQueryBuildingPlacement) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PlacingUnitTag |= (UnitTag(b) & 0x7F) << shift
+				m.PlacingUnitTag |= UnitTag(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1880,7 +1963,7 @@ func (m *RequestQueryBuildingPlacement) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthQuery
 			}
 			if (iNdEx + skippy) > l {
@@ -1910,7 +1993,7 @@ func (m *ResponseQueryBuildingPlacement) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1938,7 +2021,7 @@ func (m *ResponseQueryBuildingPlacement) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Result |= (ActionResult(b) & 0x7F) << shift
+				m.Result |= ActionResult(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1949,7 +2032,7 @@ func (m *ResponseQueryBuildingPlacement) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthQuery
 			}
 			if (iNdEx + skippy) > l {
@@ -1967,6 +2050,7 @@ func (m *ResponseQueryBuildingPlacement) Unmarshal(dAtA []byte) error {
 func skipQuery(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1998,10 +2082,8 @@ func skipQuery(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -2018,97 +2100,34 @@ func skipQuery(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthQuery
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowQuery
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipQuery(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupQuery
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthQuery
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthQuery = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowQuery   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthQuery        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowQuery          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupQuery = fmt.Errorf("proto: unexpected end of group")
 )
-
-func init() { proto.RegisterFile("query.proto", fileDescriptor_query_d0074ff9da7a4de3) }
-
-var fileDescriptor_query_d0074ff9da7a4de3 = []byte{
-	// 606 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x94, 0xcd, 0x6e, 0xd3, 0x4e,
-	0x14, 0xc5, 0x33, 0x49, 0xdb, 0x24, 0x37, 0x6d, 0xf4, 0xd7, 0xfc, 0x91, 0x88, 0xa2, 0xd6, 0x89,
-	0x0c, 0xaa, 0xb2, 0x80, 0x80, 0x02, 0x74, 0x47, 0x45, 0x43, 0x17, 0x8d, 0x44, 0x91, 0x19, 0x3e,
-	0x16, 0x6c, 0x22, 0xd7, 0x1e, 0x99, 0x91, 0xdc, 0x19, 0x77, 0x66, 0x8c, 0xe4, 0xb7, 0xe0, 0x41,
-	0x58, 0xb1, 0x85, 0x07, 0x60, 0xd9, 0x25, 0xab, 0x0a, 0xb5, 0x7b, 0x1e, 0xa0, 0x2b, 0xe4, 0x8f,
-	0x14, 0x13, 0x47, 0xc3, 0x6e, 0xae, 0x72, 0xee, 0x99, 0x33, 0xbf, 0x7b, 0x63, 0xe8, 0x9c, 0xc5,
-	0x54, 0x26, 0xe3, 0x48, 0x0a, 0x2d, 0x70, 0xf7, 0xf5, 0xf3, 0xc9, 0x81, 0x33, 0x73, 0xd2, 0xc2,
-	0x13, 0x61, 0x1f, 0x02, 0x11, 0x88, 0xfc, 0xb7, 0xfe, 0xa6, 0x27, 0x4e, 0x4f, 0x05, 0x2f, 0xaa,
-	0x0e, 0x95, 0x52, 0xc8, 0xbc, 0xb0, 0x3f, 0xd7, 0x61, 0x93, 0xd0, 0xb3, 0x98, 0x2a, 0xfd, 0x2a,
-	0x75, 0xc3, 0x4f, 0xa1, 0x19, 0xb9, 0xfa, 0x03, 0xe3, 0x41, 0x0f, 0x0d, 0x1b, 0xa3, 0xce, 0xe4,
-	0xce, 0xf8, 0x6f, 0xe7, 0x71, 0x59, 0xee, 0xe4, 0x52, 0xb2, 0xe8, 0xc1, 0x2f, 0xa0, 0xed, 0x9e,
-	0xb0, 0x90, 0x69, 0x46, 0x55, 0xaf, 0x9e, 0x19, 0x8c, 0x4d, 0x06, 0x07, 0x1f, 0x5d, 0x16, 0xba,
-	0x27, 0x21, 0x3d, 0x58, 0x74, 0x91, 0x3f, 0x06, 0xf8, 0x18, 0x20, 0x0a, 0x5d, 0x8f, 0x9e, 0x52,
-	0xae, 0x55, 0xaf, 0x91, 0xd9, 0xdd, 0x37, 0xd9, 0x4d, 0x63, 0x16, 0xfa, 0x8c, 0x07, 0xce, 0xa2,
-	0x8b, 0x94, 0x0c, 0xf0, 0x33, 0xd8, 0x66, 0x01, 0x17, 0x92, 0xce, 0x25, 0x55, 0x22, 0x96, 0x5e,
-	0x7a, 0x38, 0x8b, 0x99, 0x2c, 0x2e, 0x58, 0x1b, 0xa2, 0x51, 0x8b, 0xf4, 0x73, 0x0d, 0x29, 0x24,
-	0xa4, 0xa4, 0xb0, 0x7f, 0x21, 0xd8, 0x22, 0x54, 0x45, 0x82, 0x2b, 0x9a, 0xf3, 0xda, 0x5f, 0xe6,
-	0x75, 0xb7, 0x9a, 0xaf, 0xa4, 0xaf, 0x00, 0x3b, 0xae, 0x02, 0x7b, 0x60, 0x74, 0x30, 0x13, 0x7b,
-	0xb9, 0x82, 0xd8, 0xd8, 0xe8, 0x67, 0x44, 0x66, 0x7f, 0x41, 0xf0, 0xff, 0x8a, 0x81, 0xe3, 0x3d,
-	0x68, 0x2b, 0xed, 0x4a, 0x3d, 0x8f, 0x84, 0xea, 0xa1, 0x21, 0x1a, 0x75, 0x26, 0xb7, 0x97, 0xaf,
-	0x71, 0x04, 0xe3, 0x7a, 0x72, 0x78, 0x54, 0x23, 0xad, 0x4c, 0xeb, 0x08, 0x85, 0x47, 0xd0, 0x8a,
-	0x39, 0xd3, 0x73, 0xed, 0x06, 0xbd, 0xfa, 0x10, 0x8d, 0xd6, 0xa6, 0x9d, 0xeb, 0x8b, 0x41, 0xf3,
-	0x2d, 0x67, 0xfa, 0x8d, 0x1b, 0x1c, 0xd5, 0x48, 0x33, 0xce, 0x8f, 0xf8, 0x21, 0x34, 0x29, 0xf7,
-	0x33, 0xff, 0x86, 0xd1, 0x9f, 0x6c, 0x50, 0xee, 0x3b, 0x42, 0x4d, 0x9b, 0xb0, 0x9e, 0xdd, 0x63,
-	0x4f, 0xe0, 0xd6, 0x2a, 0xe8, 0xb8, 0x0f, 0x2d, 0x9f, 0x29, 0xed, 0x72, 0x8f, 0x66, 0x99, 0xeb,
-	0xe4, 0xa6, 0xb6, 0x8f, 0xc0, 0x32, 0xef, 0x25, 0xde, 0x2d, 0x45, 0x47, 0x95, 0xe8, 0x37, 0xc1,
-	0xed, 0xaf, 0x08, 0x06, 0xff, 0x98, 0x18, 0xde, 0x2f, 0x4f, 0x3d, 0xdf, 0x9b, 0xe1, 0xf2, 0xf3,
-	0x96, 0xda, 0x92, 0xf2, 0x98, 0x77, 0x8d, 0x18, 0xcb, 0x10, 0x37, 0x73, 0x5d, 0x12, 0xd1, 0x39,
-	0xf3, 0x33, 0x92, 0x5b, 0xd3, 0xee, 0xf5, 0xc5, 0x00, 0x32, 0x6d, 0x12, 0xd1, 0xd9, 0x21, 0x81,
-	0x78, 0x71, 0xf6, 0xed, 0x6f, 0x08, 0x76, 0x8c, 0xff, 0x28, 0x7c, 0x0f, 0x20, 0x0f, 0x92, 0xa4,
-	0x8e, 0x29, 0x89, 0xf5, 0xe9, 0xd6, 0xf5, 0xc5, 0xa0, 0x5d, 0xe4, 0x9c, 0x1d, 0x2e, 0x92, 0x26,
-	0x33, 0x1f, 0xef, 0x01, 0x68, 0x57, 0x06, 0x34, 0xdf, 0x94, 0xba, 0x79, 0x92, 0xed, 0x5c, 0x9a,
-	0x2e, 0xca, 0x13, 0xf8, 0x2f, 0x5d, 0x43, 0xc6, 0x83, 0xf9, 0xcd, 0x4b, 0x1b, 0xd5, 0x97, 0x76,
-	0x0b, 0x51, 0x51, 0xdb, 0xef, 0xd2, 0x31, 0x9a, 0xb6, 0x1b, 0x3f, 0x86, 0x0d, 0x49, 0x55, 0x1c,
-	0xea, 0x2c, 0x7a, 0x77, 0xb2, 0x5d, 0xe1, 0xee, 0x69, 0x26, 0x38, 0xc9, 0x34, 0xa4, 0xd0, 0x4e,
-	0x77, 0xbe, 0x5f, 0x5a, 0xe8, 0xfc, 0xd2, 0x42, 0x3f, 0x2f, 0x2d, 0xf4, 0xe9, 0xca, 0xaa, 0x9d,
-	0x5f, 0x59, 0xb5, 0x1f, 0x57, 0x56, 0xed, 0x7d, 0xc3, 0x8d, 0xd8, 0xc9, 0x46, 0xf6, 0x35, 0x7d,
-	0xf4, 0x3b, 0x00, 0x00, 0xff, 0xff, 0xc4, 0x99, 0xb7, 0x4d, 0x93, 0x05, 0x00, 0x00,
-}

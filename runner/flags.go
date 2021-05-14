@@ -2,7 +2,6 @@ package runner
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -31,9 +30,8 @@ func loadSettings() bool {
 	}
 
 	if !hasProcessPath() {
-		fmt.Fprintln(flag.CommandLine.Output(), "Please run StarCraft II first or use the --executable <path> arg")
-		flag.CommandLine.Usage()
-		return false
+		log.Println("Can't find executable path, hope that it's ok. If not, " +
+			"please run StarCraft II first or use the --executable <path> arg")
 	}
 
 	hasLoaded = true

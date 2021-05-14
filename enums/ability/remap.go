@@ -15,7 +15,6 @@ func Remap(ability api.AbilityID) api.AbilityID {
 
 var remap = map[api.AbilityID]api.AbilityID{
 	Attack_Attack:                              Attack,
-	Attack_AttackBuilding:                      Attack,
 	Attack_Battlecruiser:                       Attack,
 	Attack_Redirect:                            Attack,
 	Behavior_CloakOff_Banshee:                  Behavior_CloakOff,
@@ -206,7 +205,6 @@ var remap = map[api.AbilityID]api.AbilityID{
 	Research_ZergMissileWeaponsLevel3:          Research_ZergMissileWeapons,
 	Scan_Move:                                  Attack,
 	Stop_Battlecruiser:                         Stop,
-	Stop_Building:                              Stop,
 	Stop_Redirect:                              Stop,
 	Stop_Stop:                                  Stop,
 	UnloadAllAt_Medivac:                        UnloadAllAt,

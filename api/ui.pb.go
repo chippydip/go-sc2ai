@@ -3,14 +3,15 @@
 
 package api
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/gogo/protobuf/gogoproto"
-
-import encoding_binary "encoding/binary"
-
-import io "io"
+import (
+	encoding_binary "encoding/binary"
+	fmt "fmt"
+	_ "github.com/gogo/protobuf/gogoproto"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+	math_bits "math/bits"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +22,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type ActionControlGroup_ControlGroupAction int32
 
@@ -42,6 +43,7 @@ var ActionControlGroup_ControlGroupAction_name = map[int32]string{
 	4: "SetAndSteal",
 	5: "AppendAndSteal",
 }
+
 var ActionControlGroup_ControlGroupAction_value = map[string]int32{
 	"ControlGroupAction_nil": 0,
 	"Recall":                 1,
@@ -54,8 +56,9 @@ var ActionControlGroup_ControlGroupAction_value = map[string]int32{
 func (x ActionControlGroup_ControlGroupAction) String() string {
 	return proto.EnumName(ActionControlGroup_ControlGroupAction_name, int32(x))
 }
+
 func (ActionControlGroup_ControlGroupAction) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{9, 0}
+	return fileDescriptor_63867a62624c1283, []int{9, 0}
 }
 
 type ActionSelectIdleWorker_Type int32
@@ -75,6 +78,7 @@ var ActionSelectIdleWorker_Type_name = map[int32]string{
 	3: "All",
 	4: "AddAll",
 }
+
 var ActionSelectIdleWorker_Type_value = map[string]int32{
 	"Type_nil": 0,
 	"Set":      1,
@@ -86,8 +90,9 @@ var ActionSelectIdleWorker_Type_value = map[string]int32{
 func (x ActionSelectIdleWorker_Type) String() string {
 	return proto.EnumName(ActionSelectIdleWorker_Type_name, int32(x))
 }
+
 func (ActionSelectIdleWorker_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{13, 0}
+	return fileDescriptor_63867a62624c1283, []int{13, 0}
 }
 
 type ActionMultiPanel_Type int32
@@ -107,6 +112,7 @@ var ActionMultiPanel_Type_name = map[int32]string{
 	3: "SelectAllOfType",
 	4: "DeselectAllOfType",
 }
+
 var ActionMultiPanel_Type_value = map[string]int32{
 	"Type_nil":          0,
 	"SingleSelect":      1,
@@ -118,12 +124,13 @@ var ActionMultiPanel_Type_value = map[string]int32{
 func (x ActionMultiPanel_Type) String() string {
 	return proto.EnumName(ActionMultiPanel_Type_name, int32(x))
 }
+
 func (ActionMultiPanel_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{14, 0}
+	return fileDescriptor_63867a62624c1283, []int{14, 0}
 }
 
 type ObservationUI struct {
-	Groups []*ControlGroup `protobuf:"bytes,1,rep,name=groups" json:"groups,omitempty"`
+	Groups []*ControlGroup `protobuf:"bytes,1,rep,name=groups,proto3" json:"groups,omitempty"`
 	// Types that are valid to be assigned to Panel:
 	//	*ObservationUI_Single
 	//	*ObservationUI_Multi
@@ -136,7 +143,7 @@ func (m *ObservationUI) Reset()         { *m = ObservationUI{} }
 func (m *ObservationUI) String() string { return proto.CompactTextString(m) }
 func (*ObservationUI) ProtoMessage()    {}
 func (*ObservationUI) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{0}
+	return fileDescriptor_63867a62624c1283, []int{0}
 }
 func (m *ObservationUI) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -146,15 +153,15 @@ func (m *ObservationUI) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_ObservationUI.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ObservationUI) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ObservationUI.Merge(dst, src)
+func (m *ObservationUI) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ObservationUI.Merge(m, src)
 }
 func (m *ObservationUI) XXX_Size() int {
 	return m.Size()
@@ -172,16 +179,16 @@ type isObservationUI_Panel interface {
 }
 
 type ObservationUI_Single struct {
-	Single *SinglePanel `protobuf:"bytes,2,opt,name=single,oneof"`
+	Single *SinglePanel `protobuf:"bytes,2,opt,name=single,proto3,oneof" json:"single,omitempty"`
 }
 type ObservationUI_Multi struct {
-	Multi *MultiPanel `protobuf:"bytes,3,opt,name=multi,oneof"`
+	Multi *MultiPanel `protobuf:"bytes,3,opt,name=multi,proto3,oneof" json:"multi,omitempty"`
 }
 type ObservationUI_Cargo struct {
-	Cargo *CargoPanel `protobuf:"bytes,4,opt,name=cargo,oneof"`
+	Cargo *CargoPanel `protobuf:"bytes,4,opt,name=cargo,proto3,oneof" json:"cargo,omitempty"`
 }
 type ObservationUI_Production struct {
-	Production *ProductionPanel `protobuf:"bytes,5,opt,name=production,oneof"`
+	Production *ProductionPanel `protobuf:"bytes,5,opt,name=production,proto3,oneof" json:"production,omitempty"`
 }
 
 func (*ObservationUI_Single) isObservationUI_Panel()     {}
@@ -231,116 +238,14 @@ func (m *ObservationUI) GetProduction() *ProductionPanel {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*ObservationUI) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _ObservationUI_OneofMarshaler, _ObservationUI_OneofUnmarshaler, _ObservationUI_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*ObservationUI) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*ObservationUI_Single)(nil),
 		(*ObservationUI_Multi)(nil),
 		(*ObservationUI_Cargo)(nil),
 		(*ObservationUI_Production)(nil),
 	}
-}
-
-func _ObservationUI_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*ObservationUI)
-	// panel
-	switch x := m.Panel.(type) {
-	case *ObservationUI_Single:
-		_ = b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Single); err != nil {
-			return err
-		}
-	case *ObservationUI_Multi:
-		_ = b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Multi); err != nil {
-			return err
-		}
-	case *ObservationUI_Cargo:
-		_ = b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Cargo); err != nil {
-			return err
-		}
-	case *ObservationUI_Production:
-		_ = b.EncodeVarint(5<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Production); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("ObservationUI.Panel has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _ObservationUI_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*ObservationUI)
-	switch tag {
-	case 2: // panel.single
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(SinglePanel)
-		err := b.DecodeMessage(msg)
-		m.Panel = &ObservationUI_Single{msg}
-		return true, err
-	case 3: // panel.multi
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(MultiPanel)
-		err := b.DecodeMessage(msg)
-		m.Panel = &ObservationUI_Multi{msg}
-		return true, err
-	case 4: // panel.cargo
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(CargoPanel)
-		err := b.DecodeMessage(msg)
-		m.Panel = &ObservationUI_Cargo{msg}
-		return true, err
-	case 5: // panel.production
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ProductionPanel)
-		err := b.DecodeMessage(msg)
-		m.Panel = &ObservationUI_Production{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _ObservationUI_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*ObservationUI)
-	// panel
-	switch x := m.Panel.(type) {
-	case *ObservationUI_Single:
-		s := proto.Size(x.Single)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *ObservationUI_Multi:
-		s := proto.Size(x.Multi)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *ObservationUI_Cargo:
-		s := proto.Size(x.Cargo)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *ObservationUI_Production:
-		s := proto.Size(x.Production)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type ControlGroup struct {
@@ -353,7 +258,7 @@ func (m *ControlGroup) Reset()         { *m = ControlGroup{} }
 func (m *ControlGroup) String() string { return proto.CompactTextString(m) }
 func (*ControlGroup) ProtoMessage()    {}
 func (*ControlGroup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{1}
+	return fileDescriptor_63867a62624c1283, []int{1}
 }
 func (m *ControlGroup) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -363,15 +268,15 @@ func (m *ControlGroup) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return xxx_messageInfo_ControlGroup.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ControlGroup) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ControlGroup.Merge(dst, src)
+func (m *ControlGroup) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ControlGroup.Merge(m, src)
 }
 func (m *ControlGroup) XXX_Size() int {
 	return m.Size()
@@ -411,7 +316,7 @@ type UnitInfo struct {
 	Energy              int32      `protobuf:"varint,5,opt,name=energy,proto3" json:"energy,omitempty"`
 	TransportSlotsTaken int32      `protobuf:"varint,6,opt,name=transport_slots_taken,json=transportSlotsTaken,proto3" json:"transport_slots_taken,omitempty"`
 	BuildProgress       float32    `protobuf:"fixed32,7,opt,name=build_progress,json=buildProgress,proto3" json:"build_progress,omitempty"`
-	AddOn               *UnitInfo  `protobuf:"bytes,8,opt,name=add_on,json=addOn" json:"add_on,omitempty"`
+	AddOn               *UnitInfo  `protobuf:"bytes,8,opt,name=add_on,json=addOn,proto3" json:"add_on,omitempty"`
 	MaxHealth           int32      `protobuf:"varint,9,opt,name=max_health,json=maxHealth,proto3" json:"max_health,omitempty"`
 	MaxShields          int32      `protobuf:"varint,10,opt,name=max_shields,json=maxShields,proto3" json:"max_shields,omitempty"`
 	MaxEnergy           int32      `protobuf:"varint,11,opt,name=max_energy,json=maxEnergy,proto3" json:"max_energy,omitempty"`
@@ -421,7 +326,7 @@ func (m *UnitInfo) Reset()         { *m = UnitInfo{} }
 func (m *UnitInfo) String() string { return proto.CompactTextString(m) }
 func (*UnitInfo) ProtoMessage()    {}
 func (*UnitInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{2}
+	return fileDescriptor_63867a62624c1283, []int{2}
 }
 func (m *UnitInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -431,15 +336,15 @@ func (m *UnitInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_UnitInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *UnitInfo) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UnitInfo.Merge(dst, src)
+func (m *UnitInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnitInfo.Merge(m, src)
 }
 func (m *UnitInfo) XXX_Size() int {
 	return m.Size()
@@ -528,18 +433,18 @@ func (m *UnitInfo) GetMaxEnergy() int32 {
 }
 
 type SinglePanel struct {
-	Unit               *UnitInfo `protobuf:"bytes,1,opt,name=unit" json:"unit,omitempty"`
+	Unit               *UnitInfo `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
 	AttackUpgradeLevel int32     `protobuf:"varint,2,opt,name=attack_upgrade_level,json=attackUpgradeLevel,proto3" json:"attack_upgrade_level,omitempty"`
 	ArmorUpgradeLevel  int32     `protobuf:"varint,3,opt,name=armor_upgrade_level,json=armorUpgradeLevel,proto3" json:"armor_upgrade_level,omitempty"`
 	ShieldUpgradeLevel int32     `protobuf:"varint,4,opt,name=shield_upgrade_level,json=shieldUpgradeLevel,proto3" json:"shield_upgrade_level,omitempty"`
-	Buffs              []int32   `protobuf:"varint,5,rep,packed,name=buffs" json:"buffs,omitempty"`
+	Buffs              []int32   `protobuf:"varint,5,rep,packed,name=buffs,proto3" json:"buffs,omitempty"`
 }
 
 func (m *SinglePanel) Reset()         { *m = SinglePanel{} }
 func (m *SinglePanel) String() string { return proto.CompactTextString(m) }
 func (*SinglePanel) ProtoMessage()    {}
 func (*SinglePanel) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{3}
+	return fileDescriptor_63867a62624c1283, []int{3}
 }
 func (m *SinglePanel) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -549,15 +454,15 @@ func (m *SinglePanel) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return xxx_messageInfo_SinglePanel.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *SinglePanel) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SinglePanel.Merge(dst, src)
+func (m *SinglePanel) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SinglePanel.Merge(m, src)
 }
 func (m *SinglePanel) XXX_Size() int {
 	return m.Size()
@@ -604,14 +509,14 @@ func (m *SinglePanel) GetBuffs() []int32 {
 }
 
 type MultiPanel struct {
-	Units []*UnitInfo `protobuf:"bytes,1,rep,name=units" json:"units,omitempty"`
+	Units []*UnitInfo `protobuf:"bytes,1,rep,name=units,proto3" json:"units,omitempty"`
 }
 
 func (m *MultiPanel) Reset()         { *m = MultiPanel{} }
 func (m *MultiPanel) String() string { return proto.CompactTextString(m) }
 func (*MultiPanel) ProtoMessage()    {}
 func (*MultiPanel) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{4}
+	return fileDescriptor_63867a62624c1283, []int{4}
 }
 func (m *MultiPanel) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -621,15 +526,15 @@ func (m *MultiPanel) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_MultiPanel.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *MultiPanel) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MultiPanel.Merge(dst, src)
+func (m *MultiPanel) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MultiPanel.Merge(m, src)
 }
 func (m *MultiPanel) XXX_Size() int {
 	return m.Size()
@@ -648,8 +553,8 @@ func (m *MultiPanel) GetUnits() []*UnitInfo {
 }
 
 type CargoPanel struct {
-	Unit           *UnitInfo   `protobuf:"bytes,1,opt,name=unit" json:"unit,omitempty"`
-	Passengers     []*UnitInfo `protobuf:"bytes,2,rep,name=passengers" json:"passengers,omitempty"`
+	Unit           *UnitInfo   `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
+	Passengers     []*UnitInfo `protobuf:"bytes,2,rep,name=passengers,proto3" json:"passengers,omitempty"`
 	SlotsAvailable int32       `protobuf:"varint,3,opt,name=slots_available,json=slotsAvailable,proto3" json:"slots_available,omitempty"`
 }
 
@@ -657,7 +562,7 @@ func (m *CargoPanel) Reset()         { *m = CargoPanel{} }
 func (m *CargoPanel) String() string { return proto.CompactTextString(m) }
 func (*CargoPanel) ProtoMessage()    {}
 func (*CargoPanel) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{5}
+	return fileDescriptor_63867a62624c1283, []int{5}
 }
 func (m *CargoPanel) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -667,15 +572,15 @@ func (m *CargoPanel) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_CargoPanel.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *CargoPanel) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CargoPanel.Merge(dst, src)
+func (m *CargoPanel) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CargoPanel.Merge(m, src)
 }
 func (m *CargoPanel) XXX_Size() int {
 	return m.Size()
@@ -716,7 +621,7 @@ func (m *BuildItem) Reset()         { *m = BuildItem{} }
 func (m *BuildItem) String() string { return proto.CompactTextString(m) }
 func (*BuildItem) ProtoMessage()    {}
 func (*BuildItem) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{6}
+	return fileDescriptor_63867a62624c1283, []int{6}
 }
 func (m *BuildItem) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -726,15 +631,15 @@ func (m *BuildItem) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_BuildItem.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *BuildItem) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_BuildItem.Merge(dst, src)
+func (m *BuildItem) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BuildItem.Merge(m, src)
 }
 func (m *BuildItem) XXX_Size() int {
 	return m.Size()
@@ -760,16 +665,16 @@ func (m *BuildItem) GetBuildProgress() float32 {
 }
 
 type ProductionPanel struct {
-	Unit            *UnitInfo    `protobuf:"bytes,1,opt,name=unit" json:"unit,omitempty"`
-	BuildQueue      []*UnitInfo  `protobuf:"bytes,2,rep,name=build_queue,json=buildQueue" json:"build_queue,omitempty"`
-	ProductionQueue []*BuildItem `protobuf:"bytes,3,rep,name=production_queue,json=productionQueue" json:"production_queue,omitempty"`
+	Unit            *UnitInfo    `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
+	BuildQueue      []*UnitInfo  `protobuf:"bytes,2,rep,name=build_queue,json=buildQueue,proto3" json:"build_queue,omitempty"`
+	ProductionQueue []*BuildItem `protobuf:"bytes,3,rep,name=production_queue,json=productionQueue,proto3" json:"production_queue,omitempty"`
 }
 
 func (m *ProductionPanel) Reset()         { *m = ProductionPanel{} }
 func (m *ProductionPanel) String() string { return proto.CompactTextString(m) }
 func (*ProductionPanel) ProtoMessage()    {}
 func (*ProductionPanel) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{7}
+	return fileDescriptor_63867a62624c1283, []int{7}
 }
 func (m *ProductionPanel) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -779,15 +684,15 @@ func (m *ProductionPanel) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return xxx_messageInfo_ProductionPanel.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ProductionPanel) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ProductionPanel.Merge(dst, src)
+func (m *ProductionPanel) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ProductionPanel.Merge(m, src)
 }
 func (m *ProductionPanel) XXX_Size() int {
 	return m.Size()
@@ -837,7 +742,7 @@ func (m *ActionUI) Reset()         { *m = ActionUI{} }
 func (m *ActionUI) String() string { return proto.CompactTextString(m) }
 func (*ActionUI) ProtoMessage()    {}
 func (*ActionUI) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{8}
+	return fileDescriptor_63867a62624c1283, []int{8}
 }
 func (m *ActionUI) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -847,15 +752,15 @@ func (m *ActionUI) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_ActionUI.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ActionUI) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ActionUI.Merge(dst, src)
+func (m *ActionUI) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ActionUI.Merge(m, src)
 }
 func (m *ActionUI) XXX_Size() int {
 	return m.Size()
@@ -873,31 +778,31 @@ type isActionUI_Action interface {
 }
 
 type ActionUI_ControlGroup struct {
-	ControlGroup *ActionControlGroup `protobuf:"bytes,1,opt,name=control_group,json=controlGroup,oneof"`
+	ControlGroup *ActionControlGroup `protobuf:"bytes,1,opt,name=control_group,json=controlGroup,proto3,oneof" json:"control_group,omitempty"`
 }
 type ActionUI_SelectArmy struct {
-	SelectArmy *ActionSelectArmy `protobuf:"bytes,2,opt,name=select_army,json=selectArmy,oneof"`
+	SelectArmy *ActionSelectArmy `protobuf:"bytes,2,opt,name=select_army,json=selectArmy,proto3,oneof" json:"select_army,omitempty"`
 }
 type ActionUI_SelectWarpGates struct {
-	SelectWarpGates *ActionSelectWarpGates `protobuf:"bytes,3,opt,name=select_warp_gates,json=selectWarpGates,oneof"`
+	SelectWarpGates *ActionSelectWarpGates `protobuf:"bytes,3,opt,name=select_warp_gates,json=selectWarpGates,proto3,oneof" json:"select_warp_gates,omitempty"`
 }
 type ActionUI_SelectLarva struct {
-	SelectLarva *ActionSelectLarva `protobuf:"bytes,4,opt,name=select_larva,json=selectLarva,oneof"`
+	SelectLarva *ActionSelectLarva `protobuf:"bytes,4,opt,name=select_larva,json=selectLarva,proto3,oneof" json:"select_larva,omitempty"`
 }
 type ActionUI_SelectIdleWorker struct {
-	SelectIdleWorker *ActionSelectIdleWorker `protobuf:"bytes,5,opt,name=select_idle_worker,json=selectIdleWorker,oneof"`
+	SelectIdleWorker *ActionSelectIdleWorker `protobuf:"bytes,5,opt,name=select_idle_worker,json=selectIdleWorker,proto3,oneof" json:"select_idle_worker,omitempty"`
 }
 type ActionUI_MultiPanel struct {
-	MultiPanel *ActionMultiPanel `protobuf:"bytes,6,opt,name=multi_panel,json=multiPanel,oneof"`
+	MultiPanel *ActionMultiPanel `protobuf:"bytes,6,opt,name=multi_panel,json=multiPanel,proto3,oneof" json:"multi_panel,omitempty"`
 }
 type ActionUI_CargoPanel struct {
-	CargoPanel *ActionCargoPanelUnload `protobuf:"bytes,7,opt,name=cargo_panel,json=cargoPanel,oneof"`
+	CargoPanel *ActionCargoPanelUnload `protobuf:"bytes,7,opt,name=cargo_panel,json=cargoPanel,proto3,oneof" json:"cargo_panel,omitempty"`
 }
 type ActionUI_ProductionPanel struct {
-	ProductionPanel *ActionProductionPanelRemoveFromQueue `protobuf:"bytes,8,opt,name=production_panel,json=productionPanel,oneof"`
+	ProductionPanel *ActionProductionPanelRemoveFromQueue `protobuf:"bytes,8,opt,name=production_panel,json=productionPanel,proto3,oneof" json:"production_panel,omitempty"`
 }
 type ActionUI_ToggleAutocast struct {
-	ToggleAutocast *ActionToggleAutocast `protobuf:"bytes,9,opt,name=toggle_autocast,json=toggleAutocast,oneof"`
+	ToggleAutocast *ActionToggleAutocast `protobuf:"bytes,9,opt,name=toggle_autocast,json=toggleAutocast,proto3,oneof" json:"toggle_autocast,omitempty"`
 }
 
 func (*ActionUI_ControlGroup) isActionUI_Action()     {}
@@ -980,9 +885,9 @@ func (m *ActionUI) GetToggleAutocast() *ActionToggleAutocast {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*ActionUI) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _ActionUI_OneofMarshaler, _ActionUI_OneofUnmarshaler, _ActionUI_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*ActionUI) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*ActionUI_ControlGroup)(nil),
 		(*ActionUI_SelectArmy)(nil),
 		(*ActionUI_SelectWarpGates)(nil),
@@ -995,198 +900,6 @@ func (*ActionUI) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) erro
 	}
 }
 
-func _ActionUI_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*ActionUI)
-	// action
-	switch x := m.Action.(type) {
-	case *ActionUI_ControlGroup:
-		_ = b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ControlGroup); err != nil {
-			return err
-		}
-	case *ActionUI_SelectArmy:
-		_ = b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.SelectArmy); err != nil {
-			return err
-		}
-	case *ActionUI_SelectWarpGates:
-		_ = b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.SelectWarpGates); err != nil {
-			return err
-		}
-	case *ActionUI_SelectLarva:
-		_ = b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.SelectLarva); err != nil {
-			return err
-		}
-	case *ActionUI_SelectIdleWorker:
-		_ = b.EncodeVarint(5<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.SelectIdleWorker); err != nil {
-			return err
-		}
-	case *ActionUI_MultiPanel:
-		_ = b.EncodeVarint(6<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.MultiPanel); err != nil {
-			return err
-		}
-	case *ActionUI_CargoPanel:
-		_ = b.EncodeVarint(7<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.CargoPanel); err != nil {
-			return err
-		}
-	case *ActionUI_ProductionPanel:
-		_ = b.EncodeVarint(8<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ProductionPanel); err != nil {
-			return err
-		}
-	case *ActionUI_ToggleAutocast:
-		_ = b.EncodeVarint(9<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ToggleAutocast); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("ActionUI.Action has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _ActionUI_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*ActionUI)
-	switch tag {
-	case 1: // action.control_group
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ActionControlGroup)
-		err := b.DecodeMessage(msg)
-		m.Action = &ActionUI_ControlGroup{msg}
-		return true, err
-	case 2: // action.select_army
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ActionSelectArmy)
-		err := b.DecodeMessage(msg)
-		m.Action = &ActionUI_SelectArmy{msg}
-		return true, err
-	case 3: // action.select_warp_gates
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ActionSelectWarpGates)
-		err := b.DecodeMessage(msg)
-		m.Action = &ActionUI_SelectWarpGates{msg}
-		return true, err
-	case 4: // action.select_larva
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ActionSelectLarva)
-		err := b.DecodeMessage(msg)
-		m.Action = &ActionUI_SelectLarva{msg}
-		return true, err
-	case 5: // action.select_idle_worker
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ActionSelectIdleWorker)
-		err := b.DecodeMessage(msg)
-		m.Action = &ActionUI_SelectIdleWorker{msg}
-		return true, err
-	case 6: // action.multi_panel
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ActionMultiPanel)
-		err := b.DecodeMessage(msg)
-		m.Action = &ActionUI_MultiPanel{msg}
-		return true, err
-	case 7: // action.cargo_panel
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ActionCargoPanelUnload)
-		err := b.DecodeMessage(msg)
-		m.Action = &ActionUI_CargoPanel{msg}
-		return true, err
-	case 8: // action.production_panel
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ActionProductionPanelRemoveFromQueue)
-		err := b.DecodeMessage(msg)
-		m.Action = &ActionUI_ProductionPanel{msg}
-		return true, err
-	case 9: // action.toggle_autocast
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ActionToggleAutocast)
-		err := b.DecodeMessage(msg)
-		m.Action = &ActionUI_ToggleAutocast{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _ActionUI_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*ActionUI)
-	// action
-	switch x := m.Action.(type) {
-	case *ActionUI_ControlGroup:
-		s := proto.Size(x.ControlGroup)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *ActionUI_SelectArmy:
-		s := proto.Size(x.SelectArmy)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *ActionUI_SelectWarpGates:
-		s := proto.Size(x.SelectWarpGates)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *ActionUI_SelectLarva:
-		s := proto.Size(x.SelectLarva)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *ActionUI_SelectIdleWorker:
-		s := proto.Size(x.SelectIdleWorker)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *ActionUI_MultiPanel:
-		s := proto.Size(x.MultiPanel)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *ActionUI_CargoPanel:
-		s := proto.Size(x.CargoPanel)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *ActionUI_ProductionPanel:
-		s := proto.Size(x.ProductionPanel)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *ActionUI_ToggleAutocast:
-		s := proto.Size(x.ToggleAutocast)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
-}
-
 type ActionControlGroup struct {
 	Action            ActionControlGroup_ControlGroupAction `protobuf:"varint,1,opt,name=action,proto3,enum=SC2APIProtocol.ActionControlGroup_ControlGroupAction" json:"action,omitempty"`
 	ControlGroupIndex uint32                                `protobuf:"varint,2,opt,name=control_group_index,json=controlGroupIndex,proto3" json:"control_group_index,omitempty"`
@@ -1196,7 +909,7 @@ func (m *ActionControlGroup) Reset()         { *m = ActionControlGroup{} }
 func (m *ActionControlGroup) String() string { return proto.CompactTextString(m) }
 func (*ActionControlGroup) ProtoMessage()    {}
 func (*ActionControlGroup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{9}
+	return fileDescriptor_63867a62624c1283, []int{9}
 }
 func (m *ActionControlGroup) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1206,15 +919,15 @@ func (m *ActionControlGroup) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return xxx_messageInfo_ActionControlGroup.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ActionControlGroup) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ActionControlGroup.Merge(dst, src)
+func (m *ActionControlGroup) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ActionControlGroup.Merge(m, src)
 }
 func (m *ActionControlGroup) XXX_Size() int {
 	return m.Size()
@@ -1247,7 +960,7 @@ func (m *ActionSelectArmy) Reset()         { *m = ActionSelectArmy{} }
 func (m *ActionSelectArmy) String() string { return proto.CompactTextString(m) }
 func (*ActionSelectArmy) ProtoMessage()    {}
 func (*ActionSelectArmy) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{10}
+	return fileDescriptor_63867a62624c1283, []int{10}
 }
 func (m *ActionSelectArmy) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1257,15 +970,15 @@ func (m *ActionSelectArmy) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return xxx_messageInfo_ActionSelectArmy.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ActionSelectArmy) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ActionSelectArmy.Merge(dst, src)
+func (m *ActionSelectArmy) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ActionSelectArmy.Merge(m, src)
 }
 func (m *ActionSelectArmy) XXX_Size() int {
 	return m.Size()
@@ -1291,7 +1004,7 @@ func (m *ActionSelectWarpGates) Reset()         { *m = ActionSelectWarpGates{} }
 func (m *ActionSelectWarpGates) String() string { return proto.CompactTextString(m) }
 func (*ActionSelectWarpGates) ProtoMessage()    {}
 func (*ActionSelectWarpGates) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{11}
+	return fileDescriptor_63867a62624c1283, []int{11}
 }
 func (m *ActionSelectWarpGates) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1301,15 +1014,15 @@ func (m *ActionSelectWarpGates) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return xxx_messageInfo_ActionSelectWarpGates.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ActionSelectWarpGates) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ActionSelectWarpGates.Merge(dst, src)
+func (m *ActionSelectWarpGates) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ActionSelectWarpGates.Merge(m, src)
 }
 func (m *ActionSelectWarpGates) XXX_Size() int {
 	return m.Size()
@@ -1334,7 +1047,7 @@ func (m *ActionSelectLarva) Reset()         { *m = ActionSelectLarva{} }
 func (m *ActionSelectLarva) String() string { return proto.CompactTextString(m) }
 func (*ActionSelectLarva) ProtoMessage()    {}
 func (*ActionSelectLarva) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{12}
+	return fileDescriptor_63867a62624c1283, []int{12}
 }
 func (m *ActionSelectLarva) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1344,15 +1057,15 @@ func (m *ActionSelectLarva) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return xxx_messageInfo_ActionSelectLarva.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ActionSelectLarva) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ActionSelectLarva.Merge(dst, src)
+func (m *ActionSelectLarva) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ActionSelectLarva.Merge(m, src)
 }
 func (m *ActionSelectLarva) XXX_Size() int {
 	return m.Size()
@@ -1371,7 +1084,7 @@ func (m *ActionSelectIdleWorker) Reset()         { *m = ActionSelectIdleWorker{}
 func (m *ActionSelectIdleWorker) String() string { return proto.CompactTextString(m) }
 func (*ActionSelectIdleWorker) ProtoMessage()    {}
 func (*ActionSelectIdleWorker) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{13}
+	return fileDescriptor_63867a62624c1283, []int{13}
 }
 func (m *ActionSelectIdleWorker) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1381,15 +1094,15 @@ func (m *ActionSelectIdleWorker) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return xxx_messageInfo_ActionSelectIdleWorker.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ActionSelectIdleWorker) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ActionSelectIdleWorker.Merge(dst, src)
+func (m *ActionSelectIdleWorker) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ActionSelectIdleWorker.Merge(m, src)
 }
 func (m *ActionSelectIdleWorker) XXX_Size() int {
 	return m.Size()
@@ -1416,7 +1129,7 @@ func (m *ActionMultiPanel) Reset()         { *m = ActionMultiPanel{} }
 func (m *ActionMultiPanel) String() string { return proto.CompactTextString(m) }
 func (*ActionMultiPanel) ProtoMessage()    {}
 func (*ActionMultiPanel) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{14}
+	return fileDescriptor_63867a62624c1283, []int{14}
 }
 func (m *ActionMultiPanel) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1426,15 +1139,15 @@ func (m *ActionMultiPanel) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return xxx_messageInfo_ActionMultiPanel.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ActionMultiPanel) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ActionMultiPanel.Merge(dst, src)
+func (m *ActionMultiPanel) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ActionMultiPanel.Merge(m, src)
 }
 func (m *ActionMultiPanel) XXX_Size() int {
 	return m.Size()
@@ -1467,7 +1180,7 @@ func (m *ActionCargoPanelUnload) Reset()         { *m = ActionCargoPanelUnload{}
 func (m *ActionCargoPanelUnload) String() string { return proto.CompactTextString(m) }
 func (*ActionCargoPanelUnload) ProtoMessage()    {}
 func (*ActionCargoPanelUnload) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{15}
+	return fileDescriptor_63867a62624c1283, []int{15}
 }
 func (m *ActionCargoPanelUnload) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1477,15 +1190,15 @@ func (m *ActionCargoPanelUnload) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return xxx_messageInfo_ActionCargoPanelUnload.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ActionCargoPanelUnload) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ActionCargoPanelUnload.Merge(dst, src)
+func (m *ActionCargoPanelUnload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ActionCargoPanelUnload.Merge(m, src)
 }
 func (m *ActionCargoPanelUnload) XXX_Size() int {
 	return m.Size()
@@ -1511,7 +1224,7 @@ func (m *ActionProductionPanelRemoveFromQueue) Reset()         { *m = ActionProd
 func (m *ActionProductionPanelRemoveFromQueue) String() string { return proto.CompactTextString(m) }
 func (*ActionProductionPanelRemoveFromQueue) ProtoMessage()    {}
 func (*ActionProductionPanelRemoveFromQueue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{16}
+	return fileDescriptor_63867a62624c1283, []int{16}
 }
 func (m *ActionProductionPanelRemoveFromQueue) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1521,15 +1234,15 @@ func (m *ActionProductionPanelRemoveFromQueue) XXX_Marshal(b []byte, determinist
 		return xxx_messageInfo_ActionProductionPanelRemoveFromQueue.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ActionProductionPanelRemoveFromQueue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ActionProductionPanelRemoveFromQueue.Merge(dst, src)
+func (m *ActionProductionPanelRemoveFromQueue) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ActionProductionPanelRemoveFromQueue.Merge(m, src)
 }
 func (m *ActionProductionPanelRemoveFromQueue) XXX_Size() int {
 	return m.Size()
@@ -1555,7 +1268,7 @@ func (m *ActionToggleAutocast) Reset()         { *m = ActionToggleAutocast{} }
 func (m *ActionToggleAutocast) String() string { return proto.CompactTextString(m) }
 func (*ActionToggleAutocast) ProtoMessage()    {}
 func (*ActionToggleAutocast) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ui_0a4a812a4b9539d9, []int{17}
+	return fileDescriptor_63867a62624c1283, []int{17}
 }
 func (m *ActionToggleAutocast) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1565,15 +1278,15 @@ func (m *ActionToggleAutocast) XXX_Marshal(b []byte, deterministic bool) ([]byte
 		return xxx_messageInfo_ActionToggleAutocast.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ActionToggleAutocast) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ActionToggleAutocast.Merge(dst, src)
+func (m *ActionToggleAutocast) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ActionToggleAutocast.Merge(m, src)
 }
 func (m *ActionToggleAutocast) XXX_Size() int {
 	return m.Size()
@@ -1592,6 +1305,9 @@ func (m *ActionToggleAutocast) GetAbilityId() AbilityID {
 }
 
 func init() {
+	proto.RegisterEnum("SC2APIProtocol.ActionControlGroup_ControlGroupAction", ActionControlGroup_ControlGroupAction_name, ActionControlGroup_ControlGroupAction_value)
+	proto.RegisterEnum("SC2APIProtocol.ActionSelectIdleWorker_Type", ActionSelectIdleWorker_Type_name, ActionSelectIdleWorker_Type_value)
+	proto.RegisterEnum("SC2APIProtocol.ActionMultiPanel_Type", ActionMultiPanel_Type_name, ActionMultiPanel_Type_value)
 	proto.RegisterType((*ObservationUI)(nil), "SC2APIProtocol.ObservationUI")
 	proto.RegisterType((*ControlGroup)(nil), "SC2APIProtocol.ControlGroup")
 	proto.RegisterType((*UnitInfo)(nil), "SC2APIProtocol.UnitInfo")
@@ -1610,14 +1326,103 @@ func init() {
 	proto.RegisterType((*ActionCargoPanelUnload)(nil), "SC2APIProtocol.ActionCargoPanelUnload")
 	proto.RegisterType((*ActionProductionPanelRemoveFromQueue)(nil), "SC2APIProtocol.ActionProductionPanelRemoveFromQueue")
 	proto.RegisterType((*ActionToggleAutocast)(nil), "SC2APIProtocol.ActionToggleAutocast")
-	proto.RegisterEnum("SC2APIProtocol.ActionControlGroup_ControlGroupAction", ActionControlGroup_ControlGroupAction_name, ActionControlGroup_ControlGroupAction_value)
-	proto.RegisterEnum("SC2APIProtocol.ActionSelectIdleWorker_Type", ActionSelectIdleWorker_Type_name, ActionSelectIdleWorker_Type_value)
-	proto.RegisterEnum("SC2APIProtocol.ActionMultiPanel_Type", ActionMultiPanel_Type_name, ActionMultiPanel_Type_value)
 }
+
+func init() { proto.RegisterFile("ui.proto", fileDescriptor_63867a62624c1283) }
+
+var fileDescriptor_63867a62624c1283 = []byte{
+	// 1360 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x57, 0x4f, 0x6f, 0x13, 0xd7,
+	0x16, 0xf7, 0xd8, 0x1e, 0xc7, 0x39, 0x8e, 0xed, 0xc9, 0x4d, 0x82, 0xfc, 0x78, 0xef, 0x25, 0x7e,
+	0x03, 0xbc, 0x46, 0x02, 0x19, 0xe4, 0x82, 0x00, 0x15, 0xa9, 0x72, 0x12, 0xc0, 0x96, 0x40, 0x49,
+	0xc7, 0xa4, 0x48, 0xdd, 0x4c, 0x6f, 0x3c, 0x37, 0x66, 0xc4, 0xf5, 0xcc, 0xf4, 0xce, 0x75, 0xc0,
+	0xab, 0xee, 0xbb, 0xa8, 0xba, 0xe8, 0x16, 0x75, 0xd1, 0x2f, 0xd0, 0x8f, 0xd0, 0x65, 0x97, 0x2c,
+	0x2b, 0x55, 0x45, 0x15, 0xa8, 0x5f, 0x82, 0x55, 0x75, 0xff, 0x8c, 0xff, 0x4c, 0x1c, 0x07, 0x56,
+	0xf1, 0x3d, 0xe7, 0xf7, 0x3b, 0x73, 0xee, 0xf9, 0x7b, 0x03, 0xc5, 0xa1, 0xdf, 0x88, 0x58, 0xc8,
+	0x43, 0x54, 0xe9, 0xee, 0x36, 0x5b, 0x07, 0x9d, 0x03, 0x71, 0xe8, 0x85, 0xf4, 0x22, 0xf4, 0xc3,
+	0x7e, 0xa8, 0x74, 0xf6, 0x2f, 0x59, 0x28, 0xef, 0x1f, 0xc5, 0x84, 0x9d, 0x60, 0xee, 0x87, 0xc1,
+	0x61, 0x07, 0xdd, 0x84, 0x42, 0x9f, 0x85, 0xc3, 0x28, 0xae, 0x19, 0xf5, 0xdc, 0x76, 0xa9, 0xf9,
+	0x9f, 0xc6, 0x2c, 0xbd, 0xb1, 0x1b, 0x06, 0x9c, 0x85, 0xf4, 0xa1, 0x00, 0x39, 0x1a, 0x8b, 0x6e,
+	0x41, 0x21, 0xf6, 0x83, 0x3e, 0x25, 0xb5, 0x6c, 0xdd, 0xd8, 0x2e, 0x35, 0xff, 0x9d, 0x66, 0x75,
+	0xa5, 0xf6, 0x00, 0x07, 0x84, 0xb6, 0x33, 0x8e, 0x06, 0xa3, 0x26, 0x98, 0x83, 0x21, 0xe5, 0x7e,
+	0x2d, 0x27, 0x59, 0x17, 0xd3, 0xac, 0xc7, 0x42, 0x99, 0x90, 0x14, 0x54, 0x70, 0x7a, 0x98, 0xf5,
+	0xc3, 0x5a, 0x7e, 0x3e, 0x67, 0x57, 0x28, 0xc7, 0x1c, 0x09, 0x45, 0x2d, 0x80, 0x88, 0x85, 0xde,
+	0xb0, 0x27, 0x2e, 0x59, 0x33, 0x25, 0x71, 0x2b, 0x4d, 0x3c, 0x18, 0x23, 0x12, 0xf6, 0x14, 0x69,
+	0x67, 0x09, 0xcc, 0x48, 0x88, 0xed, 0xef, 0x0d, 0x58, 0x99, 0x8e, 0x01, 0x6a, 0xc0, 0x5a, 0x4f,
+	0x9d, 0x5d, 0x19, 0x0d, 0xd7, 0x0f, 0x3c, 0xf2, 0xb2, 0x66, 0xd4, 0x8d, 0xed, 0xb2, 0xb3, 0xda,
+	0x9b, 0x82, 0x76, 0x84, 0x02, 0xdd, 0x01, 0x8b, 0x12, 0xec, 0x11, 0xe6, 0x0e, 0x03, 0x9f, 0xbb,
+	0x7c, 0x14, 0xa9, 0xa8, 0x95, 0x77, 0x2a, 0xef, 0xdf, 0x6c, 0xc1, 0x61, 0xe0, 0xf3, 0x27, 0xa3,
+	0x88, 0x74, 0xf6, 0x9c, 0x8a, 0xc2, 0x25, 0x12, 0xb4, 0x0e, 0x66, 0x2f, 0x1c, 0x06, 0x5c, 0x86,
+	0xab, 0xec, 0xa8, 0x83, 0xfd, 0x73, 0x0e, 0x8a, 0x02, 0xd2, 0x09, 0x8e, 0x43, 0x74, 0x15, 0x96,
+	0x27, 0x56, 0x8d, 0xb9, 0x56, 0x8b, 0xc3, 0xc4, 0xde, 0x2d, 0xa8, 0x46, 0x14, 0x8f, 0x08, 0x73,
+	0x19, 0xa1, 0x98, 0xfb, 0x27, 0x89, 0x23, 0x2b, 0xef, 0xdf, 0x6c, 0x15, 0x0f, 0xa4, 0x4a, 0xb8,
+	0xa1, 0x40, 0x8e, 0xc6, 0xa0, 0x0b, 0x50, 0x78, 0x46, 0x30, 0xe5, 0xcf, 0xa4, 0x1f, 0xa6, 0xa3,
+	0x4f, 0xa8, 0x06, 0x4b, 0xf1, 0x33, 0x9f, 0x50, 0x2f, 0x96, 0xb9, 0x31, 0x9d, 0xe4, 0x28, 0x18,
+	0x24, 0x20, 0xac, 0x3f, 0x92, 0xb1, 0x37, 0x1d, 0x7d, 0x42, 0x4d, 0xd8, 0xe0, 0x0c, 0x07, 0x71,
+	0x14, 0x32, 0xee, 0xc6, 0x34, 0xe4, 0xb1, 0xcb, 0xf1, 0x73, 0x12, 0xd4, 0x0a, 0x12, 0xb6, 0x36,
+	0x56, 0x76, 0x85, 0xee, 0x89, 0x50, 0xa1, 0x2b, 0x50, 0x39, 0x1a, 0xfa, 0xd4, 0x73, 0x23, 0x16,
+	0xf6, 0x19, 0x89, 0xe3, 0xda, 0x52, 0xdd, 0xd8, 0xce, 0x3a, 0x65, 0x29, 0x3d, 0xd0, 0x42, 0x74,
+	0x1d, 0x0a, 0xd8, 0xf3, 0xdc, 0x30, 0xa8, 0x15, 0x65, 0xba, 0x6b, 0xe9, 0x74, 0x27, 0x21, 0x73,
+	0x4c, 0xec, 0x79, 0xfb, 0x01, 0xfa, 0x2f, 0xc0, 0x00, 0xbf, 0x74, 0xf5, 0xcd, 0x96, 0xa5, 0x03,
+	0xcb, 0x03, 0xfc, 0xb2, 0xad, 0x2e, 0xb7, 0x05, 0x25, 0xa1, 0x4e, 0x2e, 0x08, 0x52, 0x2f, 0x18,
+	0x5d, 0x7d, 0x47, 0xcd, 0xd7, 0xf7, 0x2c, 0x8d, 0xf9, 0xf7, 0xa5, 0xc0, 0xfe, 0xdb, 0x80, 0xd2,
+	0x54, 0x13, 0xa0, 0x6b, 0x90, 0x17, 0x79, 0x90, 0x39, 0x5a, 0xe4, 0x9d, 0x44, 0xa1, 0x1b, 0xb0,
+	0x8e, 0x39, 0xc7, 0xbd, 0xe7, 0xee, 0x30, 0xea, 0x33, 0xec, 0x11, 0x97, 0x92, 0x13, 0x42, 0x65,
+	0xba, 0x4c, 0x07, 0x29, 0xdd, 0xa1, 0x52, 0x3d, 0x12, 0x1a, 0x51, 0x95, 0x98, 0x0d, 0x42, 0x96,
+	0x22, 0xa8, 0x8c, 0xad, 0x4a, 0xd5, 0x0c, 0xfe, 0x06, 0xac, 0xab, 0xbb, 0xa5, 0x08, 0x2a, 0x93,
+	0x48, 0xe9, 0x66, 0x18, 0xeb, 0x60, 0x1e, 0x0d, 0x8f, 0x8f, 0xe3, 0x9a, 0x59, 0xcf, 0x6d, 0x9b,
+	0x8e, 0x3a, 0xd8, 0xf7, 0x00, 0x26, 0x5d, 0x8b, 0x1a, 0x60, 0x0a, 0xff, 0x93, 0x61, 0xb2, 0x20,
+	0x09, 0x12, 0x66, 0xbf, 0x32, 0x00, 0x26, 0x0d, 0xfc, 0x91, 0x41, 0xba, 0x03, 0x10, 0xe1, 0x38,
+	0x26, 0x41, 0x9f, 0xb0, 0xb8, 0x96, 0x3d, 0xe7, 0x8b, 0x53, 0x58, 0xf4, 0x09, 0x54, 0x55, 0xf5,
+	0xe1, 0x13, 0xec, 0x53, 0x7c, 0x44, 0x89, 0x0e, 0x54, 0x45, 0x8a, 0x5b, 0x89, 0xd4, 0xfe, 0x1a,
+	0x96, 0x77, 0x44, 0x99, 0x75, 0x38, 0x19, 0xa0, 0x6b, 0x00, 0xf8, 0xc8, 0xa7, 0x3e, 0x1f, 0xb9,
+	0xbe, 0xa7, 0x9b, 0xad, 0xfc, 0xfe, 0xcd, 0xd6, 0x72, 0x4b, 0x49, 0x3b, 0x7b, 0xce, 0xb2, 0x06,
+	0x74, 0xbc, 0x39, 0x75, 0x9b, 0x9d, 0x53, 0xb7, 0xf6, 0xaf, 0x06, 0x54, 0x53, 0x93, 0xe8, 0x23,
+	0xc3, 0x70, 0x17, 0x4a, 0xea, 0x43, 0xdf, 0x0c, 0xc9, 0x90, 0x9c, 0x1f, 0x07, 0x09, 0xfe, 0x42,
+	0x60, 0xd1, 0x1e, 0x58, 0x93, 0x91, 0xa7, 0xf9, 0x39, 0xc9, 0xff, 0x57, 0x9a, 0x3f, 0x0e, 0x83,
+	0x53, 0x9d, 0x50, 0xa4, 0x15, 0xfb, 0x4f, 0x13, 0x8a, 0xad, 0x9e, 0xde, 0x27, 0x1d, 0x28, 0xcf,
+	0x4c, 0x47, 0x7d, 0x09, 0x3b, 0x6d, 0x4f, 0x11, 0xa6, 0x07, 0x6b, 0x3b, 0xe3, 0xac, 0x4c, 0x4f,
+	0x4f, 0xb4, 0x0b, 0xa5, 0x98, 0x50, 0xd2, 0xe3, 0x2e, 0x66, 0x83, 0x91, 0xde, 0x34, 0xf5, 0xf9,
+	0x86, 0xba, 0x12, 0xd8, 0x62, 0x83, 0x91, 0x98, 0xe3, 0xf1, 0xf8, 0x84, 0xba, 0xb0, 0xaa, 0x8d,
+	0xbc, 0xc0, 0x2c, 0x72, 0xfb, 0x98, 0x93, 0x58, 0xaf, 0x9f, 0x2b, 0x8b, 0x4c, 0x3d, 0xc5, 0x2c,
+	0x7a, 0x28, 0xc0, 0xed, 0x8c, 0x53, 0x8d, 0x67, 0x45, 0xe8, 0x01, 0xac, 0x68, 0xa3, 0x14, 0xb3,
+	0x13, 0xac, 0x57, 0xd3, 0xff, 0x16, 0xd9, 0x7b, 0x24, 0x80, 0xed, 0x8c, 0xa3, 0xaf, 0x24, 0x8f,
+	0xe8, 0x4b, 0x40, 0xda, 0x8e, 0xef, 0x51, 0xe2, 0xbe, 0x08, 0xd9, 0x73, 0xc2, 0xf4, 0xbe, 0xfa,
+	0xff, 0x22, 0x6b, 0x1d, 0x8f, 0x92, 0xa7, 0x12, 0xdd, 0xce, 0x38, 0x56, 0x9c, 0x92, 0x89, 0xc8,
+	0xc9, 0xe5, 0xe9, 0xca, 0x15, 0x26, 0xa7, 0xeb, 0x99, 0x91, 0x9b, 0xd9, 0xb9, 0x30, 0x98, 0xf4,
+	0x72, 0x07, 0x4a, 0x72, 0x9b, 0x6a, 0x23, 0x4b, 0x8b, 0xbc, 0x9a, 0xf4, 0xf0, 0x61, 0x40, 0x43,
+	0xec, 0x09, 0x53, 0xbd, 0x49, 0x5f, 0xe3, 0x99, 0x3a, 0x53, 0xf6, 0xd4, 0x98, 0xbe, 0x39, 0xdf,
+	0x5e, 0xaa, 0x23, 0x1c, 0x32, 0x08, 0x4f, 0xc8, 0x03, 0x16, 0x0e, 0x64, 0xc5, 0x89, 0x94, 0x44,
+	0xa9, 0x9e, 0xd9, 0x87, 0x2a, 0x0f, 0xfb, 0x7d, 0x4a, 0x5c, 0x3c, 0xe4, 0x61, 0x0f, 0xc7, 0x5c,
+	0xce, 0xf4, 0x52, 0xf3, 0xf2, 0xfc, 0x2f, 0x3c, 0x91, 0xe0, 0x96, 0xc6, 0xb6, 0x33, 0x4e, 0x85,
+	0xcf, 0x48, 0x76, 0x8a, 0x50, 0xc0, 0x12, 0x69, 0xff, 0x98, 0x05, 0x74, 0xba, 0x5c, 0xd1, 0xe3,
+	0x04, 0x20, 0x4b, 0xbc, 0xd2, 0xbc, 0x75, 0x7e, 0x89, 0xcf, 0x3c, 0xa6, 0x94, 0xda, 0xd1, 0x46,
+	0xce, 0x7a, 0x56, 0x64, 0xcf, 0x78, 0x56, 0xd8, 0xdf, 0x02, 0x3a, 0x6d, 0x0d, 0x5d, 0x82, 0x0b,
+	0xa7, 0xa5, 0x6e, 0xe0, 0x53, 0x2b, 0x73, 0x71, 0xe9, 0xbb, 0x57, 0xf5, 0x5c, 0xe0, 0x53, 0x04,
+	0x50, 0x70, 0x48, 0x0f, 0x53, 0x6a, 0x19, 0x68, 0x09, 0x72, 0x5d, 0xc2, 0xad, 0xac, 0x10, 0xb6,
+	0xa2, 0x88, 0x04, 0x9e, 0x95, 0x43, 0x55, 0x28, 0x75, 0x09, 0x6f, 0x05, 0x5e, 0x97, 0x13, 0x4c,
+	0xad, 0x3c, 0x42, 0x50, 0x51, 0xca, 0xb1, 0xcc, 0xb4, 0x6f, 0x83, 0x95, 0xee, 0x3d, 0x74, 0x09,
+	0xca, 0xaa, 0x18, 0xc5, 0x57, 0xb1, 0xa7, 0xa6, 0x64, 0xd1, 0x59, 0x19, 0x0b, 0x5b, 0x9e, 0x67,
+	0xdf, 0x83, 0x8d, 0xb9, 0x9d, 0xf6, 0x61, 0xec, 0x35, 0x58, 0x3d, 0xd5, 0x57, 0xf6, 0x4f, 0x06,
+	0x5c, 0x98, 0xdf, 0x1f, 0xe8, 0x73, 0xc8, 0x8f, 0x1f, 0x47, 0x95, 0xe6, 0xd5, 0x0f, 0xeb, 0xaa,
+	0x86, 0x78, 0x2f, 0x39, 0x92, 0x68, 0xef, 0x41, 0x5e, 0xbe, 0x9e, 0x36, 0xa0, 0x28, 0xfe, 0xa6,
+	0x83, 0xa9, 0x03, 0x28, 0x23, 0xd9, 0xf2, 0x3c, 0x2b, 0x2b, 0x7f, 0x50, 0x6a, 0xe5, 0x64, 0x48,
+	0x3d, 0x4f, 0xfc, 0xce, 0xdb, 0x7f, 0x18, 0x49, 0xb8, 0xa6, 0xd6, 0xe5, 0xdd, 0x19, 0xdf, 0xae,
+	0x9c, 0xd7, 0xa0, 0x53, 0x5e, 0x89, 0xe7, 0x87, 0x7c, 0xf8, 0x4d, 0xaa, 0xc4, 0x74, 0xe4, 0x53,
+	0x50, 0x55, 0xc7, 0x60, 0xb1, 0xd3, 0x16, 0xac, 0xa8, 0xc7, 0x89, 0xba, 0xb8, 0x65, 0x08, 0xc9,
+	0x1e, 0x51, 0x81, 0x16, 0xab, 0xc2, 0xca, 0xa2, 0x35, 0xa8, 0xea, 0xcc, 0x52, 0xba, 0x7f, 0x2c,
+	0xac, 0x58, 0x39, 0xb4, 0x01, 0xab, 0x09, 0x6c, 0x22, 0xce, 0xdb, 0xb7, 0x93, 0xf0, 0xa7, 0x07,
+	0x41, 0xca, 0x4f, 0x23, 0xed, 0xe7, 0x7d, 0xb8, 0xfc, 0x21, 0x1d, 0x7f, 0x9e, 0x99, 0x3d, 0x58,
+	0x9f, 0xd7, 0xd6, 0x73, 0x56, 0xb6, 0x79, 0xf6, 0xca, 0xde, 0xa9, 0xff, 0xf6, 0x76, 0xd3, 0x78,
+	0xfd, 0x76, 0xd3, 0xf8, 0xeb, 0xed, 0xa6, 0xf1, 0xc3, 0xbb, 0xcd, 0xcc, 0xeb, 0x77, 0x9b, 0x99,
+	0xdf, 0xdf, 0x6d, 0x66, 0xbe, 0x2a, 0x34, 0xae, 0x7f, 0x86, 0x23, 0xff, 0xa8, 0x20, 0xff, 0x8d,
+	0xfa, 0xf4, 0x9f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x98, 0x87, 0x69, 0xec, 0x6e, 0x0d, 0x00, 0x00,
+}
+
 func (m *ObservationUI) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1625,92 +1430,129 @@ func (m *ObservationUI) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ObservationUI) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ObservationUI) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Groups) > 0 {
-		for _, msg := range m.Groups {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintUi(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
+	if m.Panel != nil {
+		{
+			size := m.Panel.Size()
+			i -= size
+			if _, err := m.Panel.MarshalTo(dAtA[i:]); err != nil {
 				return 0, err
 			}
-			i += n
 		}
 	}
-	if m.Panel != nil {
-		nn1, err := m.Panel.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	if len(m.Groups) > 0 {
+		for iNdEx := len(m.Groups) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Groups[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintUi(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
 		}
-		i += nn1
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ObservationUI_Single) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ObservationUI_Single) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Single != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.Single.Size()))
-		n2, err := m.Single.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Single.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
 		}
-		i += n2
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *ObservationUI_Multi) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ObservationUI_Multi) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Multi != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.Multi.Size()))
-		n3, err := m.Multi.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Multi.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
 		}
-		i += n3
+		i--
+		dAtA[i] = 0x1a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *ObservationUI_Cargo) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ObservationUI_Cargo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Cargo != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.Cargo.Size()))
-		n4, err := m.Cargo.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Cargo.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
 		}
-		i += n4
+		i--
+		dAtA[i] = 0x22
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *ObservationUI_Production) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ObservationUI_Production) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Production != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.Production.Size()))
-		n5, err := m.Production.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Production.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
 		}
-		i += n5
+		i--
+		dAtA[i] = 0x2a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *ControlGroup) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1718,32 +1560,37 @@ func (m *ControlGroup) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ControlGroup) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ControlGroup) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.ControlGroupIndex != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.ControlGroupIndex))
+	if m.Count != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.Count))
+		i--
+		dAtA[i] = 0x18
 	}
 	if m.LeaderUnitType != 0 {
-		dAtA[i] = 0x10
-		i++
 		i = encodeVarintUi(dAtA, i, uint64(m.LeaderUnitType))
+		i--
+		dAtA[i] = 0x10
 	}
-	if m.Count != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.Count))
+	if m.ControlGroupIndex != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.ControlGroupIndex))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *UnitInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1751,78 +1598,85 @@ func (m *UnitInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *UnitInfo) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UnitInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.UnitType != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.UnitType))
-	}
-	if m.PlayerRelative != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.PlayerRelative))
-	}
-	if m.Health != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.Health))
-	}
-	if m.Shields != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.Shields))
-	}
-	if m.Energy != 0 {
-		dAtA[i] = 0x28
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.Energy))
-	}
-	if m.TransportSlotsTaken != 0 {
-		dAtA[i] = 0x30
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.TransportSlotsTaken))
-	}
-	if m.BuildProgress != 0 {
-		dAtA[i] = 0x3d
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.BuildProgress))))
-		i += 4
-	}
-	if m.AddOn != nil {
-		dAtA[i] = 0x42
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.AddOn.Size()))
-		n6, err := m.AddOn.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n6
-	}
-	if m.MaxHealth != 0 {
-		dAtA[i] = 0x48
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.MaxHealth))
+	if m.MaxEnergy != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.MaxEnergy))
+		i--
+		dAtA[i] = 0x58
 	}
 	if m.MaxShields != 0 {
-		dAtA[i] = 0x50
-		i++
 		i = encodeVarintUi(dAtA, i, uint64(m.MaxShields))
+		i--
+		dAtA[i] = 0x50
 	}
-	if m.MaxEnergy != 0 {
-		dAtA[i] = 0x58
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.MaxEnergy))
+	if m.MaxHealth != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.MaxHealth))
+		i--
+		dAtA[i] = 0x48
 	}
-	return i, nil
+	if m.AddOn != nil {
+		{
+			size, err := m.AddOn.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x42
+	}
+	if m.BuildProgress != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.BuildProgress))))
+		i--
+		dAtA[i] = 0x3d
+	}
+	if m.TransportSlotsTaken != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.TransportSlotsTaken))
+		i--
+		dAtA[i] = 0x30
+	}
+	if m.Energy != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.Energy))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.Shields != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.Shields))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Health != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.Health))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.PlayerRelative != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.PlayerRelative))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.UnitType != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.UnitType))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *SinglePanel) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1830,60 +1684,68 @@ func (m *SinglePanel) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SinglePanel) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SinglePanel) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Unit != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.Unit.Size()))
-		n7, err := m.Unit.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n7
-	}
-	if m.AttackUpgradeLevel != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.AttackUpgradeLevel))
-	}
-	if m.ArmorUpgradeLevel != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.ArmorUpgradeLevel))
-	}
-	if m.ShieldUpgradeLevel != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.ShieldUpgradeLevel))
-	}
 	if len(m.Buffs) > 0 {
-		dAtA9 := make([]byte, len(m.Buffs)*10)
-		var j8 int
+		dAtA7 := make([]byte, len(m.Buffs)*10)
+		var j6 int
 		for _, num1 := range m.Buffs {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA9[j8] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA7[j6] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j8++
+				j6++
 			}
-			dAtA9[j8] = uint8(num)
-			j8++
+			dAtA7[j6] = uint8(num)
+			j6++
 		}
+		i -= j6
+		copy(dAtA[i:], dAtA7[:j6])
+		i = encodeVarintUi(dAtA, i, uint64(j6))
+		i--
 		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(j8))
-		i += copy(dAtA[i:], dAtA9[:j8])
 	}
-	return i, nil
+	if m.ShieldUpgradeLevel != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.ShieldUpgradeLevel))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.ArmorUpgradeLevel != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.ArmorUpgradeLevel))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.AttackUpgradeLevel != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.AttackUpgradeLevel))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Unit != nil {
+		{
+			size, err := m.Unit.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *MultiPanel) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1891,29 +1753,36 @@ func (m *MultiPanel) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *MultiPanel) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MultiPanel) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Units) > 0 {
-		for _, msg := range m.Units {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintUi(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.Units) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Units[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintUi(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *CargoPanel) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1921,44 +1790,53 @@ func (m *CargoPanel) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *CargoPanel) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CargoPanel) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Unit != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.Unit.Size()))
-		n10, err := m.Unit.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n10
+	if m.SlotsAvailable != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.SlotsAvailable))
+		i--
+		dAtA[i] = 0x18
 	}
 	if len(m.Passengers) > 0 {
-		for _, msg := range m.Passengers {
+		for iNdEx := len(m.Passengers) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Passengers[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintUi(dAtA, i, uint64(size))
+			}
+			i--
 			dAtA[i] = 0x12
-			i++
-			i = encodeVarintUi(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
+		}
+	}
+	if m.Unit != nil {
+		{
+			size, err := m.Unit.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
-			i += n
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
 		}
+		i--
+		dAtA[i] = 0xa
 	}
-	if m.SlotsAvailable != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.SlotsAvailable))
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *BuildItem) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1966,28 +1844,33 @@ func (m *BuildItem) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *BuildItem) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *BuildItem) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.AbilityId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.AbilityId))
-	}
 	if m.BuildProgress != 0 {
-		dAtA[i] = 0x15
-		i++
+		i -= 4
 		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.BuildProgress))))
-		i += 4
+		i--
+		dAtA[i] = 0x15
 	}
-	return i, nil
+	if m.AbilityId != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.AbilityId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *ProductionPanel) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1995,51 +1878,62 @@ func (m *ProductionPanel) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ProductionPanel) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ProductionPanel) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Unit != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.Unit.Size()))
-		n11, err := m.Unit.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	if len(m.ProductionQueue) > 0 {
+		for iNdEx := len(m.ProductionQueue) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ProductionQueue[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintUi(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
 		}
-		i += n11
 	}
 	if len(m.BuildQueue) > 0 {
-		for _, msg := range m.BuildQueue {
+		for iNdEx := len(m.BuildQueue) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.BuildQueue[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintUi(dAtA, i, uint64(size))
+			}
+			i--
 			dAtA[i] = 0x12
-			i++
-			i = encodeVarintUi(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
+		}
+	}
+	if m.Unit != nil {
+		{
+			size, err := m.Unit.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
-			i += n
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
 		}
+		i--
+		dAtA[i] = 0xa
 	}
-	if len(m.ProductionQueue) > 0 {
-		for _, msg := range m.ProductionQueue {
-			dAtA[i] = 0x1a
-			i++
-			i = encodeVarintUi(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ActionUI) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2047,150 +1941,220 @@ func (m *ActionUI) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ActionUI) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionUI) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.Action != nil {
-		nn12, err := m.Action.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size := m.Action.Size()
+			i -= size
+			if _, err := m.Action.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
 		}
-		i += nn12
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ActionUI_ControlGroup) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionUI_ControlGroup) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.ControlGroup != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.ControlGroup.Size()))
-		n13, err := m.ControlGroup.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.ControlGroup.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
 		}
-		i += n13
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *ActionUI_SelectArmy) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionUI_SelectArmy) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.SelectArmy != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.SelectArmy.Size()))
-		n14, err := m.SelectArmy.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.SelectArmy.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
 		}
-		i += n14
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *ActionUI_SelectWarpGates) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionUI_SelectWarpGates) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.SelectWarpGates != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.SelectWarpGates.Size()))
-		n15, err := m.SelectWarpGates.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.SelectWarpGates.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
 		}
-		i += n15
+		i--
+		dAtA[i] = 0x1a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *ActionUI_SelectLarva) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionUI_SelectLarva) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.SelectLarva != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.SelectLarva.Size()))
-		n16, err := m.SelectLarva.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.SelectLarva.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
 		}
-		i += n16
+		i--
+		dAtA[i] = 0x22
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *ActionUI_SelectIdleWorker) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionUI_SelectIdleWorker) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.SelectIdleWorker != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.SelectIdleWorker.Size()))
-		n17, err := m.SelectIdleWorker.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.SelectIdleWorker.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
 		}
-		i += n17
+		i--
+		dAtA[i] = 0x2a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *ActionUI_MultiPanel) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionUI_MultiPanel) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.MultiPanel != nil {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.MultiPanel.Size()))
-		n18, err := m.MultiPanel.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.MultiPanel.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
 		}
-		i += n18
+		i--
+		dAtA[i] = 0x32
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *ActionUI_CargoPanel) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionUI_CargoPanel) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.CargoPanel != nil {
-		dAtA[i] = 0x3a
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.CargoPanel.Size()))
-		n19, err := m.CargoPanel.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.CargoPanel.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
 		}
-		i += n19
+		i--
+		dAtA[i] = 0x3a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *ActionUI_ProductionPanel) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionUI_ProductionPanel) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.ProductionPanel != nil {
-		dAtA[i] = 0x42
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.ProductionPanel.Size()))
-		n20, err := m.ProductionPanel.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.ProductionPanel.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
 		}
-		i += n20
+		i--
+		dAtA[i] = 0x42
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *ActionUI_ToggleAutocast) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionUI_ToggleAutocast) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.ToggleAutocast != nil {
-		dAtA[i] = 0x4a
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.ToggleAutocast.Size()))
-		n21, err := m.ToggleAutocast.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.ToggleAutocast.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintUi(dAtA, i, uint64(size))
 		}
-		i += n21
+		i--
+		dAtA[i] = 0x4a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *ActionControlGroup) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2198,27 +2162,32 @@ func (m *ActionControlGroup) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ActionControlGroup) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionControlGroup) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Action != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.Action))
-	}
 	if m.ControlGroupIndex != 0 {
-		dAtA[i] = 0x10
-		i++
 		i = encodeVarintUi(dAtA, i, uint64(m.ControlGroupIndex))
+		i--
+		dAtA[i] = 0x10
 	}
-	return i, nil
+	if m.Action != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.Action))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *ActionSelectArmy) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2226,27 +2195,32 @@ func (m *ActionSelectArmy) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ActionSelectArmy) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionSelectArmy) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.SelectionAdd {
-		dAtA[i] = 0x8
-		i++
+		i--
 		if m.SelectionAdd {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ActionSelectWarpGates) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2254,27 +2228,32 @@ func (m *ActionSelectWarpGates) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ActionSelectWarpGates) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionSelectWarpGates) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.SelectionAdd {
-		dAtA[i] = 0x8
-		i++
+		i--
 		if m.SelectionAdd {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ActionSelectLarva) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2282,17 +2261,22 @@ func (m *ActionSelectLarva) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ActionSelectLarva) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionSelectLarva) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ActionSelectIdleWorker) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2300,22 +2284,27 @@ func (m *ActionSelectIdleWorker) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ActionSelectIdleWorker) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionSelectIdleWorker) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.Type != 0 {
-		dAtA[i] = 0x8
-		i++
 		i = encodeVarintUi(dAtA, i, uint64(m.Type))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ActionMultiPanel) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2323,27 +2312,32 @@ func (m *ActionMultiPanel) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ActionMultiPanel) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionMultiPanel) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Type != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintUi(dAtA, i, uint64(m.Type))
-	}
 	if m.UnitIndex != 0 {
-		dAtA[i] = 0x10
-		i++
 		i = encodeVarintUi(dAtA, i, uint64(m.UnitIndex))
+		i--
+		dAtA[i] = 0x10
 	}
-	return i, nil
+	if m.Type != 0 {
+		i = encodeVarintUi(dAtA, i, uint64(m.Type))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *ActionCargoPanelUnload) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2351,22 +2345,27 @@ func (m *ActionCargoPanelUnload) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ActionCargoPanelUnload) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionCargoPanelUnload) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.UnitIndex != 0 {
-		dAtA[i] = 0x8
-		i++
 		i = encodeVarintUi(dAtA, i, uint64(m.UnitIndex))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ActionProductionPanelRemoveFromQueue) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2374,22 +2373,27 @@ func (m *ActionProductionPanelRemoveFromQueue) Marshal() (dAtA []byte, err error
 }
 
 func (m *ActionProductionPanelRemoveFromQueue) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionProductionPanelRemoveFromQueue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.UnitIndex != 0 {
-		dAtA[i] = 0x8
-		i++
 		i = encodeVarintUi(dAtA, i, uint64(m.UnitIndex))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ActionToggleAutocast) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2397,26 +2401,33 @@ func (m *ActionToggleAutocast) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ActionToggleAutocast) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ActionToggleAutocast) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.AbilityId != 0 {
-		dAtA[i] = 0x8
-		i++
 		i = encodeVarintUi(dAtA, i, uint64(m.AbilityId))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintUi(dAtA []byte, offset int, v uint64) int {
+	offset -= sovUi(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *ObservationUI) Size() (n int) {
 	if m == nil {
@@ -2883,14 +2894,7 @@ func (m *ActionToggleAutocast) Size() (n int) {
 }
 
 func sovUi(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozUi(x uint64) (n int) {
 	return sovUi(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -2910,7 +2914,7 @@ func (m *ObservationUI) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2938,7 +2942,7 @@ func (m *ObservationUI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2947,6 +2951,9 @@ func (m *ObservationUI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2969,7 +2976,7 @@ func (m *ObservationUI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2978,6 +2985,9 @@ func (m *ObservationUI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3001,7 +3011,7 @@ func (m *ObservationUI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3010,6 +3020,9 @@ func (m *ObservationUI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3033,7 +3046,7 @@ func (m *ObservationUI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3042,6 +3055,9 @@ func (m *ObservationUI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3065,7 +3081,7 @@ func (m *ObservationUI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3074,6 +3090,9 @@ func (m *ObservationUI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3089,7 +3108,7 @@ func (m *ObservationUI) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -3119,7 +3138,7 @@ func (m *ControlGroup) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3147,7 +3166,7 @@ func (m *ControlGroup) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ControlGroupIndex |= (uint32(b) & 0x7F) << shift
+				m.ControlGroupIndex |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3166,7 +3185,7 @@ func (m *ControlGroup) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.LeaderUnitType |= (UnitTypeID(b) & 0x7F) << shift
+				m.LeaderUnitType |= UnitTypeID(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3185,7 +3204,7 @@ func (m *ControlGroup) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Count |= (uint32(b) & 0x7F) << shift
+				m.Count |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3196,7 +3215,7 @@ func (m *ControlGroup) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -3226,7 +3245,7 @@ func (m *UnitInfo) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3254,7 +3273,7 @@ func (m *UnitInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.UnitType |= (UnitTypeID(b) & 0x7F) << shift
+				m.UnitType |= UnitTypeID(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3273,7 +3292,7 @@ func (m *UnitInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PlayerRelative |= (PlayerID(b) & 0x7F) << shift
+				m.PlayerRelative |= PlayerID(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3292,7 +3311,7 @@ func (m *UnitInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Health |= (int32(b) & 0x7F) << shift
+				m.Health |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3311,7 +3330,7 @@ func (m *UnitInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Shields |= (int32(b) & 0x7F) << shift
+				m.Shields |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3330,7 +3349,7 @@ func (m *UnitInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Energy |= (int32(b) & 0x7F) << shift
+				m.Energy |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3349,7 +3368,7 @@ func (m *UnitInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TransportSlotsTaken |= (int32(b) & 0x7F) << shift
+				m.TransportSlotsTaken |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3379,7 +3398,7 @@ func (m *UnitInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3388,6 +3407,9 @@ func (m *UnitInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3412,7 +3434,7 @@ func (m *UnitInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.MaxHealth |= (int32(b) & 0x7F) << shift
+				m.MaxHealth |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3431,7 +3453,7 @@ func (m *UnitInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.MaxShields |= (int32(b) & 0x7F) << shift
+				m.MaxShields |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3450,7 +3472,7 @@ func (m *UnitInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.MaxEnergy |= (int32(b) & 0x7F) << shift
+				m.MaxEnergy |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3461,7 +3483,7 @@ func (m *UnitInfo) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -3491,7 +3513,7 @@ func (m *SinglePanel) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3519,7 +3541,7 @@ func (m *SinglePanel) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3528,6 +3550,9 @@ func (m *SinglePanel) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3552,7 +3577,7 @@ func (m *SinglePanel) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AttackUpgradeLevel |= (int32(b) & 0x7F) << shift
+				m.AttackUpgradeLevel |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3571,7 +3596,7 @@ func (m *SinglePanel) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ArmorUpgradeLevel |= (int32(b) & 0x7F) << shift
+				m.ArmorUpgradeLevel |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3590,7 +3615,7 @@ func (m *SinglePanel) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ShieldUpgradeLevel |= (int32(b) & 0x7F) << shift
+				m.ShieldUpgradeLevel |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3607,7 +3632,7 @@ func (m *SinglePanel) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int32(b) & 0x7F) << shift
+					v |= int32(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -3624,7 +3649,7 @@ func (m *SinglePanel) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -3633,12 +3658,15 @@ func (m *SinglePanel) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthUi
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthUi
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -3658,7 +3686,7 @@ func (m *SinglePanel) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int32(b) & 0x7F) << shift
+						v |= int32(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -3674,7 +3702,7 @@ func (m *SinglePanel) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -3704,7 +3732,7 @@ func (m *MultiPanel) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3732,7 +3760,7 @@ func (m *MultiPanel) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3741,6 +3769,9 @@ func (m *MultiPanel) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3755,7 +3786,7 @@ func (m *MultiPanel) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -3785,7 +3816,7 @@ func (m *CargoPanel) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3813,7 +3844,7 @@ func (m *CargoPanel) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3822,6 +3853,9 @@ func (m *CargoPanel) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3846,7 +3880,7 @@ func (m *CargoPanel) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3855,6 +3889,9 @@ func (m *CargoPanel) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3877,7 +3914,7 @@ func (m *CargoPanel) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.SlotsAvailable |= (int32(b) & 0x7F) << shift
+				m.SlotsAvailable |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3888,7 +3925,7 @@ func (m *CargoPanel) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -3918,7 +3955,7 @@ func (m *BuildItem) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3946,7 +3983,7 @@ func (m *BuildItem) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AbilityId |= (AbilityID(b) & 0x7F) << shift
+				m.AbilityId |= AbilityID(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3968,7 +4005,7 @@ func (m *BuildItem) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -3998,7 +4035,7 @@ func (m *ProductionPanel) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -4026,7 +4063,7 @@ func (m *ProductionPanel) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4035,6 +4072,9 @@ func (m *ProductionPanel) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4059,7 +4099,7 @@ func (m *ProductionPanel) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4068,6 +4108,9 @@ func (m *ProductionPanel) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4090,7 +4133,7 @@ func (m *ProductionPanel) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4099,6 +4142,9 @@ func (m *ProductionPanel) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4113,7 +4159,7 @@ func (m *ProductionPanel) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -4143,7 +4189,7 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -4171,7 +4217,7 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4180,6 +4226,9 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4203,7 +4252,7 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4212,6 +4261,9 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4235,7 +4287,7 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4244,6 +4296,9 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4267,7 +4322,7 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4276,6 +4331,9 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4299,7 +4357,7 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4308,6 +4366,9 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4331,7 +4392,7 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4340,6 +4401,9 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4363,7 +4427,7 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4372,6 +4436,9 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4395,7 +4462,7 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4404,6 +4471,9 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4427,7 +4497,7 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4436,6 +4506,9 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthUi
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthUi
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4451,7 +4524,7 @@ func (m *ActionUI) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -4481,7 +4554,7 @@ func (m *ActionControlGroup) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -4509,7 +4582,7 @@ func (m *ActionControlGroup) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Action |= (ActionControlGroup_ControlGroupAction(b) & 0x7F) << shift
+				m.Action |= ActionControlGroup_ControlGroupAction(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4528,7 +4601,7 @@ func (m *ActionControlGroup) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ControlGroupIndex |= (uint32(b) & 0x7F) << shift
+				m.ControlGroupIndex |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4539,7 +4612,7 @@ func (m *ActionControlGroup) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -4569,7 +4642,7 @@ func (m *ActionSelectArmy) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -4597,7 +4670,7 @@ func (m *ActionSelectArmy) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4609,7 +4682,7 @@ func (m *ActionSelectArmy) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -4639,7 +4712,7 @@ func (m *ActionSelectWarpGates) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -4667,7 +4740,7 @@ func (m *ActionSelectWarpGates) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4679,7 +4752,7 @@ func (m *ActionSelectWarpGates) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -4709,7 +4782,7 @@ func (m *ActionSelectLarva) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -4729,7 +4802,7 @@ func (m *ActionSelectLarva) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -4759,7 +4832,7 @@ func (m *ActionSelectIdleWorker) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -4787,7 +4860,7 @@ func (m *ActionSelectIdleWorker) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Type |= (ActionSelectIdleWorker_Type(b) & 0x7F) << shift
+				m.Type |= ActionSelectIdleWorker_Type(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4798,7 +4871,7 @@ func (m *ActionSelectIdleWorker) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -4828,7 +4901,7 @@ func (m *ActionMultiPanel) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -4856,7 +4929,7 @@ func (m *ActionMultiPanel) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Type |= (ActionMultiPanel_Type(b) & 0x7F) << shift
+				m.Type |= ActionMultiPanel_Type(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4875,7 +4948,7 @@ func (m *ActionMultiPanel) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.UnitIndex |= (int32(b) & 0x7F) << shift
+				m.UnitIndex |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4886,7 +4959,7 @@ func (m *ActionMultiPanel) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -4916,7 +4989,7 @@ func (m *ActionCargoPanelUnload) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -4944,7 +5017,7 @@ func (m *ActionCargoPanelUnload) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.UnitIndex |= (int32(b) & 0x7F) << shift
+				m.UnitIndex |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4955,7 +5028,7 @@ func (m *ActionCargoPanelUnload) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -4985,7 +5058,7 @@ func (m *ActionProductionPanelRemoveFromQueue) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -5013,7 +5086,7 @@ func (m *ActionProductionPanelRemoveFromQueue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.UnitIndex |= (int32(b) & 0x7F) << shift
+				m.UnitIndex |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -5024,7 +5097,7 @@ func (m *ActionProductionPanelRemoveFromQueue) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -5054,7 +5127,7 @@ func (m *ActionToggleAutocast) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -5082,7 +5155,7 @@ func (m *ActionToggleAutocast) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AbilityId |= (AbilityID(b) & 0x7F) << shift
+				m.AbilityId |= AbilityID(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -5093,7 +5166,7 @@ func (m *ActionToggleAutocast) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthUi
 			}
 			if (iNdEx + skippy) > l {
@@ -5111,6 +5184,7 @@ func (m *ActionToggleAutocast) Unmarshal(dAtA []byte) error {
 func skipUi(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -5142,10 +5216,8 @@ func skipUi(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -5162,144 +5234,34 @@ func skipUi(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthUi
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowUi
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipUi(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupUi
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthUi
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthUi = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowUi   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthUi        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowUi          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupUi = fmt.Errorf("proto: unexpected end of group")
 )
-
-func init() { proto.RegisterFile("ui.proto", fileDescriptor_ui_0a4a812a4b9539d9) }
-
-var fileDescriptor_ui_0a4a812a4b9539d9 = []byte{
-	// 1354 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x57, 0x4f, 0x6f, 0x13, 0x47,
-	0x14, 0xf7, 0xda, 0x5e, 0xc7, 0x79, 0x8e, 0xed, 0xcd, 0x24, 0x41, 0x2e, 0x2d, 0x89, 0xbb, 0x40,
-	0x1b, 0x09, 0x94, 0x22, 0x17, 0x04, 0x48, 0x48, 0x95, 0x93, 0x00, 0xb6, 0x04, 0x4a, 0xba, 0x26,
-	0x45, 0xea, 0x65, 0x3b, 0xf1, 0x4e, 0xcc, 0x8a, 0xf1, 0xee, 0x76, 0x76, 0x1c, 0xf0, 0xa9, 0xf7,
-	0x1e, 0xaa, 0x1e, 0x7a, 0x45, 0x3d, 0xf4, 0x0b, 0xf4, 0x23, 0xf4, 0xd8, 0x23, 0xc7, 0x4a, 0x55,
-	0x51, 0x05, 0xea, 0x97, 0xe0, 0x54, 0xcd, 0x9f, 0xf5, 0x9f, 0x8d, 0xe3, 0x84, 0x53, 0x3c, 0xef,
-	0xfd, 0x7e, 0x6f, 0xdf, 0xbc, 0xbf, 0x13, 0x28, 0x0e, 0xfc, 0xad, 0x88, 0x85, 0x3c, 0x44, 0x95,
-	0xce, 0x4e, 0xa3, 0xb9, 0xdf, 0xde, 0x17, 0x87, 0x6e, 0x48, 0x2f, 0x42, 0x2f, 0xec, 0x85, 0x4a,
-	0x67, 0xff, 0x9e, 0x85, 0xf2, 0xde, 0x61, 0x4c, 0xd8, 0x31, 0xe6, 0x7e, 0x18, 0x1c, 0xb4, 0xd1,
-	0x4d, 0x28, 0xf4, 0x58, 0x38, 0x88, 0xe2, 0x9a, 0x51, 0xcf, 0x6d, 0x96, 0x1a, 0x9f, 0x6c, 0x4d,
-	0xd3, 0xb7, 0x76, 0xc2, 0x80, 0xb3, 0x90, 0x3e, 0x14, 0x20, 0x47, 0x63, 0xd1, 0x2d, 0x28, 0xc4,
-	0x7e, 0xd0, 0xa3, 0xa4, 0x96, 0xad, 0x1b, 0x9b, 0xa5, 0xc6, 0xc7, 0x69, 0x56, 0x47, 0x6a, 0xf7,
-	0x71, 0x40, 0x68, 0x2b, 0xe3, 0x68, 0x30, 0x6a, 0x80, 0xd9, 0x1f, 0x50, 0xee, 0xd7, 0x72, 0x92,
-	0x75, 0x31, 0xcd, 0x7a, 0x2c, 0x94, 0x09, 0x49, 0x41, 0x05, 0xa7, 0x8b, 0x59, 0x2f, 0xac, 0xe5,
-	0x67, 0x73, 0x76, 0x84, 0x72, 0xc4, 0x91, 0x50, 0xd4, 0x04, 0x88, 0x58, 0xe8, 0x0d, 0xba, 0xe2,
-	0x92, 0x35, 0x53, 0x12, 0x37, 0xd2, 0xc4, 0xfd, 0x11, 0x22, 0x61, 0x4f, 0x90, 0xb6, 0x17, 0xc0,
-	0x8c, 0x84, 0xd8, 0xfe, 0xc9, 0x80, 0xa5, 0xc9, 0x18, 0xa0, 0x2d, 0x58, 0xe9, 0xaa, 0xb3, 0x2b,
-	0xa3, 0xe1, 0xfa, 0x81, 0x47, 0x5e, 0xd6, 0x8c, 0xba, 0xb1, 0x59, 0x76, 0x96, 0xbb, 0x13, 0xd0,
-	0xb6, 0x50, 0xa0, 0x3b, 0x60, 0x51, 0x82, 0x3d, 0xc2, 0xdc, 0x41, 0xe0, 0x73, 0x97, 0x0f, 0x23,
-	0x15, 0xb5, 0xf2, 0x76, 0xe5, 0xfd, 0x9b, 0x0d, 0x38, 0x08, 0x7c, 0xfe, 0x64, 0x18, 0x91, 0xf6,
-	0xae, 0x53, 0x51, 0xb8, 0x44, 0x82, 0x56, 0xc1, 0xec, 0x86, 0x83, 0x80, 0xcb, 0x70, 0x95, 0x1d,
-	0x75, 0xb0, 0x7f, 0xcb, 0x41, 0x51, 0x40, 0xda, 0xc1, 0x51, 0x88, 0xae, 0xc1, 0xe2, 0xd8, 0xaa,
-	0x31, 0xd3, 0x6a, 0x71, 0x90, 0xd8, 0xbb, 0x05, 0xd5, 0x88, 0xe2, 0x21, 0x61, 0x2e, 0x23, 0x14,
-	0x73, 0xff, 0x38, 0x71, 0x64, 0xe9, 0xfd, 0x9b, 0x8d, 0xe2, 0xbe, 0x54, 0x09, 0x37, 0x14, 0xc8,
-	0xd1, 0x18, 0x74, 0x01, 0x0a, 0xcf, 0x08, 0xa6, 0xfc, 0x99, 0xf4, 0xc3, 0x74, 0xf4, 0x09, 0xd5,
-	0x60, 0x21, 0x7e, 0xe6, 0x13, 0xea, 0xc5, 0x32, 0x37, 0xa6, 0x93, 0x1c, 0x05, 0x83, 0x04, 0x84,
-	0xf5, 0x86, 0x32, 0xf6, 0xa6, 0xa3, 0x4f, 0xa8, 0x01, 0x6b, 0x9c, 0xe1, 0x20, 0x8e, 0x42, 0xc6,
-	0xdd, 0x98, 0x86, 0x3c, 0x76, 0x39, 0x7e, 0x4e, 0x82, 0x5a, 0x41, 0xc2, 0x56, 0x46, 0xca, 0x8e,
-	0xd0, 0x3d, 0x11, 0x2a, 0x74, 0x15, 0x2a, 0x87, 0x03, 0x9f, 0x7a, 0x6e, 0xc4, 0xc2, 0x1e, 0x23,
-	0x71, 0x5c, 0x5b, 0xa8, 0x1b, 0x9b, 0x59, 0xa7, 0x2c, 0xa5, 0xfb, 0x5a, 0x88, 0xbe, 0x80, 0x02,
-	0xf6, 0x3c, 0x37, 0x0c, 0x6a, 0x45, 0x99, 0xee, 0x5a, 0x3a, 0xdd, 0x49, 0xc8, 0x1c, 0x13, 0x7b,
-	0xde, 0x5e, 0x80, 0x2e, 0x01, 0xf4, 0xf1, 0x4b, 0x57, 0xdf, 0x6c, 0x51, 0x3a, 0xb0, 0xd8, 0xc7,
-	0x2f, 0x5b, 0xea, 0x72, 0x1b, 0x50, 0x12, 0xea, 0xe4, 0x82, 0x20, 0xf5, 0x82, 0xd1, 0xd1, 0x77,
-	0xd4, 0x7c, 0x7d, 0xcf, 0xd2, 0x88, 0x7f, 0x5f, 0x0a, 0xec, 0xff, 0x0c, 0x28, 0x4d, 0x34, 0x01,
-	0xba, 0x0e, 0x79, 0x91, 0x07, 0x99, 0xa3, 0x79, 0xde, 0x49, 0x14, 0xba, 0x01, 0xab, 0x98, 0x73,
-	0xdc, 0x7d, 0xee, 0x0e, 0xa2, 0x1e, 0xc3, 0x1e, 0x71, 0x29, 0x39, 0x26, 0x54, 0xa6, 0xcb, 0x74,
-	0x90, 0xd2, 0x1d, 0x28, 0xd5, 0x23, 0xa1, 0x11, 0x55, 0x89, 0x59, 0x3f, 0x64, 0x29, 0x82, 0xca,
-	0xd8, 0xb2, 0x54, 0x4d, 0xe1, 0x6f, 0xc0, 0xaa, 0xba, 0x5b, 0x8a, 0xa0, 0x32, 0x89, 0x94, 0x6e,
-	0x8a, 0xb1, 0x0a, 0xe6, 0xe1, 0xe0, 0xe8, 0x28, 0xae, 0x99, 0xf5, 0xdc, 0xa6, 0xe9, 0xa8, 0x83,
-	0x7d, 0x0f, 0x60, 0xdc, 0xb5, 0x68, 0x0b, 0x4c, 0xe1, 0x7f, 0x32, 0x4c, 0xe6, 0x24, 0x41, 0xc2,
-	0xec, 0x57, 0x06, 0xc0, 0xb8, 0x81, 0x3f, 0x30, 0x48, 0x77, 0x00, 0x22, 0x1c, 0xc7, 0x24, 0xe8,
-	0x11, 0x16, 0xd7, 0xb2, 0x67, 0x7c, 0x71, 0x02, 0x8b, 0x3e, 0x87, 0xaa, 0xaa, 0x3e, 0x7c, 0x8c,
-	0x7d, 0x8a, 0x0f, 0x29, 0xd1, 0x81, 0xaa, 0x48, 0x71, 0x33, 0x91, 0xda, 0xdf, 0xc1, 0xe2, 0xb6,
-	0x28, 0xb3, 0x36, 0x27, 0x7d, 0x74, 0x1d, 0x00, 0x1f, 0xfa, 0xd4, 0xe7, 0x43, 0xd7, 0xf7, 0x74,
-	0xb3, 0x95, 0xdf, 0xbf, 0xd9, 0x58, 0x6c, 0x2a, 0x69, 0x7b, 0xd7, 0x59, 0xd4, 0x80, 0xb6, 0x37,
-	0xa3, 0x6e, 0xb3, 0x33, 0xea, 0xd6, 0xfe, 0xc3, 0x80, 0x6a, 0x6a, 0x12, 0x7d, 0x60, 0x18, 0xee,
-	0x42, 0x49, 0x7d, 0xe8, 0xfb, 0x01, 0x19, 0x90, 0xb3, 0xe3, 0x20, 0xc1, 0x5f, 0x0b, 0x2c, 0xda,
-	0x05, 0x6b, 0x3c, 0xf2, 0x34, 0x3f, 0x27, 0xf9, 0x1f, 0xa5, 0xf9, 0xa3, 0x30, 0x38, 0xd5, 0x31,
-	0x45, 0x5a, 0xb1, 0xff, 0x31, 0xa1, 0xd8, 0xec, 0xea, 0x7d, 0xd2, 0x86, 0xf2, 0xd4, 0x74, 0xd4,
-	0x97, 0xb0, 0xd3, 0xf6, 0x14, 0x61, 0x72, 0xb0, 0xb6, 0x32, 0xce, 0xd2, 0xe4, 0xf4, 0x44, 0x3b,
-	0x50, 0x8a, 0x09, 0x25, 0x5d, 0xee, 0x62, 0xd6, 0x1f, 0xea, 0x4d, 0x53, 0x9f, 0x6d, 0xa8, 0x23,
-	0x81, 0x4d, 0xd6, 0x1f, 0x8a, 0x39, 0x1e, 0x8f, 0x4e, 0xa8, 0x03, 0xcb, 0xda, 0xc8, 0x0b, 0xcc,
-	0x22, 0xb7, 0x87, 0x39, 0x89, 0xf5, 0xfa, 0xb9, 0x3a, 0xcf, 0xd4, 0x53, 0xcc, 0xa2, 0x87, 0x02,
-	0xdc, 0xca, 0x38, 0xd5, 0x78, 0x5a, 0x84, 0x1e, 0xc0, 0x92, 0x36, 0x4a, 0x31, 0x3b, 0xc6, 0x7a,
-	0x35, 0x7d, 0x3a, 0xcf, 0xde, 0x23, 0x01, 0x6c, 0x65, 0x1c, 0x7d, 0x25, 0x79, 0x44, 0xdf, 0x00,
-	0xd2, 0x76, 0x7c, 0x8f, 0x12, 0xf7, 0x45, 0xc8, 0x9e, 0x13, 0xa6, 0xf7, 0xd5, 0x67, 0xf3, 0xac,
-	0xb5, 0x3d, 0x4a, 0x9e, 0x4a, 0x74, 0x2b, 0xe3, 0x58, 0x71, 0x4a, 0x26, 0x22, 0x27, 0x97, 0xa7,
-	0x2b, 0x57, 0x98, 0x9c, 0xae, 0xa7, 0x46, 0x6e, 0x6a, 0xe7, 0x42, 0x7f, 0xdc, 0xcb, 0x6d, 0x28,
-	0xc9, 0x6d, 0xaa, 0x8d, 0x2c, 0xcc, 0xf3, 0x6a, 0xdc, 0xc3, 0x07, 0x01, 0x0d, 0xb1, 0x27, 0x4c,
-	0x75, 0xc7, 0x7d, 0x8d, 0xa7, 0xea, 0x4c, 0xd9, 0x53, 0x63, 0xfa, 0xe6, 0x6c, 0x7b, 0xa9, 0x8e,
-	0x70, 0x48, 0x3f, 0x3c, 0x26, 0x0f, 0x58, 0xd8, 0x97, 0x15, 0x27, 0x52, 0x12, 0xa5, 0x7a, 0x66,
-	0x0f, 0xaa, 0x3c, 0xec, 0xf5, 0x28, 0x71, 0xf1, 0x80, 0x87, 0x5d, 0x1c, 0x73, 0x39, 0xd3, 0x4b,
-	0x8d, 0x2b, 0xb3, 0xbf, 0xf0, 0x44, 0x82, 0x9b, 0x1a, 0xdb, 0xca, 0x38, 0x15, 0x3e, 0x25, 0xd9,
-	0x2e, 0x42, 0x01, 0x4b, 0xa4, 0xfd, 0x4b, 0x16, 0xd0, 0xc9, 0x72, 0x45, 0x8f, 0x13, 0x80, 0x2c,
-	0xf1, 0x4a, 0xe3, 0xd6, 0xd9, 0x25, 0x3e, 0xf5, 0x98, 0x52, 0x6a, 0x47, 0x1b, 0x39, 0xed, 0x59,
-	0x91, 0x3d, 0xe5, 0x59, 0x61, 0xff, 0x00, 0xe8, 0xa4, 0x35, 0x74, 0x19, 0x2e, 0x9c, 0x94, 0xba,
-	0x81, 0x4f, 0xad, 0xcc, 0xc5, 0x85, 0x1f, 0x5f, 0xd5, 0x73, 0x81, 0x4f, 0x11, 0x40, 0xc1, 0x21,
-	0x5d, 0x4c, 0xa9, 0x65, 0xa0, 0x05, 0xc8, 0x75, 0x08, 0xb7, 0xb2, 0x42, 0xd8, 0x8c, 0x22, 0x12,
-	0x78, 0x56, 0x0e, 0x55, 0xa1, 0xd4, 0x21, 0xbc, 0x19, 0x78, 0x1d, 0x4e, 0x30, 0xb5, 0xf2, 0x08,
-	0x41, 0x45, 0x29, 0x47, 0x32, 0xd3, 0xbe, 0x0d, 0x56, 0xba, 0xf7, 0xd0, 0x65, 0x28, 0xab, 0x62,
-	0x14, 0x5f, 0xc5, 0x9e, 0x9a, 0x92, 0x45, 0x67, 0x69, 0x24, 0x6c, 0x7a, 0x9e, 0x7d, 0x0f, 0xd6,
-	0x66, 0x76, 0xda, 0xf9, 0xd8, 0x2b, 0xb0, 0x7c, 0xa2, 0xaf, 0xec, 0x5f, 0x0d, 0xb8, 0x30, 0xbb,
-	0x3f, 0xd0, 0x57, 0x90, 0x1f, 0x3d, 0x8e, 0x2a, 0x8d, 0x6b, 0xe7, 0xeb, 0xaa, 0x2d, 0xf1, 0x5e,
-	0x72, 0x24, 0xd1, 0xde, 0x85, 0xbc, 0x7c, 0x3d, 0xad, 0x41, 0x51, 0xfc, 0x4d, 0x07, 0x53, 0x07,
-	0x50, 0x46, 0xb2, 0xe9, 0x79, 0x56, 0x56, 0xfe, 0xa0, 0xd4, 0xca, 0xc9, 0x90, 0x7a, 0x9e, 0xf8,
-	0x9d, 0xb7, 0xff, 0x36, 0x92, 0x70, 0x4d, 0xac, 0xcb, 0xbb, 0x53, 0xbe, 0x5d, 0x3d, 0xab, 0x41,
-	0x27, 0xbc, 0x12, 0xcf, 0x0f, 0xf9, 0xf0, 0x1b, 0x57, 0x89, 0xe9, 0xc8, 0xa7, 0xa0, 0xaa, 0x8e,
-	0xfe, 0x7c, 0xa7, 0x2d, 0x58, 0x52, 0x8f, 0x13, 0x75, 0x71, 0xcb, 0x10, 0x92, 0x5d, 0xa2, 0x02,
-	0x2d, 0x56, 0x85, 0x95, 0x45, 0x2b, 0x50, 0xd5, 0x99, 0xa5, 0x74, 0xef, 0x48, 0x58, 0xb1, 0x72,
-	0x68, 0x0d, 0x96, 0x13, 0xd8, 0x58, 0x9c, 0xb7, 0x6f, 0x27, 0xe1, 0x4f, 0x0f, 0x82, 0x94, 0x9f,
-	0x46, 0xda, 0xcf, 0xfb, 0x70, 0xe5, 0x3c, 0x1d, 0x7f, 0x96, 0x99, 0x5d, 0x58, 0x9d, 0xd5, 0xd6,
-	0x33, 0x56, 0xb6, 0x79, 0xfa, 0xca, 0xde, 0xbe, 0xf4, 0xe7, 0xdb, 0x75, 0xe3, 0xf5, 0xdb, 0x75,
-	0xe3, 0xdf, 0xb7, 0xeb, 0xc6, 0xcf, 0xef, 0xd6, 0x33, 0xaf, 0xdf, 0xad, 0x67, 0xfe, 0x7a, 0xb7,
-	0x9e, 0xf9, 0x36, 0x87, 0x23, 0xff, 0xb0, 0x20, 0xff, 0x87, 0xfa, 0xf2, 0xff, 0x00, 0x00, 0x00,
-	0xff, 0xff, 0xb8, 0x24, 0x68, 0x12, 0x6b, 0x0d, 0x00, 0x00,
-}

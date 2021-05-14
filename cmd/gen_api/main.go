@@ -3,13 +3,12 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"gopkg.in/src-d/go-git.v4"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
-
-	"gopkg.in/src-d/go-git.v4"
 )
 
 func main() {
@@ -39,9 +38,10 @@ func main() {
 	files, err := ioutil.ReadDir(protoDir)
 	check(err)
 
+	s := string(os.PathSeparator)
 	protocArgs := []string{
-		"-I=" + os.Getenv("GOPATH") + "/src/github.com/gogo/protobuf/gogoproto",
-		"-I=" + os.Getenv("GOPATH") + "/src/github.com/gogo/protobuf/protobuf",
+		"-I=" + os.Getenv("GOPATH") + s + "src" + s + "github.com" + s + "gogo" + s + "protobuf" + s + "gogoproto",
+		"-I=" + os.Getenv("GOPATH") + s + "src" + s + "github.com" + s + "gogo" + s + "protobuf" + s + "protobuf",
 		"--proto_path=" + protoDir,
 		"--gogofaster_out=api",
 	}
@@ -67,9 +67,10 @@ func main() {
 	}
 
 	// Generate go code from the .proto files
+	fmt.Println("protoc " + strings.Join(protocArgs, " ") + "\n\n")
 	out, err := exec.Command("protoc", protocArgs...).CombinedOutput()
-	fmt.Print(string(out))
-	check(err)
+	fmt.Println(string(out) + "\n\n")
+	fmt.Println(err)
 }
 
 // Thing we want to use twice
@@ -101,7 +102,7 @@ func upgradeProto(path string) []string {
 		switch {
 		// Upgrade to proto3 and set the go package name
 		case line == "syntax = \"proto2\";":
-			lines = append(lines, "syntax = \"proto3\";", "option go_package = \"api\";\nimport \"gogo.proto\";")
+			lines = append(lines, "syntax = \"proto3\";", "option go_package = \"./;api\";\nimport \"gogo.proto\";")
 
 		// Remove subdirectory of the import so the output path isn't nested
 		case strings.HasPrefix(line, importPrefix):
