@@ -22,7 +22,7 @@ func SetMap(name string) {
 
 // Random1v1Map returns a random map name from the current 1v1 ladder map pool.
 func Random1v1Map() string {
-	currentMaps := maps2019ladder8
+	currentMaps := maps2021season1
 
 	rand.Seed(time.Now().UnixNano())
 	return currentMaps[rand.Intn(len(currentMaps))] + ".SC2Map"
@@ -76,4 +76,14 @@ var maps2019ladder8 = []string{
 	"TritonLE",
 	"WintersGateLE",
 	"WorldofSleepersLE",
+}
+
+var maps2021season1 = []string{
+	"DeathAura506",
+	"EternalEmpire506",
+	"EverDream506",
+	"GoldenWall506",
+	"IceandChrome506",
+	"PillarsofGold506",
+	"Submarine506",
 }

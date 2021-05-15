@@ -65,7 +65,6 @@ func (config *gameConfig) launchProcesses(clients []*client.Client) []client.Pro
 		if len(path) > 0 {
 			log.Printf("%v does not exist on your filesystem.", path)
 		}
-		os.Exit(1)
 	}
 
 	info := make([]client.ProcessInfo, len(clients))

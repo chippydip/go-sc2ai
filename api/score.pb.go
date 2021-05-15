@@ -3,14 +3,15 @@
 
 package api
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/gogo/protobuf/gogoproto"
-
-import encoding_binary "encoding/binary"
-
-import io "io"
+import (
+	encoding_binary "encoding/binary"
+	fmt "fmt"
+	_ "github.com/gogo/protobuf/gogoproto"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+	math_bits "math/bits"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +22,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Score_ScoreType int32
 
@@ -36,6 +37,7 @@ var Score_ScoreType_name = map[int32]string{
 	1: "Curriculum",
 	2: "Melee",
 }
+
 var Score_ScoreType_value = map[string]int32{
 	"ScoreType_nil": 0,
 	"Curriculum":    1,
@@ -45,21 +47,22 @@ var Score_ScoreType_value = map[string]int32{
 func (x Score_ScoreType) String() string {
 	return proto.EnumName(Score_ScoreType_name, int32(x))
 }
+
 func (Score_ScoreType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_score_a39149de0dd858c1, []int{0, 0}
+	return fileDescriptor_c51f80048ffc9fcd, []int{0, 0}
 }
 
 type Score struct {
 	ScoreType    Score_ScoreType `protobuf:"varint,6,opt,name=score_type,json=scoreType,proto3,enum=SC2APIProtocol.Score_ScoreType" json:"score_type,omitempty"`
 	Score        int32           `protobuf:"varint,7,opt,name=score,proto3" json:"score,omitempty"`
-	ScoreDetails *ScoreDetails   `protobuf:"bytes,8,opt,name=score_details,json=scoreDetails" json:"score_details,omitempty"`
+	ScoreDetails *ScoreDetails   `protobuf:"bytes,8,opt,name=score_details,json=scoreDetails,proto3" json:"score_details,omitempty"`
 }
 
 func (m *Score) Reset()         { *m = Score{} }
 func (m *Score) String() string { return proto.CompactTextString(m) }
 func (*Score) ProtoMessage()    {}
 func (*Score) Descriptor() ([]byte, []int) {
-	return fileDescriptor_score_a39149de0dd858c1, []int{0}
+	return fileDescriptor_c51f80048ffc9fcd, []int{0}
 }
 func (m *Score) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -69,15 +72,15 @@ func (m *Score) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Score.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *Score) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Score.Merge(dst, src)
+func (m *Score) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Score.Merge(m, src)
 }
 func (m *Score) XXX_Size() int {
 	return m.Size()
@@ -121,7 +124,7 @@ func (m *CategoryScoreDetails) Reset()         { *m = CategoryScoreDetails{} }
 func (m *CategoryScoreDetails) String() string { return proto.CompactTextString(m) }
 func (*CategoryScoreDetails) ProtoMessage()    {}
 func (*CategoryScoreDetails) Descriptor() ([]byte, []int) {
-	return fileDescriptor_score_a39149de0dd858c1, []int{1}
+	return fileDescriptor_c51f80048ffc9fcd, []int{1}
 }
 func (m *CategoryScoreDetails) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -131,15 +134,15 @@ func (m *CategoryScoreDetails) XXX_Marshal(b []byte, deterministic bool) ([]byte
 		return xxx_messageInfo_CategoryScoreDetails.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *CategoryScoreDetails) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CategoryScoreDetails.Merge(dst, src)
+func (m *CategoryScoreDetails) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CategoryScoreDetails.Merge(m, src)
 }
 func (m *CategoryScoreDetails) XXX_Size() int {
 	return m.Size()
@@ -195,7 +198,7 @@ func (m *VitalScoreDetails) Reset()         { *m = VitalScoreDetails{} }
 func (m *VitalScoreDetails) String() string { return proto.CompactTextString(m) }
 func (*VitalScoreDetails) ProtoMessage()    {}
 func (*VitalScoreDetails) Descriptor() ([]byte, []int) {
-	return fileDescriptor_score_a39149de0dd858c1, []int{2}
+	return fileDescriptor_c51f80048ffc9fcd, []int{2}
 }
 func (m *VitalScoreDetails) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -205,15 +208,15 @@ func (m *VitalScoreDetails) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return xxx_messageInfo_VitalScoreDetails.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *VitalScoreDetails) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_VitalScoreDetails.Merge(dst, src)
+func (m *VitalScoreDetails) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_VitalScoreDetails.Merge(m, src)
 }
 func (m *VitalScoreDetails) XXX_Size() int {
 	return m.Size()
@@ -258,20 +261,20 @@ type ScoreDetails struct {
 	CollectionRateVespene  float32               `protobuf:"fixed32,10,opt,name=collection_rate_vespene,json=collectionRateVespene,proto3" json:"collection_rate_vespene,omitempty"`
 	SpentMinerals          float32               `protobuf:"fixed32,11,opt,name=spent_minerals,json=spentMinerals,proto3" json:"spent_minerals,omitempty"`
 	SpentVespene           float32               `protobuf:"fixed32,12,opt,name=spent_vespene,json=spentVespene,proto3" json:"spent_vespene,omitempty"`
-	FoodUsed               *CategoryScoreDetails `protobuf:"bytes,13,opt,name=food_used,json=foodUsed" json:"food_used,omitempty"`
-	KilledMinerals         *CategoryScoreDetails `protobuf:"bytes,14,opt,name=killed_minerals,json=killedMinerals" json:"killed_minerals,omitempty"`
-	KilledVespene          *CategoryScoreDetails `protobuf:"bytes,15,opt,name=killed_vespene,json=killedVespene" json:"killed_vespene,omitempty"`
-	LostMinerals           *CategoryScoreDetails `protobuf:"bytes,16,opt,name=lost_minerals,json=lostMinerals" json:"lost_minerals,omitempty"`
-	LostVespene            *CategoryScoreDetails `protobuf:"bytes,17,opt,name=lost_vespene,json=lostVespene" json:"lost_vespene,omitempty"`
-	FriendlyFireMinerals   *CategoryScoreDetails `protobuf:"bytes,18,opt,name=friendly_fire_minerals,json=friendlyFireMinerals" json:"friendly_fire_minerals,omitempty"`
-	FriendlyFireVespene    *CategoryScoreDetails `protobuf:"bytes,19,opt,name=friendly_fire_vespene,json=friendlyFireVespene" json:"friendly_fire_vespene,omitempty"`
-	UsedMinerals           *CategoryScoreDetails `protobuf:"bytes,20,opt,name=used_minerals,json=usedMinerals" json:"used_minerals,omitempty"`
-	UsedVespene            *CategoryScoreDetails `protobuf:"bytes,21,opt,name=used_vespene,json=usedVespene" json:"used_vespene,omitempty"`
-	TotalUsedMinerals      *CategoryScoreDetails `protobuf:"bytes,22,opt,name=total_used_minerals,json=totalUsedMinerals" json:"total_used_minerals,omitempty"`
-	TotalUsedVespene       *CategoryScoreDetails `protobuf:"bytes,23,opt,name=total_used_vespene,json=totalUsedVespene" json:"total_used_vespene,omitempty"`
-	TotalDamageDealt       *VitalScoreDetails    `protobuf:"bytes,24,opt,name=total_damage_dealt,json=totalDamageDealt" json:"total_damage_dealt,omitempty"`
-	TotalDamageTaken       *VitalScoreDetails    `protobuf:"bytes,25,opt,name=total_damage_taken,json=totalDamageTaken" json:"total_damage_taken,omitempty"`
-	TotalHealed            *VitalScoreDetails    `protobuf:"bytes,26,opt,name=total_healed,json=totalHealed" json:"total_healed,omitempty"`
+	FoodUsed               *CategoryScoreDetails `protobuf:"bytes,13,opt,name=food_used,json=foodUsed,proto3" json:"food_used,omitempty"`
+	KilledMinerals         *CategoryScoreDetails `protobuf:"bytes,14,opt,name=killed_minerals,json=killedMinerals,proto3" json:"killed_minerals,omitempty"`
+	KilledVespene          *CategoryScoreDetails `protobuf:"bytes,15,opt,name=killed_vespene,json=killedVespene,proto3" json:"killed_vespene,omitempty"`
+	LostMinerals           *CategoryScoreDetails `protobuf:"bytes,16,opt,name=lost_minerals,json=lostMinerals,proto3" json:"lost_minerals,omitempty"`
+	LostVespene            *CategoryScoreDetails `protobuf:"bytes,17,opt,name=lost_vespene,json=lostVespene,proto3" json:"lost_vespene,omitempty"`
+	FriendlyFireMinerals   *CategoryScoreDetails `protobuf:"bytes,18,opt,name=friendly_fire_minerals,json=friendlyFireMinerals,proto3" json:"friendly_fire_minerals,omitempty"`
+	FriendlyFireVespene    *CategoryScoreDetails `protobuf:"bytes,19,opt,name=friendly_fire_vespene,json=friendlyFireVespene,proto3" json:"friendly_fire_vespene,omitempty"`
+	UsedMinerals           *CategoryScoreDetails `protobuf:"bytes,20,opt,name=used_minerals,json=usedMinerals,proto3" json:"used_minerals,omitempty"`
+	UsedVespene            *CategoryScoreDetails `protobuf:"bytes,21,opt,name=used_vespene,json=usedVespene,proto3" json:"used_vespene,omitempty"`
+	TotalUsedMinerals      *CategoryScoreDetails `protobuf:"bytes,22,opt,name=total_used_minerals,json=totalUsedMinerals,proto3" json:"total_used_minerals,omitempty"`
+	TotalUsedVespene       *CategoryScoreDetails `protobuf:"bytes,23,opt,name=total_used_vespene,json=totalUsedVespene,proto3" json:"total_used_vespene,omitempty"`
+	TotalDamageDealt       *VitalScoreDetails    `protobuf:"bytes,24,opt,name=total_damage_dealt,json=totalDamageDealt,proto3" json:"total_damage_dealt,omitempty"`
+	TotalDamageTaken       *VitalScoreDetails    `protobuf:"bytes,25,opt,name=total_damage_taken,json=totalDamageTaken,proto3" json:"total_damage_taken,omitempty"`
+	TotalHealed            *VitalScoreDetails    `protobuf:"bytes,26,opt,name=total_healed,json=totalHealed,proto3" json:"total_healed,omitempty"`
 	CurrentApm             float32               `protobuf:"fixed32,27,opt,name=current_apm,json=currentApm,proto3" json:"current_apm,omitempty"`
 	CurrentEffectiveApm    float32               `protobuf:"fixed32,28,opt,name=current_effective_apm,json=currentEffectiveApm,proto3" json:"current_effective_apm,omitempty"`
 }
@@ -280,7 +283,7 @@ func (m *ScoreDetails) Reset()         { *m = ScoreDetails{} }
 func (m *ScoreDetails) String() string { return proto.CompactTextString(m) }
 func (*ScoreDetails) ProtoMessage()    {}
 func (*ScoreDetails) Descriptor() ([]byte, []int) {
-	return fileDescriptor_score_a39149de0dd858c1, []int{3}
+	return fileDescriptor_c51f80048ffc9fcd, []int{3}
 }
 func (m *ScoreDetails) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -290,15 +293,15 @@ func (m *ScoreDetails) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return xxx_messageInfo_ScoreDetails.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *ScoreDetails) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ScoreDetails.Merge(dst, src)
+func (m *ScoreDetails) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ScoreDetails.Merge(m, src)
 }
 func (m *ScoreDetails) XXX_Size() int {
 	return m.Size()
@@ -506,16 +509,79 @@ func (m *ScoreDetails) GetCurrentEffectiveApm() float32 {
 }
 
 func init() {
+	proto.RegisterEnum("SC2APIProtocol.Score_ScoreType", Score_ScoreType_name, Score_ScoreType_value)
 	proto.RegisterType((*Score)(nil), "SC2APIProtocol.Score")
 	proto.RegisterType((*CategoryScoreDetails)(nil), "SC2APIProtocol.CategoryScoreDetails")
 	proto.RegisterType((*VitalScoreDetails)(nil), "SC2APIProtocol.VitalScoreDetails")
 	proto.RegisterType((*ScoreDetails)(nil), "SC2APIProtocol.ScoreDetails")
-	proto.RegisterEnum("SC2APIProtocol.Score_ScoreType", Score_ScoreType_name, Score_ScoreType_value)
 }
+
+func init() { proto.RegisterFile("score.proto", fileDescriptor_c51f80048ffc9fcd) }
+
+var fileDescriptor_c51f80048ffc9fcd = []byte{
+	// 892 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0xdd, 0x6e, 0xe3, 0x44,
+	0x14, 0xae, 0xb3, 0x9b, 0x74, 0x73, 0xf2, 0xd3, 0x74, 0x9a, 0xa6, 0xa6, 0xac, 0xb2, 0x21, 0x80,
+	0x14, 0xf1, 0x53, 0x50, 0x41, 0x2b, 0x24, 0x24, 0xa4, 0x6c, 0xcb, 0xcf, 0x0a, 0x55, 0x54, 0xe9,
+	0x0f, 0xb0, 0x37, 0x96, 0xb1, 0x4f, 0xd2, 0x51, 0xc7, 0x1e, 0x6b, 0x3c, 0x2e, 0xca, 0x2b, 0x70,
+	0x85, 0xb8, 0xe7, 0x7d, 0xb8, 0xdc, 0x4b, 0x2e, 0x51, 0xcb, 0x03, 0xf0, 0x08, 0x68, 0x66, 0x3c,
+	0x8e, 0xd3, 0xdd, 0x0b, 0xcc, 0x4d, 0x34, 0xe7, 0x3b, 0xe7, 0xfb, 0xce, 0xe7, 0xe3, 0xf1, 0x4c,
+	0xa0, 0x95, 0x06, 0x5c, 0xe0, 0x41, 0x22, 0xb8, 0xe4, 0xa4, 0x7b, 0x76, 0x74, 0x38, 0x3d, 0x7d,
+	0x7e, 0xaa, 0x82, 0x80, 0xb3, 0x7d, 0x58, 0xf0, 0x05, 0x37, 0xb9, 0xf1, 0xdf, 0x0e, 0xd4, 0xcf,
+	0x54, 0x2d, 0xf9, 0x02, 0x40, 0x93, 0x3c, 0xb9, 0x4c, 0xd0, 0x6d, 0x8c, 0x9c, 0x49, 0xf7, 0xf0,
+	0xc9, 0xc1, 0x3a, 0xf5, 0x40, 0x97, 0x9a, 0xdf, 0xf3, 0x65, 0x82, 0xb3, 0x66, 0x6a, 0x97, 0xa4,
+	0x0f, 0x75, 0x1d, 0xb8, 0x9b, 0x23, 0x67, 0x52, 0x9f, 0x99, 0x80, 0x4c, 0xa1, 0x63, 0x54, 0x43,
+	0x94, 0x3e, 0x65, 0xa9, 0xfb, 0x68, 0xe4, 0x4c, 0x5a, 0x87, 0x8f, 0x5f, 0x2b, 0x7c, 0x6c, 0x6a,
+	0x66, 0xed, 0xb4, 0x14, 0x8d, 0x9f, 0x41, 0xb3, 0x68, 0x48, 0xf6, 0xa1, 0x53, 0x04, 0x5e, 0x4c,
+	0x59, 0x6f, 0x63, 0x7f, 0xf3, 0x97, 0xdf, 0x47, 0x0f, 0x62, 0xca, 0x48, 0x17, 0xe0, 0x28, 0x13,
+	0x82, 0x06, 0x19, 0xcb, 0xa2, 0x9e, 0x43, 0x9a, 0x50, 0x3f, 0x41, 0x86, 0xd8, 0xab, 0x8d, 0x7f,
+	0x73, 0xa0, 0x7f, 0xe4, 0x4b, 0x5c, 0x70, 0xb1, 0x2c, 0xb7, 0x22, 0x04, 0x1e, 0xc6, 0x3c, 0x46,
+	0xd7, 0x19, 0x39, 0x93, 0xda, 0x4c, 0xaf, 0x15, 0xe6, 0x8b, 0x68, 0xe9, 0xd6, 0x0c, 0xa6, 0xd6,
+	0xc4, 0x85, 0x4d, 0x0c, 0x78, 0xcc, 0xa3, 0xa5, 0xfb, 0x40, 0xc3, 0x36, 0x24, 0x43, 0x00, 0x89,
+	0xc1, 0x55, 0xcc, 0x19, 0x5f, 0x2c, 0xdd, 0x87, 0x3a, 0x59, 0x42, 0x14, 0x33, 0x4b, 0x16, 0xc2,
+	0x0f, 0xd1, 0xad, 0x1b, 0x66, 0x1e, 0x8e, 0x7f, 0x84, 0xed, 0x4b, 0x2a, 0x7d, 0x76, 0xdf, 0x10,
+	0xa3, 0xf3, 0xc2, 0x90, 0x5a, 0x2b, 0x89, 0xf4, 0x8a, 0x22, 0x0b, 0xd3, 0xdc, 0x93, 0x0d, 0xc9,
+	0x00, 0x1a, 0x18, 0xa3, 0x58, 0x58, 0x57, 0x79, 0x34, 0xfe, 0xa7, 0x03, 0xed, 0x35, 0xd9, 0x8f,
+	0xa1, 0x4f, 0x43, 0x86, 0x5e, 0x22, 0x78, 0x98, 0x05, 0x92, 0xf2, 0xd8, 0x93, 0x34, 0xb2, 0x6d,
+	0x88, 0xca, 0x9d, 0x16, 0xa9, 0x73, 0x1a, 0x21, 0x99, 0x40, 0x4f, 0x33, 0x7e, 0xe6, 0xe2, 0x1a,
+	0x85, 0xa9, 0x36, 0xdd, 0xbb, 0x0a, 0xff, 0x5e, 0xc3, 0xba, 0xf2, 0x3d, 0xd8, 0x96, 0x5c, 0xfa,
+	0xcc, 0xbb, 0xf1, 0x59, 0x86, 0x5e, 0x16, 0x53, 0x99, 0xe6, 0x7e, 0xb6, 0x74, 0xe2, 0x52, 0xe1,
+	0x17, 0x0a, 0x26, 0x9f, 0xc2, 0xa0, 0x5c, 0x9b, 0x4a, 0x91, 0x05, 0x32, 0x13, 0x98, 0xe6, 0x93,
+	0xeb, 0xaf, 0x08, 0x67, 0x45, 0x8e, 0x7c, 0x00, 0xe4, 0x9a, 0x32, 0x86, 0xe1, 0x5a, 0x0b, 0x33,
+	0xce, 0x9e, 0xc9, 0x94, 0x7a, 0x3c, 0x85, 0xbd, 0xb5, 0xea, 0x52, 0x93, 0x86, 0xa6, 0xec, 0x96,
+	0x28, 0xa5, 0x2e, 0x1f, 0x02, 0x09, 0x38, 0x63, 0x18, 0x48, 0x0c, 0xbd, 0x88, 0xc6, 0x28, 0x7c,
+	0x96, 0xea, 0xed, 0x5c, 0x9b, 0x6d, 0x17, 0x99, 0x93, 0x3c, 0x41, 0xde, 0x87, 0x15, 0xe8, 0xdd,
+	0x60, 0x9a, 0x60, 0x8c, 0x7a, 0x7b, 0xd7, 0x66, 0xbd, 0x22, 0x71, 0x69, 0x70, 0xf2, 0x19, 0xb8,
+	0x39, 0xa6, 0x46, 0x2f, 0x7c, 0x89, 0xab, 0x0e, 0x4d, 0xcd, 0x19, 0xac, 0xf2, 0x33, 0x5f, 0x62,
+	0xd1, 0xe6, 0x29, 0xec, 0xdd, 0x67, 0xda, 0x66, 0x60, 0x9e, 0x66, 0x9d, 0x68, 0x3b, 0xbe, 0x0b,
+	0x5d, 0xb5, 0x90, 0xab, 0x3e, 0x2d, 0x5d, 0xde, 0xd1, 0x68, 0x21, 0xff, 0x36, 0x18, 0xa0, 0x10,
+	0x6d, 0xeb, 0xaa, 0xb6, 0x06, 0xad, 0xd6, 0x14, 0x9a, 0x73, 0xce, 0x43, 0x2f, 0x4b, 0x31, 0x74,
+	0x3b, 0xfa, 0x0b, 0x7e, 0xe7, 0xfe, 0x17, 0xfc, 0xba, 0xcf, 0x6b, 0xf6, 0x48, 0xd1, 0x2e, 0x52,
+	0x0c, 0xc9, 0x09, 0x6c, 0xe5, 0x2f, 0xa5, 0xf0, 0xd3, 0xad, 0x20, 0xd4, 0x35, 0xe4, 0xc2, 0xf6,
+	0xb7, 0xd0, 0xb5, 0xef, 0x38, 0xf7, 0xbd, 0x55, 0x41, 0xad, 0x93, 0x6f, 0x80, 0xfc, 0xf1, 0x9e,
+	0x43, 0x87, 0xf1, 0xb4, 0x34, 0xa9, 0x5e, 0x05, 0xad, 0xb6, 0xa2, 0x16, 0xbe, 0xbe, 0x06, 0x1d,
+	0x17, 0xae, 0xb6, 0x2b, 0x28, 0xb5, 0x14, 0xd3, 0x7a, 0x7a, 0x01, 0x83, 0xb9, 0xa0, 0x18, 0x87,
+	0x6c, 0xe9, 0xcd, 0xa9, 0x28, 0x6d, 0x17, 0x52, 0x41, 0xb2, 0x6f, 0x35, 0xbe, 0xa2, 0x62, 0xb5,
+	0xa5, 0x7e, 0x80, 0xdd, 0x75, 0x6d, 0xeb, 0x76, 0xa7, 0x82, 0xf4, 0x4e, 0x59, 0xba, 0x34, 0x49,
+	0xb5, 0x47, 0x56, 0x66, 0xfb, 0x55, 0x26, 0xa9, 0xa8, 0xe5, 0x49, 0x6a, 0x29, 0xeb, 0x6d, 0xb7,
+	0xca, 0x24, 0x15, 0xd3, 0x7a, 0x3a, 0x87, 0x1d, 0x73, 0xe4, 0xac, 0x3b, 0x1b, 0x54, 0xd0, 0x33,
+	0xe7, 0xdb, 0x45, 0xd9, 0xde, 0x0c, 0x48, 0x49, 0xd5, 0x9a, 0xdc, 0xab, 0x20, 0xda, 0x2b, 0x44,
+	0xad, 0xd3, 0xef, 0xac, 0x66, 0xe8, 0x47, 0xfe, 0x42, 0xdd, 0x99, 0x3e, 0x93, 0xae, 0xab, 0x35,
+	0xdf, 0xba, 0xaf, 0xf9, 0xca, 0xd5, 0x91, 0x0b, 0x1e, 0x6b, 0xee, 0xb1, 0xa2, 0xbe, 0x22, 0x28,
+	0xfd, 0x6b, 0x8c, 0xdd, 0x37, 0xfe, 0x8f, 0xe0, 0xb9, 0xa2, 0x92, 0x63, 0x68, 0x1b, 0xc1, 0x2b,
+	0xf4, 0x19, 0x86, 0xee, 0xfe, 0x7f, 0x95, 0x6a, 0x69, 0xda, 0x37, 0x9a, 0x45, 0x9e, 0x40, 0x2b,
+	0xc8, 0x84, 0x50, 0xa7, 0x8e, 0x9f, 0x44, 0xee, 0x9b, 0xe6, 0xce, 0xcc, 0xa1, 0x69, 0x12, 0x91,
+	0x43, 0xd8, 0xb5, 0x05, 0x38, 0x9f, 0xab, 0xb3, 0xed, 0x06, 0x75, 0xe9, 0x63, 0x5d, 0xba, 0x93,
+	0x27, 0xbf, 0xb4, 0xb9, 0x69, 0x12, 0x3d, 0x1b, 0xfd, 0x71, 0x3b, 0x74, 0x5e, 0xde, 0x0e, 0x9d,
+	0xbf, 0x6e, 0x87, 0xce, 0xaf, 0x77, 0xc3, 0x8d, 0x97, 0x77, 0xc3, 0x8d, 0x3f, 0xef, 0x86, 0x1b,
+	0x2f, 0x1a, 0x07, 0x1f, 0x7d, 0xee, 0x27, 0xf4, 0xa7, 0x86, 0xfe, 0xcb, 0xf3, 0xc9, 0xbf, 0x01,
+	0x00, 0x00, 0xff, 0xff, 0xdc, 0xde, 0x6b, 0x8f, 0x1d, 0x09, 0x00, 0x00,
+}
+
 func (m *Score) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -523,37 +589,44 @@ func (m *Score) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Score) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Score) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.ScoreType != 0 {
-		dAtA[i] = 0x30
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.ScoreType))
+	if m.ScoreDetails != nil {
+		{
+			size, err := m.ScoreDetails.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScore(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x42
 	}
 	if m.Score != 0 {
-		dAtA[i] = 0x38
-		i++
 		i = encodeVarintScore(dAtA, i, uint64(m.Score))
+		i--
+		dAtA[i] = 0x38
 	}
-	if m.ScoreDetails != nil {
-		dAtA[i] = 0x42
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.ScoreDetails.Size()))
-		n1, err := m.ScoreDetails.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
+	if m.ScoreType != 0 {
+		i = encodeVarintScore(dAtA, i, uint64(m.ScoreType))
+		i--
+		dAtA[i] = 0x30
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *CategoryScoreDetails) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -561,47 +634,52 @@ func (m *CategoryScoreDetails) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *CategoryScoreDetails) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CategoryScoreDetails) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.None != 0 {
-		dAtA[i] = 0xd
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.None))))
-		i += 4
-	}
-	if m.Army != 0 {
-		dAtA[i] = 0x15
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Army))))
-		i += 4
-	}
-	if m.Economy != 0 {
-		dAtA[i] = 0x1d
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Economy))))
-		i += 4
+	if m.Upgrade != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Upgrade))))
+		i--
+		dAtA[i] = 0x2d
 	}
 	if m.Technology != 0 {
-		dAtA[i] = 0x25
-		i++
+		i -= 4
 		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Technology))))
-		i += 4
+		i--
+		dAtA[i] = 0x25
 	}
-	if m.Upgrade != 0 {
-		dAtA[i] = 0x2d
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Upgrade))))
-		i += 4
+	if m.Economy != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Economy))))
+		i--
+		dAtA[i] = 0x1d
 	}
-	return i, nil
+	if m.Army != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Army))))
+		i--
+		dAtA[i] = 0x15
+	}
+	if m.None != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.None))))
+		i--
+		dAtA[i] = 0xd
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *VitalScoreDetails) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -609,35 +687,40 @@ func (m *VitalScoreDetails) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *VitalScoreDetails) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *VitalScoreDetails) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Life != 0 {
-		dAtA[i] = 0xd
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Life))))
-		i += 4
+	if m.Energy != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Energy))))
+		i--
+		dAtA[i] = 0x1d
 	}
 	if m.Shields != 0 {
-		dAtA[i] = 0x15
-		i++
+		i -= 4
 		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Shields))))
-		i += 4
+		i--
+		dAtA[i] = 0x15
 	}
-	if m.Energy != 0 {
-		dAtA[i] = 0x1d
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Energy))))
-		i += 4
+	if m.Life != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Life))))
+		i--
+		dAtA[i] = 0xd
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ScoreDetails) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -645,271 +728,306 @@ func (m *ScoreDetails) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ScoreDetails) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ScoreDetails) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.IdleProductionTime != 0 {
-		dAtA[i] = 0xd
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.IdleProductionTime))))
-		i += 4
-	}
-	if m.IdleWorkerTime != 0 {
-		dAtA[i] = 0x15
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.IdleWorkerTime))))
-		i += 4
-	}
-	if m.TotalValueUnits != 0 {
-		dAtA[i] = 0x1d
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.TotalValueUnits))))
-		i += 4
-	}
-	if m.TotalValueStructures != 0 {
-		dAtA[i] = 0x25
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.TotalValueStructures))))
-		i += 4
-	}
-	if m.KilledValueUnits != 0 {
-		dAtA[i] = 0x2d
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.KilledValueUnits))))
-		i += 4
-	}
-	if m.KilledValueStructures != 0 {
-		dAtA[i] = 0x35
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.KilledValueStructures))))
-		i += 4
-	}
-	if m.CollectedMinerals != 0 {
-		dAtA[i] = 0x3d
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.CollectedMinerals))))
-		i += 4
-	}
-	if m.CollectedVespene != 0 {
-		dAtA[i] = 0x45
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.CollectedVespene))))
-		i += 4
-	}
-	if m.CollectionRateMinerals != 0 {
-		dAtA[i] = 0x4d
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.CollectionRateMinerals))))
-		i += 4
-	}
-	if m.CollectionRateVespene != 0 {
-		dAtA[i] = 0x55
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.CollectionRateVespene))))
-		i += 4
-	}
-	if m.SpentMinerals != 0 {
-		dAtA[i] = 0x5d
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.SpentMinerals))))
-		i += 4
-	}
-	if m.SpentVespene != 0 {
-		dAtA[i] = 0x65
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.SpentVespene))))
-		i += 4
-	}
-	if m.FoodUsed != nil {
-		dAtA[i] = 0x6a
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.FoodUsed.Size()))
-		n2, err := m.FoodUsed.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n2
-	}
-	if m.KilledMinerals != nil {
-		dAtA[i] = 0x72
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.KilledMinerals.Size()))
-		n3, err := m.KilledMinerals.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n3
-	}
-	if m.KilledVespene != nil {
-		dAtA[i] = 0x7a
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.KilledVespene.Size()))
-		n4, err := m.KilledVespene.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n4
-	}
-	if m.LostMinerals != nil {
-		dAtA[i] = 0x82
-		i++
+	if m.CurrentEffectiveApm != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.CurrentEffectiveApm))))
+		i--
 		dAtA[i] = 0x1
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.LostMinerals.Size()))
-		n5, err := m.LostMinerals.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n5
-	}
-	if m.LostVespene != nil {
-		dAtA[i] = 0x8a
-		i++
-		dAtA[i] = 0x1
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.LostVespene.Size()))
-		n6, err := m.LostVespene.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n6
-	}
-	if m.FriendlyFireMinerals != nil {
-		dAtA[i] = 0x92
-		i++
-		dAtA[i] = 0x1
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.FriendlyFireMinerals.Size()))
-		n7, err := m.FriendlyFireMinerals.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n7
-	}
-	if m.FriendlyFireVespene != nil {
-		dAtA[i] = 0x9a
-		i++
-		dAtA[i] = 0x1
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.FriendlyFireVespene.Size()))
-		n8, err := m.FriendlyFireVespene.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n8
-	}
-	if m.UsedMinerals != nil {
-		dAtA[i] = 0xa2
-		i++
-		dAtA[i] = 0x1
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.UsedMinerals.Size()))
-		n9, err := m.UsedMinerals.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n9
-	}
-	if m.UsedVespene != nil {
-		dAtA[i] = 0xaa
-		i++
-		dAtA[i] = 0x1
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.UsedVespene.Size()))
-		n10, err := m.UsedVespene.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n10
-	}
-	if m.TotalUsedMinerals != nil {
-		dAtA[i] = 0xb2
-		i++
-		dAtA[i] = 0x1
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.TotalUsedMinerals.Size()))
-		n11, err := m.TotalUsedMinerals.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n11
-	}
-	if m.TotalUsedVespene != nil {
-		dAtA[i] = 0xba
-		i++
-		dAtA[i] = 0x1
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.TotalUsedVespene.Size()))
-		n12, err := m.TotalUsedVespene.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n12
-	}
-	if m.TotalDamageDealt != nil {
-		dAtA[i] = 0xc2
-		i++
-		dAtA[i] = 0x1
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.TotalDamageDealt.Size()))
-		n13, err := m.TotalDamageDealt.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n13
-	}
-	if m.TotalDamageTaken != nil {
-		dAtA[i] = 0xca
-		i++
-		dAtA[i] = 0x1
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.TotalDamageTaken.Size()))
-		n14, err := m.TotalDamageTaken.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n14
-	}
-	if m.TotalHealed != nil {
-		dAtA[i] = 0xd2
-		i++
-		dAtA[i] = 0x1
-		i++
-		i = encodeVarintScore(dAtA, i, uint64(m.TotalHealed.Size()))
-		n15, err := m.TotalHealed.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n15
+		i--
+		dAtA[i] = 0xe5
 	}
 	if m.CurrentApm != 0 {
-		dAtA[i] = 0xdd
-		i++
-		dAtA[i] = 0x1
-		i++
+		i -= 4
 		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.CurrentApm))))
-		i += 4
-	}
-	if m.CurrentEffectiveApm != 0 {
-		dAtA[i] = 0xe5
-		i++
+		i--
 		dAtA[i] = 0x1
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.CurrentEffectiveApm))))
-		i += 4
+		i--
+		dAtA[i] = 0xdd
 	}
-	return i, nil
+	if m.TotalHealed != nil {
+		{
+			size, err := m.TotalHealed.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScore(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xd2
+	}
+	if m.TotalDamageTaken != nil {
+		{
+			size, err := m.TotalDamageTaken.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScore(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xca
+	}
+	if m.TotalDamageDealt != nil {
+		{
+			size, err := m.TotalDamageDealt.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScore(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xc2
+	}
+	if m.TotalUsedVespene != nil {
+		{
+			size, err := m.TotalUsedVespene.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScore(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xba
+	}
+	if m.TotalUsedMinerals != nil {
+		{
+			size, err := m.TotalUsedMinerals.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScore(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xb2
+	}
+	if m.UsedVespene != nil {
+		{
+			size, err := m.UsedVespene.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScore(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xaa
+	}
+	if m.UsedMinerals != nil {
+		{
+			size, err := m.UsedMinerals.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScore(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xa2
+	}
+	if m.FriendlyFireVespene != nil {
+		{
+			size, err := m.FriendlyFireVespene.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScore(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x9a
+	}
+	if m.FriendlyFireMinerals != nil {
+		{
+			size, err := m.FriendlyFireMinerals.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScore(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x92
+	}
+	if m.LostVespene != nil {
+		{
+			size, err := m.LostVespene.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScore(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x8a
+	}
+	if m.LostMinerals != nil {
+		{
+			size, err := m.LostMinerals.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScore(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x82
+	}
+	if m.KilledVespene != nil {
+		{
+			size, err := m.KilledVespene.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScore(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x7a
+	}
+	if m.KilledMinerals != nil {
+		{
+			size, err := m.KilledMinerals.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScore(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x72
+	}
+	if m.FoodUsed != nil {
+		{
+			size, err := m.FoodUsed.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScore(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x6a
+	}
+	if m.SpentVespene != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.SpentVespene))))
+		i--
+		dAtA[i] = 0x65
+	}
+	if m.SpentMinerals != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.SpentMinerals))))
+		i--
+		dAtA[i] = 0x5d
+	}
+	if m.CollectionRateVespene != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.CollectionRateVespene))))
+		i--
+		dAtA[i] = 0x55
+	}
+	if m.CollectionRateMinerals != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.CollectionRateMinerals))))
+		i--
+		dAtA[i] = 0x4d
+	}
+	if m.CollectedVespene != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.CollectedVespene))))
+		i--
+		dAtA[i] = 0x45
+	}
+	if m.CollectedMinerals != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.CollectedMinerals))))
+		i--
+		dAtA[i] = 0x3d
+	}
+	if m.KilledValueStructures != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.KilledValueStructures))))
+		i--
+		dAtA[i] = 0x35
+	}
+	if m.KilledValueUnits != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.KilledValueUnits))))
+		i--
+		dAtA[i] = 0x2d
+	}
+	if m.TotalValueStructures != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.TotalValueStructures))))
+		i--
+		dAtA[i] = 0x25
+	}
+	if m.TotalValueUnits != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.TotalValueUnits))))
+		i--
+		dAtA[i] = 0x1d
+	}
+	if m.IdleWorkerTime != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.IdleWorkerTime))))
+		i--
+		dAtA[i] = 0x15
+	}
+	if m.IdleProductionTime != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.IdleProductionTime))))
+		i--
+		dAtA[i] = 0xd
+	}
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintScore(dAtA []byte, offset int, v uint64) int {
+	offset -= sovScore(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *Score) Size() (n int) {
 	if m == nil {
@@ -1080,14 +1198,7 @@ func (m *ScoreDetails) Size() (n int) {
 }
 
 func sovScore(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozScore(x uint64) (n int) {
 	return sovScore(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -1107,7 +1218,7 @@ func (m *Score) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1135,7 +1246,7 @@ func (m *Score) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ScoreType |= (Score_ScoreType(b) & 0x7F) << shift
+				m.ScoreType |= Score_ScoreType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1154,7 +1265,7 @@ func (m *Score) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Score |= (int32(b) & 0x7F) << shift
+				m.Score |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1173,7 +1284,7 @@ func (m *Score) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1182,6 +1293,9 @@ func (m *Score) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthScore
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScore
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1198,7 +1312,7 @@ func (m *Score) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthScore
 			}
 			if (iNdEx + skippy) > l {
@@ -1228,7 +1342,7 @@ func (m *CategoryScoreDetails) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1303,7 +1417,7 @@ func (m *CategoryScoreDetails) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthScore
 			}
 			if (iNdEx + skippy) > l {
@@ -1333,7 +1447,7 @@ func (m *VitalScoreDetails) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1386,7 +1500,7 @@ func (m *VitalScoreDetails) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthScore
 			}
 			if (iNdEx + skippy) > l {
@@ -1416,7 +1530,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1576,7 +1690,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1585,6 +1699,9 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthScore
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScore
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1609,7 +1726,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1618,6 +1735,9 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthScore
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScore
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1642,7 +1762,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1651,6 +1771,9 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthScore
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScore
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1675,7 +1798,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1684,6 +1807,9 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthScore
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScore
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1708,7 +1834,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1717,6 +1843,9 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthScore
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScore
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1741,7 +1870,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1750,6 +1879,9 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthScore
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScore
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1774,7 +1906,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1783,6 +1915,9 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthScore
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScore
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1807,7 +1942,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1816,6 +1951,9 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthScore
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScore
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1840,7 +1978,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1849,6 +1987,9 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthScore
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScore
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1873,7 +2014,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1882,6 +2023,9 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthScore
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScore
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1906,7 +2050,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1915,6 +2059,9 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthScore
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScore
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1939,7 +2086,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1948,6 +2095,9 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthScore
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScore
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1972,7 +2122,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1981,6 +2131,9 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthScore
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScore
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2005,7 +2158,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2014,6 +2167,9 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthScore
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScore
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2052,7 +2208,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthScore
 			}
 			if (iNdEx + skippy) > l {
@@ -2070,6 +2226,7 @@ func (m *ScoreDetails) Unmarshal(dAtA []byte) error {
 func skipScore(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -2101,10 +2258,8 @@ func skipScore(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -2121,115 +2276,34 @@ func skipScore(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthScore
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowScore
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipScore(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupScore
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthScore
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthScore = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowScore   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthScore        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowScore          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupScore = fmt.Errorf("proto: unexpected end of group")
 )
-
-func init() { proto.RegisterFile("score.proto", fileDescriptor_score_a39149de0dd858c1) }
-
-var fileDescriptor_score_a39149de0dd858c1 = []byte{
-	// 888 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0xdd, 0x6e, 0xe3, 0x44,
-	0x14, 0xae, 0xd3, 0x4d, 0xbb, 0x39, 0xf9, 0x69, 0x3a, 0x4d, 0x53, 0x53, 0x96, 0x6c, 0x08, 0x20,
-	0x45, 0xfc, 0x54, 0xa8, 0xa0, 0x15, 0x57, 0x48, 0xd9, 0x96, 0x9f, 0x15, 0xaa, 0xa8, 0xd2, 0x1f,
-	0x60, 0x6f, 0x2c, 0x63, 0x9f, 0xa4, 0xa3, 0x8e, 0x3d, 0xd6, 0x78, 0x5c, 0x94, 0x57, 0xe0, 0x0a,
-	0x71, 0xcf, 0xfb, 0x70, 0xb9, 0x97, 0x5c, 0xa2, 0x96, 0x07, 0xe0, 0x11, 0xd0, 0xcc, 0x78, 0x1c,
-	0xa7, 0xdb, 0x0b, 0xbc, 0x37, 0xd1, 0x9c, 0xef, 0x9c, 0xef, 0x3b, 0x9f, 0x8f, 0xc7, 0x33, 0x81,
-	0x66, 0x1a, 0x70, 0x81, 0x07, 0x89, 0xe0, 0x92, 0x93, 0xce, 0xd9, 0xd1, 0xe1, 0xe4, 0xf4, 0xc5,
-	0xa9, 0x0a, 0x02, 0xce, 0xf6, 0x61, 0xce, 0xe7, 0xdc, 0xe4, 0x46, 0xff, 0x38, 0x50, 0x3f, 0x53,
-	0xb5, 0xe4, 0x4b, 0x00, 0x4d, 0xf2, 0xe4, 0x22, 0x41, 0x77, 0x63, 0xe8, 0x8c, 0x3b, 0x87, 0x4f,
-	0x0f, 0x56, 0xa9, 0x07, 0xba, 0xd4, 0xfc, 0x9e, 0x2f, 0x12, 0x9c, 0x36, 0x52, 0xbb, 0x24, 0x3d,
-	0xa8, 0xeb, 0xc0, 0xdd, 0x1c, 0x3a, 0xe3, 0xfa, 0xd4, 0x04, 0x64, 0x02, 0x6d, 0xa3, 0x1a, 0xa2,
-	0xf4, 0x29, 0x4b, 0xdd, 0xc7, 0x43, 0x67, 0xdc, 0x3c, 0x7c, 0xf2, 0xa0, 0xf0, 0xb1, 0xa9, 0x99,
-	0xb6, 0xd2, 0x52, 0x34, 0x7a, 0x0e, 0x8d, 0xa2, 0x21, 0xd9, 0x87, 0x76, 0x11, 0x78, 0x31, 0x65,
-	0xdd, 0xb5, 0xfd, 0xcd, 0x5f, 0xff, 0x18, 0xae, 0xc7, 0x94, 0x91, 0x0e, 0xc0, 0x51, 0x26, 0x04,
-	0x0d, 0x32, 0x96, 0x45, 0x5d, 0x87, 0x34, 0xa0, 0x7e, 0x82, 0x0c, 0xb1, 0x5b, 0x1b, 0xfd, 0xee,
-	0x40, 0xef, 0xc8, 0x97, 0x38, 0xe7, 0x62, 0x51, 0x6e, 0x45, 0x08, 0x3c, 0x8a, 0x79, 0x8c, 0xae,
-	0x33, 0x74, 0xc6, 0xb5, 0xa9, 0x5e, 0x2b, 0xcc, 0x17, 0xd1, 0xc2, 0xad, 0x19, 0x4c, 0xad, 0x89,
-	0x0b, 0x9b, 0x18, 0xf0, 0x98, 0x47, 0x0b, 0x77, 0x5d, 0xc3, 0x36, 0x24, 0x03, 0x00, 0x89, 0xc1,
-	0x55, 0xcc, 0x19, 0x9f, 0x2f, 0xdc, 0x47, 0x3a, 0x59, 0x42, 0x14, 0x33, 0x4b, 0xe6, 0xc2, 0x0f,
-	0xd1, 0xad, 0x1b, 0x66, 0x1e, 0x8e, 0x7e, 0x82, 0xed, 0x4b, 0x2a, 0x7d, 0x76, 0xdf, 0x10, 0xa3,
-	0xb3, 0xc2, 0x90, 0x5a, 0x2b, 0x89, 0xf4, 0x8a, 0x22, 0x0b, 0xd3, 0xdc, 0x93, 0x0d, 0x49, 0x1f,
-	0x36, 0x30, 0x46, 0x31, 0xb7, 0xae, 0xf2, 0x68, 0xf4, 0x6f, 0x1b, 0x5a, 0x2b, 0xb2, 0x9f, 0x42,
-	0x8f, 0x86, 0x0c, 0xbd, 0x44, 0xf0, 0x30, 0x0b, 0x24, 0xe5, 0xb1, 0x27, 0x69, 0x64, 0xdb, 0x10,
-	0x95, 0x3b, 0x2d, 0x52, 0xe7, 0x34, 0x42, 0x32, 0x86, 0xae, 0x66, 0xfc, 0xc2, 0xc5, 0x35, 0x0a,
-	0x53, 0x6d, 0xba, 0x77, 0x14, 0xfe, 0x83, 0x86, 0x75, 0xe5, 0x87, 0xb0, 0x2d, 0xb9, 0xf4, 0x99,
-	0x77, 0xe3, 0xb3, 0x0c, 0xbd, 0x2c, 0xa6, 0x32, 0xcd, 0xfd, 0x6c, 0xe9, 0xc4, 0xa5, 0xc2, 0x2f,
-	0x14, 0x4c, 0x3e, 0x87, 0x7e, 0xb9, 0x36, 0x95, 0x22, 0x0b, 0x64, 0x26, 0x30, 0xcd, 0x27, 0xd7,
-	0x5b, 0x12, 0xce, 0x8a, 0x1c, 0xf9, 0x18, 0xc8, 0x35, 0x65, 0x0c, 0xc3, 0x95, 0x16, 0x66, 0x9c,
-	0x5d, 0x93, 0x29, 0xf5, 0x78, 0x06, 0x7b, 0x2b, 0xd5, 0xa5, 0x26, 0x1b, 0x9a, 0xb2, 0x5b, 0xa2,
-	0x94, 0xba, 0x7c, 0x02, 0x24, 0xe0, 0x8c, 0x61, 0x20, 0x31, 0xf4, 0x22, 0x1a, 0xa3, 0xf0, 0x59,
-	0xaa, 0xb7, 0x73, 0x6d, 0xba, 0x5d, 0x64, 0x4e, 0xf2, 0x04, 0xf9, 0x08, 0x96, 0xa0, 0x77, 0x83,
-	0x69, 0x82, 0x31, 0xea, 0xed, 0x5d, 0x9b, 0x76, 0x8b, 0xc4, 0xa5, 0xc1, 0xc9, 0x17, 0xe0, 0xe6,
-	0x98, 0x1a, 0xbd, 0xf0, 0x25, 0x2e, 0x3b, 0x34, 0x34, 0xa7, 0xbf, 0xcc, 0x4f, 0x7d, 0x89, 0x45,
-	0x9b, 0x67, 0xb0, 0x77, 0x9f, 0x69, 0x9b, 0x81, 0x79, 0x9a, 0x55, 0xa2, 0xed, 0xf8, 0x01, 0x74,
-	0xd4, 0x42, 0x2e, 0xfb, 0x34, 0x75, 0x79, 0x5b, 0xa3, 0x85, 0xfc, 0x7b, 0x60, 0x80, 0x42, 0xb4,
-	0xa5, 0xab, 0x5a, 0x1a, 0xb4, 0x5a, 0x13, 0x68, 0xcc, 0x38, 0x0f, 0xbd, 0x2c, 0xc5, 0xd0, 0x6d,
-	0xeb, 0x2f, 0xf8, 0xfd, 0xfb, 0x5f, 0xf0, 0x43, 0x9f, 0xd7, 0xf4, 0xb1, 0xa2, 0x5d, 0xa4, 0x18,
-	0x92, 0x13, 0xd8, 0xca, 0x5f, 0x4a, 0xe1, 0xa7, 0x53, 0x41, 0xa8, 0x63, 0xc8, 0x85, 0xed, 0xef,
-	0xa0, 0x63, 0xdf, 0x71, 0xee, 0x7b, 0xab, 0x82, 0x5a, 0x3b, 0xdf, 0x00, 0xf9, 0xe3, 0xbd, 0x80,
-	0x36, 0xe3, 0x69, 0x69, 0x52, 0xdd, 0x0a, 0x5a, 0x2d, 0x45, 0x2d, 0x7c, 0x7d, 0x03, 0x3a, 0x2e,
-	0x5c, 0x6d, 0x57, 0x50, 0x6a, 0x2a, 0xa6, 0xf5, 0xf4, 0x12, 0xfa, 0x33, 0x41, 0x31, 0x0e, 0xd9,
-	0xc2, 0x9b, 0x51, 0x51, 0xda, 0x2e, 0xa4, 0x82, 0x64, 0xcf, 0x6a, 0x7c, 0x4d, 0xc5, 0x72, 0x4b,
-	0xfd, 0x08, 0xbb, 0xab, 0xda, 0xd6, 0xed, 0x4e, 0x05, 0xe9, 0x9d, 0xb2, 0x74, 0x69, 0x92, 0x6a,
-	0x8f, 0x2c, 0xcd, 0xf6, 0xaa, 0x4c, 0x52, 0x51, 0xcb, 0x93, 0xd4, 0x52, 0xd6, 0xdb, 0x6e, 0x95,
-	0x49, 0x2a, 0xa6, 0xf5, 0x74, 0x0e, 0x3b, 0xe6, 0xc8, 0x59, 0x75, 0xd6, 0xaf, 0xa0, 0x67, 0xce,
-	0xb7, 0x8b, 0xb2, 0xbd, 0x29, 0x90, 0x92, 0xaa, 0x35, 0xb9, 0x57, 0x41, 0xb4, 0x5b, 0x88, 0x5a,
-	0xa7, 0xdf, 0x5b, 0xcd, 0xd0, 0x8f, 0xfc, 0xb9, 0xba, 0x33, 0x7d, 0x26, 0x5d, 0x57, 0x6b, 0xbe,
-	0x7b, 0x5f, 0xf3, 0xb5, 0xab, 0x23, 0x17, 0x3c, 0xd6, 0xdc, 0x63, 0x45, 0x7d, 0x4d, 0x50, 0xfa,
-	0xd7, 0x18, 0xbb, 0x6f, 0xbd, 0x89, 0xe0, 0xb9, 0xa2, 0x92, 0x63, 0x68, 0x19, 0xc1, 0x2b, 0xf4,
-	0x19, 0x86, 0xee, 0xfe, 0xff, 0x95, 0x6a, 0x6a, 0xda, 0xb7, 0x9a, 0x45, 0x9e, 0x42, 0x33, 0xc8,
-	0x84, 0x50, 0xa7, 0x8e, 0x9f, 0x44, 0xee, 0xdb, 0xe6, 0xce, 0xcc, 0xa1, 0x49, 0x12, 0x91, 0x43,
-	0xd8, 0xb5, 0x05, 0x38, 0x9b, 0xa9, 0xb3, 0xed, 0x06, 0x75, 0xe9, 0x13, 0x5d, 0xba, 0x93, 0x27,
-	0xbf, 0xb2, 0xb9, 0x49, 0x12, 0x3d, 0x7f, 0xe7, 0xcf, 0xdb, 0x81, 0xf3, 0xea, 0x76, 0xe0, 0xfc,
-	0x7d, 0x3b, 0x70, 0x7e, 0xbb, 0x1b, 0xac, 0xbd, 0xba, 0x1b, 0xac, 0xfd, 0x75, 0x37, 0x58, 0x7b,
-	0xb9, 0xee, 0x27, 0xf4, 0xe7, 0x0d, 0xfd, 0x7f, 0xe7, 0xb3, 0xff, 0x02, 0x00, 0x00, 0xff, 0xff,
-	0xba, 0x8e, 0x01, 0xa7, 0x1a, 0x09, 0x00, 0x00,
-}

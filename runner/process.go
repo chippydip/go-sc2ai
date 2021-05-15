@@ -112,14 +112,14 @@ func processPathForBuild(build uint32) string {
 		_, exe := filepath.Split(path)
 		root := sc2Path(path)
 		if root == "" {
-			log.Fatalf("Can't find game dir: %v", path)
+			log.Printf("Can't find game dir: %v", path)
 		}
 		dir := filepath.Join(sc2Path(path), "Versions")
 
 		// Get the path of the correct version and make sure the exe exists
 		path = filepath.Join(dir, fmt.Sprintf("Base%v", build), exe)
 		if _, err := os.Stat(path); err != nil {
-			log.Fatalf("Base version not found: %v", err)
+			log.Printf("Base version not found: %v", err)
 		}
 	}
 	return path

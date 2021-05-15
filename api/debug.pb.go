@@ -3,14 +3,15 @@
 
 package api
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/gogo/protobuf/gogoproto"
-
-import encoding_binary "encoding/binary"
-
-import io "io"
+import (
+	encoding_binary "encoding/binary"
+	fmt "fmt"
+	_ "github.com/gogo/protobuf/gogoproto"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+	math_bits "math/bits"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +22,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type DebugGameState int32
 
@@ -56,6 +57,7 @@ var DebugGameState_name = map[int32]string{
 	11: "upgrade",
 	12: "fast_build",
 }
+
 var DebugGameState_value = map[string]int32{
 	"DebugGameState_nil": 0,
 	"show_map":           1,
@@ -75,8 +77,9 @@ var DebugGameState_value = map[string]int32{
 func (x DebugGameState) String() string {
 	return proto.EnumName(DebugGameState_name, int32(x))
 }
+
 func (DebugGameState) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{0}
+	return fileDescriptor_8d9d361be58531fb, []int{0}
 }
 
 type DebugTestProcess_Test int32
@@ -94,6 +97,7 @@ var DebugTestProcess_Test_name = map[int32]string{
 	2: "crash",
 	3: "exit",
 }
+
 var DebugTestProcess_Test_value = map[string]int32{
 	"Test_nil": 0,
 	"hang":     1,
@@ -104,8 +108,9 @@ var DebugTestProcess_Test_value = map[string]int32{
 func (x DebugTestProcess_Test) String() string {
 	return proto.EnumName(DebugTestProcess_Test_name, int32(x))
 }
+
 func (DebugTestProcess_Test) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{10, 0}
+	return fileDescriptor_8d9d361be58531fb, []int{10, 0}
 }
 
 type DebugEndGame_EndResult int32
@@ -121,6 +126,7 @@ var DebugEndGame_EndResult_name = map[int32]string{
 	1: "Surrender",
 	2: "DeclareVictory",
 }
+
 var DebugEndGame_EndResult_value = map[string]int32{
 	"EndResult_nil":  0,
 	"Surrender":      1,
@@ -130,8 +136,9 @@ var DebugEndGame_EndResult_value = map[string]int32{
 func (x DebugEndGame_EndResult) String() string {
 	return proto.EnumName(DebugEndGame_EndResult_name, int32(x))
 }
+
 func (DebugEndGame_EndResult) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{12, 0}
+	return fileDescriptor_8d9d361be58531fb, []int{12, 0}
 }
 
 type DebugSetUnitValue_UnitValue int32
@@ -149,6 +156,7 @@ var DebugSetUnitValue_UnitValue_name = map[int32]string{
 	2: "Life",
 	3: "Shields",
 }
+
 var DebugSetUnitValue_UnitValue_value = map[string]int32{
 	"UnitValue_nil": 0,
 	"Energy":        1,
@@ -159,8 +167,9 @@ var DebugSetUnitValue_UnitValue_value = map[string]int32{
 func (x DebugSetUnitValue_UnitValue) String() string {
 	return proto.EnumName(DebugSetUnitValue_UnitValue_name, int32(x))
 }
+
 func (DebugSetUnitValue_UnitValue) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{13, 0}
+	return fileDescriptor_8d9d361be58531fb, []int{13, 0}
 }
 
 // Issue various useful commands to the game engine.
@@ -181,7 +190,7 @@ func (m *DebugCommand) Reset()         { *m = DebugCommand{} }
 func (m *DebugCommand) String() string { return proto.CompactTextString(m) }
 func (*DebugCommand) ProtoMessage()    {}
 func (*DebugCommand) Descriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{0}
+	return fileDescriptor_8d9d361be58531fb, []int{0}
 }
 func (m *DebugCommand) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -191,15 +200,15 @@ func (m *DebugCommand) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return xxx_messageInfo_DebugCommand.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *DebugCommand) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DebugCommand.Merge(dst, src)
+func (m *DebugCommand) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DebugCommand.Merge(m, src)
 }
 func (m *DebugCommand) XXX_Size() int {
 	return m.Size()
@@ -217,28 +226,28 @@ type isDebugCommand_Command interface {
 }
 
 type DebugCommand_Draw struct {
-	Draw *DebugDraw `protobuf:"bytes,1,opt,name=draw,oneof"`
+	Draw *DebugDraw `protobuf:"bytes,1,opt,name=draw,proto3,oneof" json:"draw,omitempty"`
 }
 type DebugCommand_GameState struct {
-	GameState DebugGameState `protobuf:"varint,2,opt,name=game_state,json=gameState,proto3,enum=SC2APIProtocol.DebugGameState,oneof"`
+	GameState DebugGameState `protobuf:"varint,2,opt,name=game_state,json=gameState,proto3,enum=SC2APIProtocol.DebugGameState,oneof" json:"game_state,omitempty"`
 }
 type DebugCommand_CreateUnit struct {
-	CreateUnit *DebugCreateUnit `protobuf:"bytes,3,opt,name=create_unit,json=createUnit,oneof"`
+	CreateUnit *DebugCreateUnit `protobuf:"bytes,3,opt,name=create_unit,json=createUnit,proto3,oneof" json:"create_unit,omitempty"`
 }
 type DebugCommand_KillUnit struct {
-	KillUnit *DebugKillUnit `protobuf:"bytes,4,opt,name=kill_unit,json=killUnit,oneof"`
+	KillUnit *DebugKillUnit `protobuf:"bytes,4,opt,name=kill_unit,json=killUnit,proto3,oneof" json:"kill_unit,omitempty"`
 }
 type DebugCommand_TestProcess struct {
-	TestProcess *DebugTestProcess `protobuf:"bytes,5,opt,name=test_process,json=testProcess,oneof"`
+	TestProcess *DebugTestProcess `protobuf:"bytes,5,opt,name=test_process,json=testProcess,proto3,oneof" json:"test_process,omitempty"`
 }
 type DebugCommand_Score struct {
-	Score *DebugSetScore `protobuf:"bytes,6,opt,name=score,oneof"`
+	Score *DebugSetScore `protobuf:"bytes,6,opt,name=score,proto3,oneof" json:"score,omitempty"`
 }
 type DebugCommand_EndGame struct {
-	EndGame *DebugEndGame `protobuf:"bytes,7,opt,name=end_game,json=endGame,oneof"`
+	EndGame *DebugEndGame `protobuf:"bytes,7,opt,name=end_game,json=endGame,proto3,oneof" json:"end_game,omitempty"`
 }
 type DebugCommand_UnitValue struct {
-	UnitValue *DebugSetUnitValue `protobuf:"bytes,8,opt,name=unit_value,json=unitValue,oneof"`
+	UnitValue *DebugSetUnitValue `protobuf:"bytes,8,opt,name=unit_value,json=unitValue,proto3,oneof" json:"unit_value,omitempty"`
 }
 
 func (*DebugCommand_Draw) isDebugCommand_Command()        {}
@@ -313,9 +322,9 @@ func (m *DebugCommand) GetUnitValue() *DebugSetUnitValue {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*DebugCommand) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _DebugCommand_OneofMarshaler, _DebugCommand_OneofUnmarshaler, _DebugCommand_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*DebugCommand) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*DebugCommand_Draw)(nil),
 		(*DebugCommand_GameState)(nil),
 		(*DebugCommand_CreateUnit)(nil),
@@ -327,187 +336,18 @@ func (*DebugCommand) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) 
 	}
 }
 
-func _DebugCommand_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*DebugCommand)
-	// command
-	switch x := m.Command.(type) {
-	case *DebugCommand_Draw:
-		_ = b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Draw); err != nil {
-			return err
-		}
-	case *DebugCommand_GameState:
-		_ = b.EncodeVarint(2<<3 | proto.WireVarint)
-		_ = b.EncodeVarint(uint64(x.GameState))
-	case *DebugCommand_CreateUnit:
-		_ = b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.CreateUnit); err != nil {
-			return err
-		}
-	case *DebugCommand_KillUnit:
-		_ = b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.KillUnit); err != nil {
-			return err
-		}
-	case *DebugCommand_TestProcess:
-		_ = b.EncodeVarint(5<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.TestProcess); err != nil {
-			return err
-		}
-	case *DebugCommand_Score:
-		_ = b.EncodeVarint(6<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Score); err != nil {
-			return err
-		}
-	case *DebugCommand_EndGame:
-		_ = b.EncodeVarint(7<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.EndGame); err != nil {
-			return err
-		}
-	case *DebugCommand_UnitValue:
-		_ = b.EncodeVarint(8<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.UnitValue); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("DebugCommand.Command has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _DebugCommand_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*DebugCommand)
-	switch tag {
-	case 1: // command.draw
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(DebugDraw)
-		err := b.DecodeMessage(msg)
-		m.Command = &DebugCommand_Draw{msg}
-		return true, err
-	case 2: // command.game_state
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Command = &DebugCommand_GameState{DebugGameState(x)}
-		return true, err
-	case 3: // command.create_unit
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(DebugCreateUnit)
-		err := b.DecodeMessage(msg)
-		m.Command = &DebugCommand_CreateUnit{msg}
-		return true, err
-	case 4: // command.kill_unit
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(DebugKillUnit)
-		err := b.DecodeMessage(msg)
-		m.Command = &DebugCommand_KillUnit{msg}
-		return true, err
-	case 5: // command.test_process
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(DebugTestProcess)
-		err := b.DecodeMessage(msg)
-		m.Command = &DebugCommand_TestProcess{msg}
-		return true, err
-	case 6: // command.score
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(DebugSetScore)
-		err := b.DecodeMessage(msg)
-		m.Command = &DebugCommand_Score{msg}
-		return true, err
-	case 7: // command.end_game
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(DebugEndGame)
-		err := b.DecodeMessage(msg)
-		m.Command = &DebugCommand_EndGame{msg}
-		return true, err
-	case 8: // command.unit_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(DebugSetUnitValue)
-		err := b.DecodeMessage(msg)
-		m.Command = &DebugCommand_UnitValue{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _DebugCommand_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*DebugCommand)
-	// command
-	switch x := m.Command.(type) {
-	case *DebugCommand_Draw:
-		s := proto.Size(x.Draw)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *DebugCommand_GameState:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.GameState))
-	case *DebugCommand_CreateUnit:
-		s := proto.Size(x.CreateUnit)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *DebugCommand_KillUnit:
-		s := proto.Size(x.KillUnit)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *DebugCommand_TestProcess:
-		s := proto.Size(x.TestProcess)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *DebugCommand_Score:
-		s := proto.Size(x.Score)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *DebugCommand_EndGame:
-		s := proto.Size(x.EndGame)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *DebugCommand_UnitValue:
-		s := proto.Size(x.UnitValue)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
-}
-
 type DebugDraw struct {
-	Text    []*DebugText   `protobuf:"bytes,1,rep,name=text" json:"text,omitempty"`
-	Lines   []*DebugLine   `protobuf:"bytes,2,rep,name=lines" json:"lines,omitempty"`
-	Boxes   []*DebugBox    `protobuf:"bytes,3,rep,name=boxes" json:"boxes,omitempty"`
-	Spheres []*DebugSphere `protobuf:"bytes,4,rep,name=spheres" json:"spheres,omitempty"`
+	Text    []*DebugText   `protobuf:"bytes,1,rep,name=text,proto3" json:"text,omitempty"`
+	Lines   []*DebugLine   `protobuf:"bytes,2,rep,name=lines,proto3" json:"lines,omitempty"`
+	Boxes   []*DebugBox    `protobuf:"bytes,3,rep,name=boxes,proto3" json:"boxes,omitempty"`
+	Spheres []*DebugSphere `protobuf:"bytes,4,rep,name=spheres,proto3" json:"spheres,omitempty"`
 }
 
 func (m *DebugDraw) Reset()         { *m = DebugDraw{} }
 func (m *DebugDraw) String() string { return proto.CompactTextString(m) }
 func (*DebugDraw) ProtoMessage()    {}
 func (*DebugDraw) Descriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{1}
+	return fileDescriptor_8d9d361be58531fb, []int{1}
 }
 func (m *DebugDraw) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -517,15 +357,15 @@ func (m *DebugDraw) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_DebugDraw.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *DebugDraw) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DebugDraw.Merge(dst, src)
+func (m *DebugDraw) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DebugDraw.Merge(m, src)
 }
 func (m *DebugDraw) XXX_Size() int {
 	return m.Size()
@@ -565,15 +405,15 @@ func (m *DebugDraw) GetSpheres() []*DebugSphere {
 }
 
 type Line struct {
-	P0 *Point `protobuf:"bytes,1,opt,name=p0" json:"p0,omitempty"`
-	P1 *Point `protobuf:"bytes,2,opt,name=p1" json:"p1,omitempty"`
+	P0 *Point `protobuf:"bytes,1,opt,name=p0,proto3" json:"p0,omitempty"`
+	P1 *Point `protobuf:"bytes,2,opt,name=p1,proto3" json:"p1,omitempty"`
 }
 
 func (m *Line) Reset()         { *m = Line{} }
 func (m *Line) String() string { return proto.CompactTextString(m) }
 func (*Line) ProtoMessage()    {}
 func (*Line) Descriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{2}
+	return fileDescriptor_8d9d361be58531fb, []int{2}
 }
 func (m *Line) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -583,15 +423,15 @@ func (m *Line) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Line.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *Line) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Line.Merge(dst, src)
+func (m *Line) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Line.Merge(m, src)
 }
 func (m *Line) XXX_Size() int {
 	return m.Size()
@@ -626,7 +466,7 @@ func (m *Color) Reset()         { *m = Color{} }
 func (m *Color) String() string { return proto.CompactTextString(m) }
 func (*Color) ProtoMessage()    {}
 func (*Color) Descriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{3}
+	return fileDescriptor_8d9d361be58531fb, []int{3}
 }
 func (m *Color) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -636,15 +476,15 @@ func (m *Color) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Color.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *Color) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Color.Merge(dst, src)
+func (m *Color) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Color.Merge(m, src)
 }
 func (m *Color) XXX_Size() int {
 	return m.Size()
@@ -678,10 +518,10 @@ func (m *Color) GetB() uint32 {
 
 // Display debug text on screen.
 type DebugText struct {
-	Color      *Color `protobuf:"bytes,1,opt,name=color" json:"color,omitempty"`
+	Color      *Color `protobuf:"bytes,1,opt,name=color,proto3" json:"color,omitempty"`
 	Text       string `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`
-	VirtualPos *Point `protobuf:"bytes,3,opt,name=virtual_pos,json=virtualPos" json:"virtual_pos,omitempty"`
-	WorldPos   *Point `protobuf:"bytes,4,opt,name=world_pos,json=worldPos" json:"world_pos,omitempty"`
+	VirtualPos *Point `protobuf:"bytes,3,opt,name=virtual_pos,json=virtualPos,proto3" json:"virtual_pos,omitempty"`
+	WorldPos   *Point `protobuf:"bytes,4,opt,name=world_pos,json=worldPos,proto3" json:"world_pos,omitempty"`
 	Size_      uint32 `protobuf:"varint,5,opt,name=size,proto3" json:"size,omitempty"`
 }
 
@@ -689,7 +529,7 @@ func (m *DebugText) Reset()         { *m = DebugText{} }
 func (m *DebugText) String() string { return proto.CompactTextString(m) }
 func (*DebugText) ProtoMessage()    {}
 func (*DebugText) Descriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{4}
+	return fileDescriptor_8d9d361be58531fb, []int{4}
 }
 func (m *DebugText) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -699,15 +539,15 @@ func (m *DebugText) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_DebugText.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *DebugText) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DebugText.Merge(dst, src)
+func (m *DebugText) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DebugText.Merge(m, src)
 }
 func (m *DebugText) XXX_Size() int {
 	return m.Size()
@@ -755,15 +595,15 @@ func (m *DebugText) GetSize_() uint32 {
 
 // Display debug lines on screen.
 type DebugLine struct {
-	Color *Color `protobuf:"bytes,1,opt,name=color" json:"color,omitempty"`
-	Line  *Line  `protobuf:"bytes,2,opt,name=line" json:"line,omitempty"`
+	Color *Color `protobuf:"bytes,1,opt,name=color,proto3" json:"color,omitempty"`
+	Line  *Line  `protobuf:"bytes,2,opt,name=line,proto3" json:"line,omitempty"`
 }
 
 func (m *DebugLine) Reset()         { *m = DebugLine{} }
 func (m *DebugLine) String() string { return proto.CompactTextString(m) }
 func (*DebugLine) ProtoMessage()    {}
 func (*DebugLine) Descriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{5}
+	return fileDescriptor_8d9d361be58531fb, []int{5}
 }
 func (m *DebugLine) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -773,15 +613,15 @@ func (m *DebugLine) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_DebugLine.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *DebugLine) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DebugLine.Merge(dst, src)
+func (m *DebugLine) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DebugLine.Merge(m, src)
 }
 func (m *DebugLine) XXX_Size() int {
 	return m.Size()
@@ -808,16 +648,16 @@ func (m *DebugLine) GetLine() *Line {
 
 // Display debug boxes on screen.
 type DebugBox struct {
-	Color *Color `protobuf:"bytes,1,opt,name=color" json:"color,omitempty"`
-	Min   *Point `protobuf:"bytes,2,opt,name=min" json:"min,omitempty"`
-	Max   *Point `protobuf:"bytes,3,opt,name=max" json:"max,omitempty"`
+	Color *Color `protobuf:"bytes,1,opt,name=color,proto3" json:"color,omitempty"`
+	Min   *Point `protobuf:"bytes,2,opt,name=min,proto3" json:"min,omitempty"`
+	Max   *Point `protobuf:"bytes,3,opt,name=max,proto3" json:"max,omitempty"`
 }
 
 func (m *DebugBox) Reset()         { *m = DebugBox{} }
 func (m *DebugBox) String() string { return proto.CompactTextString(m) }
 func (*DebugBox) ProtoMessage()    {}
 func (*DebugBox) Descriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{6}
+	return fileDescriptor_8d9d361be58531fb, []int{6}
 }
 func (m *DebugBox) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -827,15 +667,15 @@ func (m *DebugBox) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_DebugBox.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *DebugBox) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DebugBox.Merge(dst, src)
+func (m *DebugBox) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DebugBox.Merge(m, src)
 }
 func (m *DebugBox) XXX_Size() int {
 	return m.Size()
@@ -869,8 +709,8 @@ func (m *DebugBox) GetMax() *Point {
 
 // Display debug spheres on screen.
 type DebugSphere struct {
-	Color *Color  `protobuf:"bytes,1,opt,name=color" json:"color,omitempty"`
-	P     *Point  `protobuf:"bytes,2,opt,name=p" json:"p,omitempty"`
+	Color *Color  `protobuf:"bytes,1,opt,name=color,proto3" json:"color,omitempty"`
+	P     *Point  `protobuf:"bytes,2,opt,name=p,proto3" json:"p,omitempty"`
 	R     float32 `protobuf:"fixed32,3,opt,name=r,proto3" json:"r,omitempty"`
 }
 
@@ -878,7 +718,7 @@ func (m *DebugSphere) Reset()         { *m = DebugSphere{} }
 func (m *DebugSphere) String() string { return proto.CompactTextString(m) }
 func (*DebugSphere) ProtoMessage()    {}
 func (*DebugSphere) Descriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{7}
+	return fileDescriptor_8d9d361be58531fb, []int{7}
 }
 func (m *DebugSphere) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -888,15 +728,15 @@ func (m *DebugSphere) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return xxx_messageInfo_DebugSphere.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *DebugSphere) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DebugSphere.Merge(dst, src)
+func (m *DebugSphere) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DebugSphere.Merge(m, src)
 }
 func (m *DebugSphere) XXX_Size() int {
 	return m.Size()
@@ -931,7 +771,7 @@ func (m *DebugSphere) GetR() float32 {
 type DebugCreateUnit struct {
 	UnitType UnitTypeID `protobuf:"varint,1,opt,name=unit_type,json=unitType,proto3,casttype=UnitTypeID" json:"unit_type,omitempty"`
 	Owner    PlayerID   `protobuf:"varint,2,opt,name=owner,proto3,casttype=PlayerID" json:"owner,omitempty"`
-	Pos      *Point2D   `protobuf:"bytes,3,opt,name=pos" json:"pos,omitempty"`
+	Pos      *Point2D   `protobuf:"bytes,3,opt,name=pos,proto3" json:"pos,omitempty"`
 	Quantity uint32     `protobuf:"varint,4,opt,name=quantity,proto3" json:"quantity,omitempty"`
 }
 
@@ -939,7 +779,7 @@ func (m *DebugCreateUnit) Reset()         { *m = DebugCreateUnit{} }
 func (m *DebugCreateUnit) String() string { return proto.CompactTextString(m) }
 func (*DebugCreateUnit) ProtoMessage()    {}
 func (*DebugCreateUnit) Descriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{8}
+	return fileDescriptor_8d9d361be58531fb, []int{8}
 }
 func (m *DebugCreateUnit) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -949,15 +789,15 @@ func (m *DebugCreateUnit) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return xxx_messageInfo_DebugCreateUnit.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *DebugCreateUnit) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DebugCreateUnit.Merge(dst, src)
+func (m *DebugCreateUnit) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DebugCreateUnit.Merge(m, src)
 }
 func (m *DebugCreateUnit) XXX_Size() int {
 	return m.Size()
@@ -997,14 +837,14 @@ func (m *DebugCreateUnit) GetQuantity() uint32 {
 }
 
 type DebugKillUnit struct {
-	Tag []UnitTag `protobuf:"varint,1,rep,packed,name=tag,casttype=UnitTag" json:"tag,omitempty"`
+	Tag []UnitTag `protobuf:"varint,1,rep,packed,name=tag,proto3,casttype=UnitTag" json:"tag,omitempty"`
 }
 
 func (m *DebugKillUnit) Reset()         { *m = DebugKillUnit{} }
 func (m *DebugKillUnit) String() string { return proto.CompactTextString(m) }
 func (*DebugKillUnit) ProtoMessage()    {}
 func (*DebugKillUnit) Descriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{9}
+	return fileDescriptor_8d9d361be58531fb, []int{9}
 }
 func (m *DebugKillUnit) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1014,15 +854,15 @@ func (m *DebugKillUnit) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_DebugKillUnit.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *DebugKillUnit) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DebugKillUnit.Merge(dst, src)
+func (m *DebugKillUnit) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DebugKillUnit.Merge(m, src)
 }
 func (m *DebugKillUnit) XXX_Size() int {
 	return m.Size()
@@ -1049,7 +889,7 @@ func (m *DebugTestProcess) Reset()         { *m = DebugTestProcess{} }
 func (m *DebugTestProcess) String() string { return proto.CompactTextString(m) }
 func (*DebugTestProcess) ProtoMessage()    {}
 func (*DebugTestProcess) Descriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{10}
+	return fileDescriptor_8d9d361be58531fb, []int{10}
 }
 func (m *DebugTestProcess) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1059,15 +899,15 @@ func (m *DebugTestProcess) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return xxx_messageInfo_DebugTestProcess.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *DebugTestProcess) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DebugTestProcess.Merge(dst, src)
+func (m *DebugTestProcess) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DebugTestProcess.Merge(m, src)
 }
 func (m *DebugTestProcess) XXX_Size() int {
 	return m.Size()
@@ -1100,7 +940,7 @@ func (m *DebugSetScore) Reset()         { *m = DebugSetScore{} }
 func (m *DebugSetScore) String() string { return proto.CompactTextString(m) }
 func (*DebugSetScore) ProtoMessage()    {}
 func (*DebugSetScore) Descriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{11}
+	return fileDescriptor_8d9d361be58531fb, []int{11}
 }
 func (m *DebugSetScore) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1110,15 +950,15 @@ func (m *DebugSetScore) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_DebugSetScore.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *DebugSetScore) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DebugSetScore.Merge(dst, src)
+func (m *DebugSetScore) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DebugSetScore.Merge(m, src)
 }
 func (m *DebugSetScore) XXX_Size() int {
 	return m.Size()
@@ -1144,7 +984,7 @@ func (m *DebugEndGame) Reset()         { *m = DebugEndGame{} }
 func (m *DebugEndGame) String() string { return proto.CompactTextString(m) }
 func (*DebugEndGame) ProtoMessage()    {}
 func (*DebugEndGame) Descriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{12}
+	return fileDescriptor_8d9d361be58531fb, []int{12}
 }
 func (m *DebugEndGame) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1154,15 +994,15 @@ func (m *DebugEndGame) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return xxx_messageInfo_DebugEndGame.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *DebugEndGame) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DebugEndGame.Merge(dst, src)
+func (m *DebugEndGame) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DebugEndGame.Merge(m, src)
 }
 func (m *DebugEndGame) XXX_Size() int {
 	return m.Size()
@@ -1190,7 +1030,7 @@ func (m *DebugSetUnitValue) Reset()         { *m = DebugSetUnitValue{} }
 func (m *DebugSetUnitValue) String() string { return proto.CompactTextString(m) }
 func (*DebugSetUnitValue) ProtoMessage()    {}
 func (*DebugSetUnitValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_debug_6c69d8b6bf2ff17c, []int{13}
+	return fileDescriptor_8d9d361be58531fb, []int{13}
 }
 func (m *DebugSetUnitValue) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1200,15 +1040,15 @@ func (m *DebugSetUnitValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return xxx_messageInfo_DebugSetUnitValue.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (dst *DebugSetUnitValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DebugSetUnitValue.Merge(dst, src)
+func (m *DebugSetUnitValue) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DebugSetUnitValue.Merge(m, src)
 }
 func (m *DebugSetUnitValue) XXX_Size() int {
 	return m.Size()
@@ -1241,6 +1081,10 @@ func (m *DebugSetUnitValue) GetUnitTag() UnitTag {
 }
 
 func init() {
+	proto.RegisterEnum("SC2APIProtocol.DebugGameState", DebugGameState_name, DebugGameState_value)
+	proto.RegisterEnum("SC2APIProtocol.DebugTestProcess_Test", DebugTestProcess_Test_name, DebugTestProcess_Test_value)
+	proto.RegisterEnum("SC2APIProtocol.DebugEndGame_EndResult", DebugEndGame_EndResult_name, DebugEndGame_EndResult_value)
+	proto.RegisterEnum("SC2APIProtocol.DebugSetUnitValue_UnitValue", DebugSetUnitValue_UnitValue_name, DebugSetUnitValue_UnitValue_value)
 	proto.RegisterType((*DebugCommand)(nil), "SC2APIProtocol.DebugCommand")
 	proto.RegisterType((*DebugDraw)(nil), "SC2APIProtocol.DebugDraw")
 	proto.RegisterType((*Line)(nil), "SC2APIProtocol.Line")
@@ -1255,15 +1099,91 @@ func init() {
 	proto.RegisterType((*DebugSetScore)(nil), "SC2APIProtocol.DebugSetScore")
 	proto.RegisterType((*DebugEndGame)(nil), "SC2APIProtocol.DebugEndGame")
 	proto.RegisterType((*DebugSetUnitValue)(nil), "SC2APIProtocol.DebugSetUnitValue")
-	proto.RegisterEnum("SC2APIProtocol.DebugGameState", DebugGameState_name, DebugGameState_value)
-	proto.RegisterEnum("SC2APIProtocol.DebugTestProcess_Test", DebugTestProcess_Test_name, DebugTestProcess_Test_value)
-	proto.RegisterEnum("SC2APIProtocol.DebugEndGame_EndResult", DebugEndGame_EndResult_name, DebugEndGame_EndResult_value)
-	proto.RegisterEnum("SC2APIProtocol.DebugSetUnitValue_UnitValue", DebugSetUnitValue_UnitValue_name, DebugSetUnitValue_UnitValue_value)
 }
+
+func init() { proto.RegisterFile("debug.proto", fileDescriptor_8d9d361be58531fb) }
+
+var fileDescriptor_8d9d361be58531fb = []byte{
+	// 1162 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x56, 0x4f, 0x8f, 0xdb, 0xc4,
+	0x1b, 0xce, 0x24, 0xce, 0xc6, 0x79, 0x93, 0xec, 0xcf, 0x1d, 0xb5, 0xfa, 0xb9, 0x0b, 0xcd, 0x2e,
+	0x46, 0x2d, 0x85, 0x8a, 0xb4, 0x5d, 0x54, 0xa4, 0x8a, 0x4a, 0x88, 0xec, 0xae, 0xd8, 0x96, 0x22,
+	0xad, 0x66, 0x97, 0x1e, 0xb8, 0x58, 0x13, 0x7b, 0xea, 0x58, 0xb5, 0x3d, 0x66, 0x66, 0xdc, 0x24,
+	0x7c, 0x03, 0x7a, 0xe2, 0x0b, 0x70, 0xe0, 0x82, 0xc4, 0x37, 0xe1, 0xc0, 0xa1, 0x82, 0x0b, 0xa7,
+	0x0a, 0xb5, 0x27, 0xbe, 0x42, 0x4f, 0x68, 0xc6, 0x4e, 0xda, 0x0d, 0xd9, 0x54, 0x3d, 0xe5, 0x7d,
+	0xc7, 0xcf, 0xfb, 0xf8, 0xfd, 0xf3, 0xf8, 0x9d, 0x40, 0x27, 0x64, 0xa3, 0x22, 0x1a, 0xe4, 0x82,
+	0x2b, 0x8e, 0x37, 0x8f, 0xf7, 0x76, 0xbf, 0x38, 0xba, 0x7b, 0xa4, 0x9d, 0x80, 0x27, 0x5b, 0x10,
+	0xf1, 0x88, 0x97, 0xcf, 0xb6, 0xba, 0x01, 0x4f, 0x53, 0x9e, 0x95, 0x9e, 0xf7, 0xc4, 0x82, 0xee,
+	0xbe, 0x8e, 0xdc, 0xe3, 0x69, 0x4a, 0xb3, 0x10, 0x5f, 0x07, 0x2b, 0x14, 0x74, 0xe2, 0xa2, 0x1d,
+	0x74, 0xb5, 0xb3, 0x7b, 0x71, 0x70, 0x9a, 0x69, 0x60, 0xb0, 0xfb, 0x82, 0x4e, 0x0e, 0x6b, 0xc4,
+	0x00, 0xf1, 0xe7, 0x00, 0x11, 0x4d, 0x99, 0x2f, 0x15, 0x55, 0xcc, 0xad, 0xef, 0xa0, 0xab, 0x9b,
+	0xbb, 0xfd, 0x95, 0x61, 0x5f, 0xd2, 0x94, 0x1d, 0x6b, 0xd4, 0x61, 0x8d, 0xb4, 0xa3, 0xb9, 0x83,
+	0x87, 0xd0, 0x09, 0x04, 0xa3, 0x8a, 0xf9, 0x45, 0x16, 0x2b, 0xb7, 0x61, 0x5e, 0xbc, 0xbd, 0x92,
+	0x61, 0xcf, 0xe0, 0xbe, 0xc9, 0x62, 0x75, 0x58, 0x23, 0x10, 0x2c, 0x3c, 0x7c, 0x07, 0xda, 0x8f,
+	0xe2, 0x24, 0x29, 0x19, 0x2c, 0xc3, 0x70, 0x69, 0x25, 0xc3, 0x57, 0x71, 0x92, 0x54, 0xf1, 0xf6,
+	0xa3, 0xca, 0xc6, 0x07, 0xd0, 0x55, 0x4c, 0x2a, 0x3f, 0x17, 0x3c, 0x60, 0x52, 0xba, 0x4d, 0x43,
+	0xb0, 0xb3, 0x92, 0xe0, 0x84, 0x49, 0x75, 0x54, 0xe2, 0x0e, 0x6b, 0xa4, 0xa3, 0x5e, 0xb9, 0xf8,
+	0x16, 0x34, 0x65, 0xc0, 0x05, 0x73, 0x37, 0xd6, 0x24, 0x70, 0xcc, 0xd4, 0xb1, 0x06, 0x1d, 0xd6,
+	0x48, 0x89, 0xc6, 0xb7, 0xc1, 0x66, 0x59, 0xe8, 0xeb, 0x86, 0xb8, 0x2d, 0x13, 0xf9, 0xee, 0xca,
+	0xc8, 0x83, 0x2c, 0xd4, 0x1d, 0x3c, 0xac, 0x91, 0x16, 0x2b, 0x4d, 0x3c, 0x04, 0xd0, 0x15, 0xfb,
+	0x8f, 0x69, 0x52, 0x30, 0xd7, 0x36, 0xc1, 0xef, 0x9d, 0xf5, 0x5a, 0x5d, 0xea, 0x03, 0x0d, 0xd4,
+	0xed, 0x2f, 0xe6, 0xce, 0xb0, 0x0d, 0xad, 0xa0, 0x9c, 0xbd, 0xf7, 0x07, 0x82, 0xf6, 0x62, 0xc0,
+	0xf8, 0x63, 0xb0, 0x14, 0x9b, 0x2a, 0x17, 0xed, 0x34, 0xce, 0x54, 0xc2, 0x09, 0x9b, 0x2a, 0x62,
+	0x60, 0xf8, 0x3a, 0x34, 0x93, 0x38, 0x63, 0xd2, 0xad, 0xaf, 0xc1, 0xdf, 0x8f, 0x33, 0x46, 0x4a,
+	0x1c, 0x1e, 0x40, 0x73, 0xc4, 0xa7, 0x4c, 0xba, 0x0d, 0x13, 0xe0, 0xae, 0x0c, 0x18, 0xf2, 0x29,
+	0x29, 0x61, 0xf8, 0x16, 0xb4, 0x64, 0x3e, 0x66, 0x82, 0x49, 0xd7, 0x32, 0x11, 0xef, 0xac, 0xae,
+	0xd4, 0x60, 0xc8, 0x1c, 0xeb, 0x9d, 0x80, 0xa5, 0xdf, 0x8a, 0x2f, 0x43, 0x3d, 0xbf, 0x51, 0xc9,
+	0xfa, 0xc2, 0x72, 0xe4, 0x11, 0x8f, 0x33, 0x45, 0xea, 0xf9, 0x0d, 0x03, 0xbb, 0x69, 0x64, 0xbc,
+	0x06, 0x76, 0xd3, 0xbb, 0x09, 0xcd, 0x3d, 0x9e, 0x70, 0x81, 0xbb, 0x80, 0x84, 0x61, 0xed, 0x11,
+	0x64, 0xbc, 0xc8, 0x04, 0xf7, 0x08, 0x8a, 0xb4, 0x37, 0x32, 0x7a, 0xee, 0x11, 0x34, 0xf2, 0x7e,
+	0x9f, 0x77, 0x57, 0x37, 0x0d, 0x5f, 0x83, 0x66, 0xa0, 0x09, 0xce, 0xca, 0xc8, 0xb0, 0x93, 0x12,
+	0x83, 0x71, 0x35, 0x0a, 0xcd, 0xdc, 0xae, 0xfa, 0xfd, 0x29, 0x74, 0x1e, 0xc7, 0x42, 0x15, 0x34,
+	0xf1, 0x73, 0x2e, 0xab, 0xcf, 0xe6, 0x8c, 0x8c, 0xa1, 0x42, 0x1e, 0x71, 0x89, 0x77, 0xa1, 0x3d,
+	0xe1, 0x22, 0x09, 0x4d, 0x94, 0xb5, 0x2e, 0xca, 0x36, 0x38, 0x1d, 0x83, 0xc1, 0x92, 0xf1, 0xf7,
+	0xcc, 0x7c, 0x18, 0x3d, 0x62, 0x6c, 0x6f, 0x54, 0x55, 0x63, 0x9a, 0xfb, 0x56, 0xd5, 0x5c, 0x05,
+	0x4b, 0x2b, 0xa0, 0x6a, 0xf2, 0xf9, 0x65, 0xac, 0xd1, 0x88, 0x41, 0x78, 0x3f, 0x20, 0xb0, 0xe7,
+	0x32, 0x78, 0xbb, 0x77, 0x7c, 0x00, 0x8d, 0x34, 0xce, 0xd6, 0xcf, 0x51, 0x23, 0x0c, 0x90, 0x4e,
+	0xd7, 0xb7, 0x4f, 0x23, 0xbc, 0x14, 0x3a, 0xaf, 0xe9, 0xeb, 0xed, 0xb2, 0x79, 0x1f, 0x50, 0xbe,
+	0x3e, 0x17, 0x94, 0x97, 0x4a, 0xd2, 0x79, 0xd4, 0x09, 0x12, 0xde, 0xaf, 0x08, 0xfe, 0xb7, 0xb4,
+	0xf3, 0xf0, 0x35, 0x30, 0xdf, 0xad, 0xaf, 0x66, 0x39, 0x2b, 0x35, 0x37, 0xdc, 0x7c, 0xf9, 0x6c,
+	0x1b, 0xf4, 0xc3, 0x93, 0x59, 0xce, 0xee, 0xee, 0x13, 0xbb, 0xa8, 0x6c, 0xec, 0x41, 0x93, 0x4f,
+	0x32, 0x26, 0xcc, 0x7b, 0x9b, 0xc3, 0xee, 0xcb, 0x67, 0xdb, 0xf6, 0x51, 0x42, 0x67, 0x4c, 0xdc,
+	0xdd, 0x27, 0xe5, 0x23, 0xfc, 0x21, 0x34, 0x5e, 0x69, 0xe7, 0xff, 0x2b, 0x33, 0xdb, 0xdd, 0x27,
+	0x1a, 0x83, 0xb7, 0xc0, 0xfe, 0xae, 0xa0, 0x99, 0x8a, 0xd5, 0xcc, 0xa8, 0xa6, 0x47, 0x16, 0xbe,
+	0x37, 0x80, 0xde, 0xa9, 0xe5, 0x8a, 0x2f, 0x41, 0x43, 0xd1, 0xc8, 0x6c, 0x0e, 0x6b, 0xd8, 0x79,
+	0xf9, 0x6c, 0xbb, 0x65, 0x52, 0xa4, 0x11, 0xd1, 0xe7, 0xde, 0x2f, 0x08, 0x9c, 0xe5, 0x65, 0x8a,
+	0x6f, 0x6b, 0x8d, 0x4b, 0x65, 0xea, 0xda, 0xdc, 0xbd, 0xfc, 0xa6, 0xe5, 0x3b, 0xd0, 0x36, 0x31,
+	0x21, 0xf8, 0x22, 0xd8, 0x21, 0x4b, 0xe8, 0xcc, 0x4f, 0x65, 0x59, 0x2d, 0x69, 0x19, 0xff, 0x6b,
+	0xe9, 0xdd, 0x01, 0x4b, 0x03, 0xf1, 0x05, 0xb0, 0xf5, 0xaf, 0x9f, 0xc5, 0x89, 0x53, 0xdb, 0x6a,
+	0x3d, 0xf9, 0x69, 0xa7, 0x91, 0xc5, 0x09, 0xb6, 0xc1, 0x1a, 0xd3, 0x2c, 0x72, 0x10, 0x6e, 0x43,
+	0x33, 0x10, 0x54, 0x8e, 0x9d, 0xba, 0x3e, 0x64, 0xd3, 0x58, 0x39, 0x0d, 0xef, 0x72, 0x55, 0xd8,
+	0x7c, 0x69, 0xe3, 0xf3, 0xf3, 0x15, 0x8f, 0xcc, 0x9c, 0x4a, 0xc7, 0xfb, 0x19, 0x55, 0x97, 0x68,
+	0xb5, 0xa2, 0xf1, 0x01, 0x80, 0x5e, 0xe9, 0x82, 0xc9, 0x22, 0x99, 0x57, 0x74, 0x65, 0xdd, 0x52,
+	0x1f, 0x1c, 0x64, 0x21, 0x31, 0x68, 0xd2, 0x66, 0x73, 0xd3, 0xbb, 0x07, 0xed, 0xc5, 0x39, 0xde,
+	0x82, 0xde, 0xc2, 0x59, 0x2e, 0xa3, 0x07, 0xed, 0xe3, 0x42, 0x08, 0x96, 0x85, 0x4c, 0x38, 0x08,
+	0x63, 0xd8, 0xdc, 0x67, 0x41, 0x42, 0x05, 0x7b, 0x10, 0x07, 0x8a, 0x8b, 0x99, 0x53, 0xf7, 0xfe,
+	0x41, 0x70, 0xee, 0x3f, 0x37, 0x01, 0xbe, 0x77, 0xea, 0x02, 0x29, 0x13, 0xbd, 0xf6, 0xc6, 0x0b,
+	0x64, 0xb0, 0xb0, 0x5e, 0xbb, 0x48, 0x74, 0x6f, 0x4a, 0x9a, 0x7a, 0xd9, 0x1b, 0xe3, 0xe0, 0x2b,
+	0x60, 0x97, 0x9a, 0xa5, 0x91, 0xd1, 0xd9, 0x92, 0x1e, 0x5a, 0x45, 0x69, 0xe8, 0x5a, 0x5f, 0xa5,
+	0xb5, 0x05, 0xbd, 0x85, 0xb3, 0x5c, 0x2b, 0xc0, 0xc6, 0x41, 0xc6, 0x44, 0x34, 0x73, 0x90, 0x9e,
+	0xd4, 0xfd, 0xf8, 0x21, 0x73, 0xea, 0xb8, 0x03, 0xad, 0xe3, 0x71, 0xcc, 0x92, 0x50, 0x3a, 0x8d,
+	0x8f, 0xfe, 0x44, 0xba, 0x01, 0xaf, 0xff, 0xe3, 0xc0, 0xdb, 0x80, 0x4f, 0x9f, 0x2c, 0xd3, 0x76,
+	0xc1, 0x96, 0x63, 0x3e, 0xf1, 0x53, 0x9a, 0x3b, 0x08, 0x9f, 0x83, 0x5e, 0xc0, 0x33, 0x25, 0x78,
+	0xe2, 0xb3, 0x8c, 0xa5, 0xb3, 0x52, 0x15, 0x0f, 0x39, 0x0f, 0x9d, 0x86, 0xb1, 0x04, 0x63, 0x8e,
+	0xa5, 0x61, 0x34, 0x49, 0xf4, 0x9c, 0x79, 0x21, 0x02, 0x26, 0x9d, 0x26, 0x6e, 0x41, 0x23, 0xe2,
+	0xa1, 0xb3, 0xa1, 0x09, 0xd3, 0x38, 0x63, 0x82, 0x26, 0xd2, 0x69, 0x99, 0x63, 0x2a, 0x1d, 0x5b,
+	0x1f, 0x07, 0x9c, 0x27, 0x21, 0x9f, 0x64, 0x4e, 0x5b, 0x0f, 0x4e, 0xb1, 0x60, 0xec, 0x2b, 0xcd,
+	0x07, 0xba, 0x8a, 0x22, 0x8f, 0x04, 0x0d, 0x99, 0xd3, 0xc1, 0x9b, 0x00, 0x0f, 0xa9, 0x54, 0xfe,
+	0xa8, 0x88, 0x93, 0xd0, 0xe9, 0x0e, 0x77, 0x7e, 0x7b, 0xde, 0x47, 0x4f, 0x9f, 0xf7, 0xd1, 0xdf,
+	0xcf, 0xfb, 0xe8, 0xc7, 0x17, 0xfd, 0xda, 0xd3, 0x17, 0xfd, 0xda, 0x5f, 0x2f, 0xfa, 0xb5, 0x6f,
+	0x37, 0x06, 0xd7, 0x3f, 0xa3, 0x79, 0x3c, 0xda, 0x30, 0xff, 0xe9, 0x3e, 0xf9, 0x37, 0x00, 0x00,
+	0xff, 0xff, 0x9b, 0x22, 0xd0, 0xcb, 0x0c, 0x0a, 0x00, 0x00,
+}
+
 func (m *DebugCommand) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1271,129 +1191,190 @@ func (m *DebugCommand) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebugCommand) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugCommand) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.Command != nil {
-		nn1, err := m.Command.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size := m.Command.Size()
+			i -= size
+			if _, err := m.Command.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
 		}
-		i += nn1
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *DebugCommand_Draw) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugCommand_Draw) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Draw != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.Draw.Size()))
-		n2, err := m.Draw.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Draw.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
 		}
-		i += n2
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *DebugCommand_GameState) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
-	dAtA[i] = 0x10
-	i++
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugCommand_GameState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	i = encodeVarintDebug(dAtA, i, uint64(m.GameState))
-	return i, nil
+	i--
+	dAtA[i] = 0x10
+	return len(dAtA) - i, nil
 }
 func (m *DebugCommand_CreateUnit) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugCommand_CreateUnit) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.CreateUnit != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.CreateUnit.Size()))
-		n3, err := m.CreateUnit.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.CreateUnit.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
 		}
-		i += n3
+		i--
+		dAtA[i] = 0x1a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *DebugCommand_KillUnit) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugCommand_KillUnit) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.KillUnit != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.KillUnit.Size()))
-		n4, err := m.KillUnit.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.KillUnit.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
 		}
-		i += n4
+		i--
+		dAtA[i] = 0x22
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *DebugCommand_TestProcess) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugCommand_TestProcess) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.TestProcess != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.TestProcess.Size()))
-		n5, err := m.TestProcess.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.TestProcess.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
 		}
-		i += n5
+		i--
+		dAtA[i] = 0x2a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *DebugCommand_Score) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugCommand_Score) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Score != nil {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.Score.Size()))
-		n6, err := m.Score.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Score.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
 		}
-		i += n6
+		i--
+		dAtA[i] = 0x32
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *DebugCommand_EndGame) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugCommand_EndGame) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.EndGame != nil {
-		dAtA[i] = 0x3a
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.EndGame.Size()))
-		n7, err := m.EndGame.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.EndGame.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
 		}
-		i += n7
+		i--
+		dAtA[i] = 0x3a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *DebugCommand_UnitValue) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugCommand_UnitValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.UnitValue != nil {
-		dAtA[i] = 0x42
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.UnitValue.Size()))
-		n8, err := m.UnitValue.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.UnitValue.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
 		}
-		i += n8
+		i--
+		dAtA[i] = 0x42
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *DebugDraw) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1401,65 +1382,78 @@ func (m *DebugDraw) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebugDraw) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugDraw) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Text) > 0 {
-		for _, msg := range m.Text {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintDebug(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+	if len(m.Spheres) > 0 {
+		for iNdEx := len(m.Spheres) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Spheres[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintDebug(dAtA, i, uint64(size))
 			}
-			i += n
-		}
-	}
-	if len(m.Lines) > 0 {
-		for _, msg := range m.Lines {
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintDebug(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
+			i--
+			dAtA[i] = 0x22
 		}
 	}
 	if len(m.Boxes) > 0 {
-		for _, msg := range m.Boxes {
+		for iNdEx := len(m.Boxes) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Boxes[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintDebug(dAtA, i, uint64(size))
+			}
+			i--
 			dAtA[i] = 0x1a
-			i++
-			i = encodeVarintDebug(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
 		}
 	}
-	if len(m.Spheres) > 0 {
-		for _, msg := range m.Spheres {
-			dAtA[i] = 0x22
-			i++
-			i = encodeVarintDebug(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+	if len(m.Lines) > 0 {
+		for iNdEx := len(m.Lines) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Lines[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintDebug(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0x12
 		}
 	}
-	return i, nil
+	if len(m.Text) > 0 {
+		for iNdEx := len(m.Text) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Text[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintDebug(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *Line) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1467,37 +1461,46 @@ func (m *Line) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Line) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Line) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.P0 != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.P0.Size()))
-		n9, err := m.P0.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n9
-	}
 	if m.P1 != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.P1.Size()))
-		n10, err := m.P1.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.P1.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
 		}
-		i += n10
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.P0 != nil {
+		{
+			size, err := m.P0.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *Color) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1505,32 +1508,37 @@ func (m *Color) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Color) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Color) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.R != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.R))
+	if m.B != 0 {
+		i = encodeVarintDebug(dAtA, i, uint64(m.B))
+		i--
+		dAtA[i] = 0x18
 	}
 	if m.G != 0 {
-		dAtA[i] = 0x10
-		i++
 		i = encodeVarintDebug(dAtA, i, uint64(m.G))
+		i--
+		dAtA[i] = 0x10
 	}
-	if m.B != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.B))
+	if m.R != 0 {
+		i = encodeVarintDebug(dAtA, i, uint64(m.R))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *DebugText) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1538,58 +1546,70 @@ func (m *DebugText) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebugText) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugText) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Color != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.Color.Size()))
-		n11, err := m.Color.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n11
-	}
-	if len(m.Text) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(len(m.Text)))
-		i += copy(dAtA[i:], m.Text)
-	}
-	if m.VirtualPos != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.VirtualPos.Size()))
-		n12, err := m.VirtualPos.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n12
+	if m.Size_ != 0 {
+		i = encodeVarintDebug(dAtA, i, uint64(m.Size_))
+		i--
+		dAtA[i] = 0x28
 	}
 	if m.WorldPos != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.WorldPos.Size()))
-		n13, err := m.WorldPos.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.WorldPos.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
 		}
-		i += n13
+		i--
+		dAtA[i] = 0x22
 	}
-	if m.Size_ != 0 {
-		dAtA[i] = 0x28
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.Size_))
+	if m.VirtualPos != nil {
+		{
+			size, err := m.VirtualPos.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
 	}
-	return i, nil
+	if len(m.Text) > 0 {
+		i -= len(m.Text)
+		copy(dAtA[i:], m.Text)
+		i = encodeVarintDebug(dAtA, i, uint64(len(m.Text)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Color != nil {
+		{
+			size, err := m.Color.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *DebugLine) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1597,37 +1617,46 @@ func (m *DebugLine) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebugLine) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugLine) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Color != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.Color.Size()))
-		n14, err := m.Color.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n14
-	}
 	if m.Line != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.Line.Size()))
-		n15, err := m.Line.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Line.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
 		}
-		i += n15
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.Color != nil {
+		{
+			size, err := m.Color.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *DebugBox) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1635,47 +1664,58 @@ func (m *DebugBox) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebugBox) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugBox) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Color != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.Color.Size()))
-		n16, err := m.Color.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	if m.Max != nil {
+		{
+			size, err := m.Max.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
 		}
-		i += n16
+		i--
+		dAtA[i] = 0x1a
 	}
 	if m.Min != nil {
+		{
+			size, err := m.Min.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
+		}
+		i--
 		dAtA[i] = 0x12
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.Min.Size()))
-		n17, err := m.Min.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n17
 	}
-	if m.Max != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.Max.Size()))
-		n18, err := m.Max.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	if m.Color != nil {
+		{
+			size, err := m.Color.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
 		}
-		i += n18
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *DebugSphere) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1683,43 +1723,52 @@ func (m *DebugSphere) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebugSphere) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugSphere) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Color != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.Color.Size()))
-		n19, err := m.Color.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n19
+	if m.R != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.R))))
+		i--
+		dAtA[i] = 0x1d
 	}
 	if m.P != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.P.Size()))
-		n20, err := m.P.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.P.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
 		}
-		i += n20
+		i--
+		dAtA[i] = 0x12
 	}
-	if m.R != 0 {
-		dAtA[i] = 0x1d
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.R))))
-		i += 4
+	if m.Color != nil {
+		{
+			size, err := m.Color.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *DebugCreateUnit) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1727,42 +1776,49 @@ func (m *DebugCreateUnit) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebugCreateUnit) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugCreateUnit) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.UnitType != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.UnitType))
-	}
-	if m.Owner != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.Owner))
+	if m.Quantity != 0 {
+		i = encodeVarintDebug(dAtA, i, uint64(m.Quantity))
+		i--
+		dAtA[i] = 0x20
 	}
 	if m.Pos != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.Pos.Size()))
-		n21, err := m.Pos.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Pos.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDebug(dAtA, i, uint64(size))
 		}
-		i += n21
+		i--
+		dAtA[i] = 0x1a
 	}
-	if m.Quantity != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.Quantity))
+	if m.Owner != 0 {
+		i = encodeVarintDebug(dAtA, i, uint64(m.Owner))
+		i--
+		dAtA[i] = 0x10
 	}
-	return i, nil
+	if m.UnitType != 0 {
+		i = encodeVarintDebug(dAtA, i, uint64(m.UnitType))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *DebugKillUnit) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1770,34 +1826,40 @@ func (m *DebugKillUnit) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebugKillUnit) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugKillUnit) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Tag) > 0 {
-		dAtA23 := make([]byte, len(m.Tag)*10)
-		var j22 int
+		dAtA22 := make([]byte, len(m.Tag)*10)
+		var j21 int
 		for _, num := range m.Tag {
 			for num >= 1<<7 {
-				dAtA23[j22] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA22[j21] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j22++
+				j21++
 			}
-			dAtA23[j22] = uint8(num)
-			j22++
+			dAtA22[j21] = uint8(num)
+			j21++
 		}
+		i -= j21
+		copy(dAtA[i:], dAtA22[:j21])
+		i = encodeVarintDebug(dAtA, i, uint64(j21))
+		i--
 		dAtA[i] = 0xa
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(j22))
-		i += copy(dAtA[i:], dAtA23[:j22])
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *DebugTestProcess) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1805,27 +1867,32 @@ func (m *DebugTestProcess) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebugTestProcess) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugTestProcess) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Test != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.Test))
-	}
 	if m.DelayMs != 0 {
-		dAtA[i] = 0x10
-		i++
 		i = encodeVarintDebug(dAtA, i, uint64(m.DelayMs))
+		i--
+		dAtA[i] = 0x10
 	}
-	return i, nil
+	if m.Test != 0 {
+		i = encodeVarintDebug(dAtA, i, uint64(m.Test))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *DebugSetScore) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1833,23 +1900,28 @@ func (m *DebugSetScore) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebugSetScore) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugSetScore) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.Score != 0 {
-		dAtA[i] = 0xd
-		i++
+		i -= 4
 		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Score))))
-		i += 4
+		i--
+		dAtA[i] = 0xd
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *DebugEndGame) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1857,22 +1929,27 @@ func (m *DebugEndGame) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebugEndGame) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugEndGame) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.EndResult != 0 {
-		dAtA[i] = 0x8
-		i++
 		i = encodeVarintDebug(dAtA, i, uint64(m.EndResult))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *DebugSetUnitValue) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1880,37 +1957,44 @@ func (m *DebugSetUnitValue) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebugSetUnitValue) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugSetUnitValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.UnitValue != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.UnitValue))
+	if m.UnitTag != 0 {
+		i = encodeVarintDebug(dAtA, i, uint64(m.UnitTag))
+		i--
+		dAtA[i] = 0x18
 	}
 	if m.Value != 0 {
-		dAtA[i] = 0x15
-		i++
+		i -= 4
 		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Value))))
-		i += 4
+		i--
+		dAtA[i] = 0x15
 	}
-	if m.UnitTag != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.UnitTag))
+	if m.UnitValue != 0 {
+		i = encodeVarintDebug(dAtA, i, uint64(m.UnitValue))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintDebug(dAtA []byte, offset int, v uint64) int {
+	offset -= sovDebug(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *DebugCommand) Size() (n int) {
 	if m == nil {
@@ -2267,14 +2351,7 @@ func (m *DebugSetUnitValue) Size() (n int) {
 }
 
 func sovDebug(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozDebug(x uint64) (n int) {
 	return sovDebug(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -2294,7 +2371,7 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2322,7 +2399,7 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2331,6 +2408,9 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2354,7 +2434,7 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (DebugGameState(b) & 0x7F) << shift
+				v |= DebugGameState(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2374,7 +2454,7 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2383,6 +2463,9 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2406,7 +2489,7 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2415,6 +2498,9 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2438,7 +2524,7 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2447,6 +2533,9 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2470,7 +2559,7 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2479,6 +2568,9 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2502,7 +2594,7 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2511,6 +2603,9 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2534,7 +2629,7 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2543,6 +2638,9 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2558,7 +2656,7 @@ func (m *DebugCommand) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -2588,7 +2686,7 @@ func (m *DebugDraw) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2616,7 +2714,7 @@ func (m *DebugDraw) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2625,6 +2723,9 @@ func (m *DebugDraw) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2647,7 +2748,7 @@ func (m *DebugDraw) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2656,6 +2757,9 @@ func (m *DebugDraw) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2678,7 +2782,7 @@ func (m *DebugDraw) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2687,6 +2791,9 @@ func (m *DebugDraw) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2709,7 +2816,7 @@ func (m *DebugDraw) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2718,6 +2825,9 @@ func (m *DebugDraw) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2732,7 +2842,7 @@ func (m *DebugDraw) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -2762,7 +2872,7 @@ func (m *Line) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2790,7 +2900,7 @@ func (m *Line) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2799,6 +2909,9 @@ func (m *Line) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2823,7 +2936,7 @@ func (m *Line) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2832,6 +2945,9 @@ func (m *Line) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2848,7 +2964,7 @@ func (m *Line) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -2878,7 +2994,7 @@ func (m *Color) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2906,7 +3022,7 @@ func (m *Color) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.R |= (uint32(b) & 0x7F) << shift
+				m.R |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2925,7 +3041,7 @@ func (m *Color) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.G |= (uint32(b) & 0x7F) << shift
+				m.G |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2944,7 +3060,7 @@ func (m *Color) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.B |= (uint32(b) & 0x7F) << shift
+				m.B |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2955,7 +3071,7 @@ func (m *Color) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -2985,7 +3101,7 @@ func (m *DebugText) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3013,7 +3129,7 @@ func (m *DebugText) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3022,6 +3138,9 @@ func (m *DebugText) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3046,7 +3165,7 @@ func (m *DebugText) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3056,6 +3175,9 @@ func (m *DebugText) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3075,7 +3197,7 @@ func (m *DebugText) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3084,6 +3206,9 @@ func (m *DebugText) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3108,7 +3233,7 @@ func (m *DebugText) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3117,6 +3242,9 @@ func (m *DebugText) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3141,7 +3269,7 @@ func (m *DebugText) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Size_ |= (uint32(b) & 0x7F) << shift
+				m.Size_ |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3152,7 +3280,7 @@ func (m *DebugText) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -3182,7 +3310,7 @@ func (m *DebugLine) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3210,7 +3338,7 @@ func (m *DebugLine) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3219,6 +3347,9 @@ func (m *DebugLine) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3243,7 +3374,7 @@ func (m *DebugLine) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3252,6 +3383,9 @@ func (m *DebugLine) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3268,7 +3402,7 @@ func (m *DebugLine) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -3298,7 +3432,7 @@ func (m *DebugBox) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3326,7 +3460,7 @@ func (m *DebugBox) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3335,6 +3469,9 @@ func (m *DebugBox) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3359,7 +3496,7 @@ func (m *DebugBox) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3368,6 +3505,9 @@ func (m *DebugBox) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3392,7 +3532,7 @@ func (m *DebugBox) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3401,6 +3541,9 @@ func (m *DebugBox) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3417,7 +3560,7 @@ func (m *DebugBox) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -3447,7 +3590,7 @@ func (m *DebugSphere) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3475,7 +3618,7 @@ func (m *DebugSphere) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3484,6 +3627,9 @@ func (m *DebugSphere) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3508,7 +3654,7 @@ func (m *DebugSphere) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3517,6 +3663,9 @@ func (m *DebugSphere) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3544,7 +3693,7 @@ func (m *DebugSphere) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -3574,7 +3723,7 @@ func (m *DebugCreateUnit) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3602,7 +3751,7 @@ func (m *DebugCreateUnit) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.UnitType |= (UnitTypeID(b) & 0x7F) << shift
+				m.UnitType |= UnitTypeID(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3621,7 +3770,7 @@ func (m *DebugCreateUnit) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Owner |= (PlayerID(b) & 0x7F) << shift
+				m.Owner |= PlayerID(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3640,7 +3789,7 @@ func (m *DebugCreateUnit) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3649,6 +3798,9 @@ func (m *DebugCreateUnit) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3673,7 +3825,7 @@ func (m *DebugCreateUnit) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Quantity |= (uint32(b) & 0x7F) << shift
+				m.Quantity |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3684,7 +3836,7 @@ func (m *DebugCreateUnit) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -3714,7 +3866,7 @@ func (m *DebugKillUnit) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3740,7 +3892,7 @@ func (m *DebugKillUnit) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (UnitTag(b) & 0x7F) << shift
+					v |= UnitTag(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -3757,7 +3909,7 @@ func (m *DebugKillUnit) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -3766,12 +3918,15 @@ func (m *DebugKillUnit) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthDebug
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthDebug
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -3791,7 +3946,7 @@ func (m *DebugKillUnit) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (UnitTag(b) & 0x7F) << shift
+						v |= UnitTag(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -3807,7 +3962,7 @@ func (m *DebugKillUnit) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -3837,7 +3992,7 @@ func (m *DebugTestProcess) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3865,7 +4020,7 @@ func (m *DebugTestProcess) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Test |= (DebugTestProcess_Test(b) & 0x7F) << shift
+				m.Test |= DebugTestProcess_Test(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3884,7 +4039,7 @@ func (m *DebugTestProcess) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DelayMs |= (int32(b) & 0x7F) << shift
+				m.DelayMs |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3895,7 +4050,7 @@ func (m *DebugTestProcess) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -3925,7 +4080,7 @@ func (m *DebugSetScore) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3956,7 +4111,7 @@ func (m *DebugSetScore) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -3986,7 +4141,7 @@ func (m *DebugEndGame) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -4014,7 +4169,7 @@ func (m *DebugEndGame) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.EndResult |= (DebugEndGame_EndResult(b) & 0x7F) << shift
+				m.EndResult |= DebugEndGame_EndResult(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4025,7 +4180,7 @@ func (m *DebugEndGame) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -4055,7 +4210,7 @@ func (m *DebugSetUnitValue) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -4083,7 +4238,7 @@ func (m *DebugSetUnitValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.UnitValue |= (DebugSetUnitValue_UnitValue(b) & 0x7F) << shift
+				m.UnitValue |= DebugSetUnitValue_UnitValue(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4113,7 +4268,7 @@ func (m *DebugSetUnitValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.UnitTag |= (UnitTag(b) & 0x7F) << shift
+				m.UnitTag |= UnitTag(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4124,7 +4279,7 @@ func (m *DebugSetUnitValue) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -4142,6 +4297,7 @@ func (m *DebugSetUnitValue) Unmarshal(dAtA []byte) error {
 func skipDebug(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -4173,10 +4329,8 @@ func skipDebug(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -4193,132 +4347,34 @@ func skipDebug(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthDebug
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowDebug
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipDebug(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupDebug
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthDebug
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthDebug = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowDebug   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthDebug        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowDebug          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupDebug = fmt.Errorf("proto: unexpected end of group")
 )
-
-func init() { proto.RegisterFile("debug.proto", fileDescriptor_debug_6c69d8b6bf2ff17c) }
-
-var fileDescriptor_debug_6c69d8b6bf2ff17c = []byte{
-	// 1158 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x56, 0x4f, 0x8f, 0xdb, 0x44,
-	0x14, 0xcf, 0xc4, 0xce, 0xc6, 0x79, 0x49, 0x16, 0x77, 0xd4, 0x0a, 0x77, 0xa1, 0xd9, 0xc5, 0xa8,
-	0xa5, 0x50, 0x91, 0xb6, 0x8b, 0x8a, 0x54, 0xa9, 0x12, 0x22, 0xbb, 0x2b, 0xb6, 0xa5, 0x48, 0xab,
-	0xd9, 0xa5, 0x07, 0x2e, 0xd6, 0xc4, 0x9e, 0x7a, 0xad, 0xda, 0x1e, 0x33, 0x33, 0xee, 0x26, 0x7c,
-	0x03, 0x7a, 0xe2, 0x0b, 0x70, 0xe0, 0x82, 0xc4, 0x37, 0xe1, 0xc0, 0xa1, 0x82, 0x0b, 0xa7, 0x0a,
-	0xb5, 0x27, 0xbe, 0x42, 0x4f, 0x68, 0xc6, 0x4e, 0xda, 0x0d, 0xd9, 0x54, 0x3d, 0xe5, 0xbd, 0xf1,
-	0xef, 0xfd, 0xfc, 0xfe, 0xfc, 0xfc, 0x26, 0xd0, 0x8d, 0xd8, 0xb8, 0x8c, 0x87, 0x85, 0xe0, 0x8a,
-	0xe3, 0xf5, 0xc3, 0x9d, 0xed, 0x2f, 0x0f, 0xee, 0x1e, 0x68, 0x27, 0xe4, 0xe9, 0x06, 0xc4, 0x3c,
-	0xe6, 0xd5, 0xb3, 0x8d, 0x5e, 0xc8, 0xb3, 0x8c, 0xe7, 0x95, 0xe7, 0x3f, 0xb1, 0xa1, 0xb7, 0xab,
-	0x23, 0x77, 0x78, 0x96, 0xd1, 0x3c, 0xc2, 0xd7, 0xc1, 0x8e, 0x04, 0x3d, 0xf1, 0xd0, 0x16, 0xba,
-	0xda, 0xdd, 0xbe, 0x38, 0x3c, 0xcd, 0x34, 0x34, 0xd8, 0x5d, 0x41, 0x4f, 0xf6, 0x1b, 0xc4, 0x00,
-	0xf1, 0x17, 0x00, 0x31, 0xcd, 0x58, 0x20, 0x15, 0x55, 0xcc, 0x6b, 0x6e, 0xa1, 0xab, 0xeb, 0xdb,
-	0x83, 0xa5, 0x61, 0x5f, 0xd1, 0x8c, 0x1d, 0x6a, 0xd4, 0x7e, 0x83, 0x74, 0xe2, 0x99, 0x83, 0x47,
-	0xd0, 0x0d, 0x05, 0xa3, 0x8a, 0x05, 0x65, 0x9e, 0x28, 0xcf, 0x32, 0x2f, 0xde, 0x5c, 0xca, 0xb0,
-	0x63, 0x70, 0xdf, 0xe6, 0x89, 0xda, 0x6f, 0x10, 0x08, 0xe7, 0x1e, 0xbe, 0x03, 0x9d, 0x47, 0x49,
-	0x9a, 0x56, 0x0c, 0xb6, 0x61, 0xb8, 0xb4, 0x94, 0xe1, 0xeb, 0x24, 0x4d, 0xeb, 0x78, 0xe7, 0x51,
-	0x6d, 0xe3, 0x3d, 0xe8, 0x29, 0x26, 0x55, 0x50, 0x08, 0x1e, 0x32, 0x29, 0xbd, 0x96, 0x21, 0xd8,
-	0x5a, 0x4a, 0x70, 0xc4, 0xa4, 0x3a, 0xa8, 0x70, 0xfb, 0x0d, 0xd2, 0x55, 0xaf, 0x5c, 0x7c, 0x0b,
-	0x5a, 0x32, 0xe4, 0x82, 0x79, 0x6b, 0x2b, 0x12, 0x38, 0x64, 0xea, 0x50, 0x83, 0xf6, 0x1b, 0xa4,
-	0x42, 0xe3, 0xdb, 0xe0, 0xb0, 0x3c, 0x0a, 0x74, 0x43, 0xbc, 0xb6, 0x89, 0x7c, 0x7f, 0x69, 0xe4,
-	0x5e, 0x1e, 0xe9, 0x0e, 0xee, 0x37, 0x48, 0x9b, 0x55, 0x26, 0x1e, 0x01, 0xe8, 0x8a, 0x83, 0xc7,
-	0x34, 0x2d, 0x99, 0xe7, 0x98, 0xe0, 0x0f, 0xce, 0x7a, 0xad, 0x2e, 0xf5, 0x81, 0x06, 0xea, 0xf6,
-	0x97, 0x33, 0x67, 0xd4, 0x81, 0x76, 0x58, 0xcd, 0xde, 0xff, 0x13, 0x41, 0x67, 0x3e, 0x60, 0xfc,
-	0x29, 0xd8, 0x8a, 0x4d, 0x94, 0x87, 0xb6, 0xac, 0x33, 0x95, 0x70, 0xc4, 0x26, 0x8a, 0x18, 0x18,
-	0xbe, 0x0e, 0xad, 0x34, 0xc9, 0x99, 0xf4, 0x9a, 0x2b, 0xf0, 0xf7, 0x93, 0x9c, 0x91, 0x0a, 0x87,
-	0x87, 0xd0, 0x1a, 0xf3, 0x09, 0x93, 0x9e, 0x65, 0x02, 0xbc, 0xa5, 0x01, 0x23, 0x3e, 0x21, 0x15,
-	0x0c, 0xdf, 0x82, 0xb6, 0x2c, 0x8e, 0x99, 0x60, 0xd2, 0xb3, 0x4d, 0xc4, 0x7b, 0xcb, 0x2b, 0x35,
-	0x18, 0x32, 0xc3, 0xfa, 0x47, 0x60, 0xeb, 0xb7, 0xe2, 0xcb, 0xd0, 0x2c, 0x6e, 0xd4, 0xb2, 0xbe,
-	0xb0, 0x18, 0x79, 0xc0, 0x93, 0x5c, 0x91, 0x66, 0x71, 0xc3, 0xc0, 0x6e, 0x1a, 0x19, 0xaf, 0x80,
-	0xdd, 0xf4, 0x6f, 0x42, 0x6b, 0x87, 0xa7, 0x5c, 0xe0, 0x1e, 0x20, 0x61, 0x58, 0xfb, 0x04, 0x19,
-	0x2f, 0x36, 0xc1, 0x7d, 0x82, 0x62, 0xed, 0x8d, 0x8d, 0x9e, 0xfb, 0x04, 0x8d, 0xfd, 0x3f, 0x66,
-	0xdd, 0xd5, 0x4d, 0xc3, 0xd7, 0xa0, 0x15, 0x6a, 0x82, 0xb3, 0x32, 0x32, 0xec, 0xa4, 0xc2, 0x60,
-	0x5c, 0x8f, 0x42, 0x33, 0x77, 0xea, 0x7e, 0x7f, 0x0e, 0xdd, 0xc7, 0x89, 0x50, 0x25, 0x4d, 0x83,
-	0x82, 0xcb, 0xfa, 0xb3, 0x39, 0x23, 0x63, 0xa8, 0x91, 0x07, 0x5c, 0xe2, 0x6d, 0xe8, 0x9c, 0x70,
-	0x91, 0x46, 0x26, 0xca, 0x5e, 0x15, 0xe5, 0x18, 0x9c, 0x8e, 0xc1, 0x60, 0xcb, 0xe4, 0x07, 0x66,
-	0x3e, 0x8c, 0x3e, 0x31, 0xb6, 0x3f, 0xae, 0xab, 0x31, 0xcd, 0x7d, 0xab, 0x6a, 0xae, 0x82, 0xad,
-	0x15, 0x50, 0x37, 0xf9, 0xfc, 0x22, 0xd6, 0x68, 0xc4, 0x20, 0xfc, 0x1f, 0x11, 0x38, 0x33, 0x19,
-	0xbc, 0xdd, 0x3b, 0x3e, 0x02, 0x2b, 0x4b, 0xf2, 0xd5, 0x73, 0xd4, 0x08, 0x03, 0xa4, 0x93, 0xd5,
-	0xed, 0xd3, 0x08, 0x3f, 0x83, 0xee, 0x6b, 0xfa, 0x7a, 0xbb, 0x6c, 0x3e, 0x04, 0x54, 0xac, 0xce,
-	0x05, 0x15, 0x95, 0x92, 0x74, 0x1e, 0x4d, 0x82, 0x84, 0xff, 0x1b, 0x82, 0x77, 0x16, 0x76, 0x1e,
-	0xbe, 0x06, 0xe6, 0xbb, 0x0d, 0xd4, 0xb4, 0x60, 0x95, 0xe6, 0x46, 0xeb, 0x2f, 0x9f, 0x6d, 0x82,
-	0x7e, 0x78, 0x34, 0x2d, 0xd8, 0xdd, 0x5d, 0xe2, 0x94, 0xb5, 0x8d, 0x7d, 0x68, 0xf1, 0x93, 0x9c,
-	0x09, 0xf3, 0xde, 0xd6, 0xa8, 0xf7, 0xf2, 0xd9, 0xa6, 0x73, 0x90, 0xd2, 0x29, 0x13, 0x77, 0x77,
-	0x49, 0xf5, 0x08, 0x7f, 0x0c, 0xd6, 0x2b, 0xed, 0xbc, 0xbb, 0x34, 0xb3, 0xed, 0x5d, 0xa2, 0x31,
-	0x78, 0x03, 0x9c, 0xef, 0x4b, 0x9a, 0xab, 0x44, 0x4d, 0x8d, 0x6a, 0xfa, 0x64, 0xee, 0xfb, 0x43,
-	0xe8, 0x9f, 0x5a, 0xae, 0xf8, 0x12, 0x58, 0x8a, 0xc6, 0x66, 0x73, 0xd8, 0xa3, 0xee, 0xcb, 0x67,
-	0x9b, 0x6d, 0x93, 0x22, 0x8d, 0x89, 0x3e, 0xf7, 0x7f, 0x45, 0xe0, 0x2e, 0x2e, 0x53, 0x7c, 0x5b,
-	0x6b, 0x5c, 0x2a, 0x53, 0xd7, 0xfa, 0xf6, 0xe5, 0x37, 0x2d, 0xdf, 0xa1, 0xb6, 0x89, 0x09, 0xc1,
-	0x17, 0xc1, 0x89, 0x58, 0x4a, 0xa7, 0x41, 0x26, 0xab, 0x6a, 0x49, 0xdb, 0xf8, 0xdf, 0x48, 0xff,
-	0x0e, 0xd8, 0x1a, 0x88, 0x2f, 0x80, 0xa3, 0x7f, 0x83, 0x3c, 0x49, 0xdd, 0xc6, 0x46, 0xfb, 0xc9,
-	0xcf, 0x5b, 0x56, 0x9e, 0xa4, 0xd8, 0x01, 0xfb, 0x98, 0xe6, 0xb1, 0x8b, 0x70, 0x07, 0x5a, 0xa1,
-	0xa0, 0xf2, 0xd8, 0x6d, 0xea, 0x43, 0x36, 0x49, 0x94, 0x6b, 0xf9, 0x97, 0xeb, 0xc2, 0x66, 0x4b,
-	0x1b, 0x9f, 0x9f, 0xad, 0x78, 0x64, 0xe6, 0x54, 0x39, 0xfe, 0x2f, 0xa8, 0xbe, 0x44, 0xeb, 0x15,
-	0x8d, 0xf7, 0x00, 0xf4, 0x4a, 0x17, 0x4c, 0x96, 0xe9, 0xac, 0xa2, 0x2b, 0xab, 0x96, 0xfa, 0x70,
-	0x2f, 0x8f, 0x88, 0x41, 0x93, 0x0e, 0x9b, 0x99, 0xfe, 0x3d, 0xe8, 0xcc, 0xcf, 0xf1, 0x06, 0xf4,
-	0xe7, 0xce, 0x62, 0x19, 0x7d, 0xe8, 0x1c, 0x96, 0x42, 0xb0, 0x3c, 0x62, 0xc2, 0x45, 0x18, 0xc3,
-	0xfa, 0x2e, 0x0b, 0x53, 0x2a, 0xd8, 0x83, 0x24, 0x54, 0x5c, 0x4c, 0xdd, 0xa6, 0xff, 0x2f, 0x82,
-	0x73, 0xff, 0xbb, 0x09, 0xf0, 0xbd, 0x53, 0x17, 0x48, 0x95, 0xe8, 0xb5, 0x37, 0x5e, 0x20, 0xc3,
-	0xb9, 0xf5, 0xda, 0x45, 0xa2, 0x7b, 0x53, 0xd1, 0x34, 0xab, 0xde, 0x18, 0x07, 0x5f, 0x01, 0xa7,
-	0xd2, 0x2c, 0x8d, 0x8d, 0xce, 0x16, 0xf4, 0xd0, 0x2e, 0x2b, 0x43, 0xd7, 0xfa, 0x2a, 0xad, 0x0d,
-	0xe8, 0xcf, 0x9d, 0xc5, 0x5a, 0x01, 0xd6, 0xf6, 0x72, 0x26, 0xe2, 0xa9, 0x8b, 0xf4, 0xa4, 0xee,
-	0x27, 0x0f, 0x99, 0xdb, 0xc4, 0x5d, 0x68, 0x1f, 0x1e, 0x27, 0x2c, 0x8d, 0xa4, 0x6b, 0x7d, 0xf2,
-	0x17, 0xd2, 0x0d, 0x78, 0xfd, 0x1f, 0x07, 0xde, 0x04, 0x7c, 0xfa, 0x64, 0x91, 0xb6, 0x07, 0x8e,
-	0x3c, 0xe6, 0x27, 0x41, 0x46, 0x0b, 0x17, 0xe1, 0x73, 0xd0, 0x0f, 0x79, 0xae, 0x04, 0x4f, 0x03,
-	0x96, 0xb3, 0x6c, 0x5a, 0xa9, 0xe2, 0x21, 0xe7, 0x91, 0x6b, 0x19, 0x4b, 0x30, 0xe6, 0xda, 0x1a,
-	0x46, 0xd3, 0x54, 0xcf, 0x99, 0x97, 0x22, 0x64, 0xd2, 0x6d, 0xe1, 0x36, 0x58, 0x31, 0x8f, 0xdc,
-	0x35, 0x4d, 0x98, 0x25, 0x39, 0x13, 0x34, 0x95, 0x6e, 0xdb, 0x1c, 0x53, 0xe9, 0x3a, 0xfa, 0x38,
-	0xe4, 0x3c, 0x8d, 0xf8, 0x49, 0xee, 0x76, 0xf4, 0xe0, 0x14, 0x0b, 0x8f, 0x03, 0xa5, 0xf9, 0x40,
-	0x57, 0x51, 0x16, 0xb1, 0xa0, 0x11, 0x73, 0xbb, 0x78, 0x1d, 0xe0, 0x21, 0x95, 0x2a, 0x18, 0x97,
-	0x49, 0x1a, 0xb9, 0xbd, 0xd1, 0xa5, 0xdf, 0x9f, 0x0f, 0xd0, 0xd3, 0xe7, 0x03, 0xf4, 0xcf, 0xf3,
-	0x01, 0xfa, 0xe9, 0xc5, 0xa0, 0xf1, 0xf4, 0xc5, 0xa0, 0xf1, 0xf7, 0x8b, 0x41, 0xe3, 0x3b, 0x8b,
-	0x16, 0xc9, 0x78, 0xcd, 0xfc, 0xa1, 0xfb, 0xec, 0xbf, 0x00, 0x00, 0x00, 0xff, 0xff, 0xfb, 0xbb,
-	0x0a, 0x29, 0x09, 0x0a, 0x00, 0x00,
-}
