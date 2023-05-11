@@ -18,7 +18,12 @@ var (
 	launchDataVersion      = ""
 	launchPortStart        = 8168
 	launchExtraCommandArgs = []string(nil)
+	launchPortListen       = ""
 )
+
+func init() {
+	flagStr("listen", &launchPortListen, "The port StarCraft II process listens for incoming connections")
+}
 
 // SetGameVersion specifies a specific base game and data version to use when launching.
 func SetGameVersion(baseBuild uint32, dataVersion string) {
@@ -91,8 +96,11 @@ func (config *gameConfig) launchAndAttach(path string, c *client.Client) client.
 
 	// See if we can connect to an old instance real quick before launching
 	if err := c.TryConnect(config.netAddress, pi.Port); err != nil {
+		if len(launchPortListen) == 0 {
+			launchPortListen = config.netAddress
+		}
 		args := []string{
-			"-listen", config.netAddress,
+			"-listen", launchPortListen,
 			"-port", strconv.Itoa(pi.Port),
 			// DirectX will fail if multiple games try to launch in fullscreen mode. Force them into windowed mode.
 			"-displayMode", "0",
