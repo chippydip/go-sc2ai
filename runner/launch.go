@@ -92,7 +92,7 @@ func (config *gameConfig) launchAndAttach(path string, c *client.Client) client.
 	// See if we can connect to an old instance real quick before launching
 	if err := c.TryConnect(config.netAddress, pi.Port); err != nil {
 		args := []string{
-			"-listen", config.netAddress,
+			"-listen", "0.0.0.0",
 			"-port", strconv.Itoa(pi.Port),
 			// DirectX will fail if multiple games try to launch in fullscreen mode. Force them into windowed mode.
 			"-displayMode", "0",
