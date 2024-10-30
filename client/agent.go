@@ -43,6 +43,7 @@ type AgentInfo interface {
 	SendDebugCommands(commands []*api.DebugCommand)
 	ClearDebugDraw()
 	LeaveGame()
+	SaveReplay(path string)
 
 	OnBeforeStep(func())
 	OnObservation(func())
@@ -189,6 +190,19 @@ func (c *Client) ClearDebugDraw() {
 // LeaveGame ...
 func (c *Client) LeaveGame() {
 	c.connection.leaveGame(api.RequestLeaveGame{})
+}
+
+// SaveReplay ...
+func (c *Client) SaveReplay(path string) {
+	responseSaveReplay, err := c.connection.saveReplay(api.RequestSaveReplay{})
+	if err != nil {
+		log.Print(err)
+		return
+	}
+	err = os.WriteFile(path, responseSaveReplay.GetData(), 0644)
+	if err != nil {
+		log.Print(err)
+	}
 }
 
 // OnBeforeStep ...
