@@ -51,6 +51,8 @@ func (a *mockAgentInfo) ClearDebugDraw() {
 }
 func (a *mockAgentInfo) LeaveGame() {
 }
+func (a *mockAgentInfo) SaveReplay(path string) {
+}
 
 func (a *mockAgentInfo) OnBeforeStep(func()) {
 }

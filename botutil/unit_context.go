@@ -229,10 +229,10 @@ func (g *grouper) updateMap(ctx *UnitContext, i int) {
 		// Normal case
 		m[t] = Units{raw: n}
 	} else {
-		// Only happens if there are flying and ground units of the same type (locust?)
+		// Happens when there are flying and ground units of the same type (e.g. lifting or landing structures)
 		s := make([]Unit, len(r)+len(n))
 		copy(s, r)
-		copy(s[:len(r)], n)
+		copy(s[len(r):], n)
 		m[t] = Units{raw: s}
 	}
 	g.typeStart = i
